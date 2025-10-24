@@ -21,6 +21,7 @@ public:
 
     void Kill() override;
     bool isBig() { return mIsBig; };
+    bool isInvulnerable() { return mIsInvulnerable;};
 
 private:
     void ManageAnimations();

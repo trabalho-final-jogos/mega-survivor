@@ -1,5 +1,6 @@
 #include "QuestionBlock.h"
 
+#include "Coin.h"
 #include "Mushroom.h"
 #include "../Renderer/Renderer.h"
 #include "../Game.h"
@@ -39,8 +40,11 @@ void QuestionBlock::StartBounce()
 
     // Solta o item (exemplo)
     Vector2 itemPos = GetPosition() + Vector2(Game::TILE_SIZE*0.1, -Game::TILE_SIZE/2);
-    if (name == "Block Mushroom")
-        new Mushroom(GetGame(), itemPos);
+    if (name == "Block Mushroom") {
+        new Mushroom(GetGame(), GetPosition() + Vector2(0, -Game::TILE_SIZE));
+    }else if (name == "Block Coin") {
+        new Coin(GetGame(), itemPos);
+    }
     SDL_Log("Bloco ? esvaziado! Item deveria aparecer em (%f, %f)", itemPos.x, itemPos.y);
 }
 

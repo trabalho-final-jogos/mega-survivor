@@ -90,7 +90,8 @@ O Mario agora possui a habilidade de crescer ao coletar um cogumelo e encolher a
             * Define `mIsEmpty = true`.
             * Pega o `AnimatorComponent` e chama `SetTexture()` para mudar para a textura do bloco vazio (`mEmptyBlockTexture`, carregada no construtor).
             * **Em blocos específicos com o o nome "Block Mushroom" instancia um novo `Mushroom`** (`new Mushroom(...)`) na posição acima do bloco.
-
+            * **Em blocos específicos com o o nome "Block Coin" instancia uma moeda `Coin`** (`new Coin(...)`) na posição acima do bloco.
+            
 ### 2. Cogumelo (`Mushroom`)
 
 * **Herança:** `Mushroom : public Actor`
@@ -105,3 +106,19 @@ O Mario agora possui a habilidade de crescer ao coletar um cogumelo e encolher a
         * É ignorado por `ColliderLayer::Enemy` (verificação em `AABBColliderComponent::Detect...Collision`).
         * Ao colidir com `ColliderLayer::Player` (Mario), chama `SetState(ActorState::Destroy)` em si mesmo (é coletado).
     * **Destruição:** Chama `SetState(ActorState::Destroy)` se cair para fora dos limites inferiores da tela (`OnUpdate()`).
+
+### 3. Moeda (`Coin`)
+
+* **Herança:** `Coin : public Actor`
+* **Propósito:** Representa a moeda que aparece brevemente acima de um Bloco ? quando atingido.
+* **Criação:** Instanciada por `QuestionBlock::OnUpdate()` quando um `QuestionBlock` (configurado com `name == Block Coin`) termina sua animação de quique. A moeda é criada em uma posição ligeiramente acima do bloco.
+* **Componentes:**
+    * **Não utiliza** `RigidBodyComponent` nem `AABBColliderComponent`, pois seu movimento é simples e ela não interage fisicamente com outros objetos.
+* **Comportamento (`OnUpdate()`):**
+    * Possui um temporizador de vida (`mLifeTimer`, inicializado com `INITIAL_LIFE`).
+    * Inicia com uma velocidade vertical para cima (`mVerticalSpeed = UP_SPEED`).
+    * A cada quadro, `OnUpdate()`:
+        * Decrementa `mLifeTimer`.
+        * Atualiza a posição vertical com base em `mVerticalSpeed` e `deltaTime`.
+        * Aplica uma aceleração de "gravidade" simulada (`GRAVITY`) a `mVerticalSpeed`, fazendo a moeda desacelerar na subida e acelerar na descida, criando um pequeno arco.
+        * Quando `mLifeTimer` chega a zero ou menos, a moeda chama `SetState(ActorState::Destroy)` para ser removida do jogo.

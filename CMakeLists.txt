@@ -55,6 +55,8 @@ add_executable(${PROJECT_NAME}
         Source/Actors/QuestionBlock.h
         Source/Actors/Mushroom.h
         Source/Actors/Mushroom.cpp
+        Source/Actors/Coin.cpp
+        Source/Actors/Coin.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image OpenGL::GL)

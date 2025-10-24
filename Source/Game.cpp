@@ -208,7 +208,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     break;
                 // --- BLOCOS (IDs 0 a 15) ---
                 case 0: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockA.png"); b->SetPosition(pos); } break;
-                case 1: { auto b = new QuestionBlock(this, "../Assets/Sprites/Blocks/BlockC.png", "Block ?"); b->SetPosition(pos); } break;
+                case 1: { auto b = new QuestionBlock(this, "../Assets/Sprites/Blocks/BlockC.png", "Block Coin"); b->SetPosition(pos); } break;
                 case 2: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockF.png"); b->SetPosition(pos); } break;
                 case 3: { auto b = new Block(this, "../Assets/Sprites/Collectables/Coin.png"); b->SetPosition(pos); } break;
                 case 4: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockB.png", "Block B"); b->SetPosition(pos); } break;

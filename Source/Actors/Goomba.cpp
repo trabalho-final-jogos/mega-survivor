@@ -82,12 +82,13 @@ void Goomba::OnHorizontalCollision(const float minOverlap, AABBColliderComponent
         if (other->GetLayer() == ColliderLayer::Player) {
                 Actor* player = other->GetOwner();
                 Mario* mario = dynamic_cast<Mario*>(player);
-                if (mario->isBig()) {
-                        mario->Shrink();
-                }else {
-                        mario->Kill();
+                if (!mario->isInvulnerable()) {
+                        if (mario->isBig()) {
+                                mario->Shrink();
+                        }else {
+                                mario->Kill();
+                        }
                 }
-
         }
 
         // Se colidiu com blocos (Layer::Block) ou outros inimigos (Layer::Enemy)
@@ -112,13 +113,13 @@ void Goomba::OnVerticalCollision(const float minOverlap, AABBColliderComponent* 
                 Actor* player = other->GetOwner();
 
                 Mario* mario = dynamic_cast<Mario*>(player);
-
-                if (minOverlap<0) {
-
-                        if (mario->isBig()) {
-                                mario->Shrink();
-                        }else {
-                                mario->Kill();
+                if (!mario->isInvulnerable()) {
+                        if (minOverlap<0) {
+                                if (mario->isBig()) {
+                                        mario->Shrink();
+                                }else {
+                                        mario->Kill();
+                                }
                         }
                 }
                 SDL_Log("Goomba::OnVerticalCollision %f", minOverlap );
