@@ -1,10 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/R6H2vFsw)
 # TP3: Super Mario Bros
+**Autor:** Filipe Barros Vitorino
 
 Instruções: [https://lucasnfe.github.io/dcc192-2025-2/avaliacoes/tp3-smb]([https://lucasnfe.github.io/dcc192-2025-2/avaliacoes/tp3-smb](https://lucasnfe.github.io/dcc192-2025-2/avaliacoes/tp3-smb))
 
 
-# Novas Funcionalidades Implementadas (Outubro 2025)
+# Novas Funcionalidades Implementadas 
 
 Este documento descreve as funcionalidades da parte de customização.
 
@@ -50,6 +51,27 @@ O Mario agora possui a habilidade de crescer ao coletar um cogumelo e encolher a
         * O `mInvulnerabilityTimer` é decrementado por `deltaTime`.
         * Um efeito visual de **piscar** é aplicado alterando a visibilidade do `AnimatorComponent` (`mAnimator->SetVisible()`) com base no tempo restante.
         * Quando `mInvulnerabilityTimer` chega a zero ou menos, `mIsInvulnerable` é definido como `false`, e a visibilidade do Animator é garantida como `true`.
+
+## Bloco Padrão (`Block`) e Comportamento de Quique (Bloco de Tijolo "Tipo B")
+
+* **Herança:** `Block : public Actor`
+* **Propósito:** Representa os blocos estáticos do cenário, incluindo os blocos de tijolo que podem quicar quando atingidos por baixo.
+* **Identificação (Tipo B):** A própria classe `Block` contém a lógica para identificar se é um bloco de tijolo. No construtor (`Block::Block()`), ela recebe o `nome` vindo do `Game::BuildLevel`. Uma verificação interna (`if (nome == BLOCO B)`) define a flag `mCanBounce = true` se o ID corresponder ao Bloco de Tijolo. Blocos que não são do Tipo B terão `mCanBounce = false`.
+* **Comportamento de Quique:**
+    * **Gatilho:** Quando o Mario colide verticalmente *de baixo para cima* (`overlap > 0.0f`) com um `Actor` na camada `ColliderLayer::Blocks`, `Mario::OnVerticalCollision` faz um `dynamic_cast<Block*>` para obter um ponteiro para o bloco atingido. Se for bem-sucedido, ele chama `block->StartBounce()`.
+    * **`Block::StartBounce()`:**
+        * Este método existe na classe `Block`.
+        * Ele primeiro verifica se `mCanBounce` é `true` e se o bloco já não está quicando (`!mIsBouncing`). Se uma dessas condições falhar, ele retorna sem fazer nada (garantindo que blocos normais não quiquem).
+        * Se puder quicar, define `mIsBouncing = true` e reseta `mBounceTimer = 0.0f`.
+        * Armazena a `mOriginalPosition` (se ainda não foi definida).
+    * **`Block::OnUpdate()`:**
+        * Este método também existe na classe `Block`.
+        * Contém uma seção que só executa se `mIsBouncing` for `true`:
+            * Incrementa `mBounceTimer` com `deltaTime`.
+            * Usa `Math::Lerp` (interpolação linear) para calcular um deslocamento vertical (`offsetY`) baseado no `mBounceTimer` e na `BOUNCE_DURATION`. O deslocamento simula o movimento para cima e depois para baixo.
+            * Define a posição atual do bloco como `mOriginalPosition + Vector2(0.0f, offsetY)`.
+            * Quando `mBounceTimer` ultrapassa `BOUNCE_DURATION`, define `mIsBouncing = false` e reposiciona o bloco exatamente em `mOriginalPosition`.
+
 
 ## Novas Classes de Atores
 
