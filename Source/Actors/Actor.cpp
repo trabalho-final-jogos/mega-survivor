@@ -19,6 +19,7 @@ Actor::Actor(Game* game)
         , mGame(game)
 {
     mGame->AddActor(this);
+    SetScale(Vector2(Game::TILE_SIZE,Game::TILE_SIZE));
 }
 
 Actor::~Actor()
@@ -72,6 +73,7 @@ void Actor::OnProcessInput(const Uint8* keyState)
 {
 
 }
+
 
 void Actor::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) {
 

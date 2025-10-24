@@ -24,5 +24,8 @@ in vec2 fragTexCoord;
 
 void main()
 {
-    outColor = vec4(uColor, 1.0);
+    vec4 texColor = texture(uTexture, fragTexCoord);
+    vec4 solidColor = vec4(uColor, 1.0);
+
+    outColor = mix(solidColor, texColor, uTextureFactor);
 }

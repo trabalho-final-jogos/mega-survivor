@@ -11,6 +11,7 @@
 #include <SDL_stdinc.h>
 #include "../Math.h"
 #include "../Renderer/Renderer.h"
+#include <string>
 
 enum class ActorState
 {
@@ -72,7 +73,7 @@ public:
     void SetOnGround() { mIsOnGround = true; };
     void SetOffGround() { mIsOnGround = false; };
     bool IsOnGround() const { return mIsOnGround; };
-
+    std::string GetName() const {return name;};
     // Any actor-specific collision code (overridable)
     virtual void OnHorizontalCollision(const float minOverlap, class AABBColliderComponent* other);
     virtual void OnVerticalCollision(const float minOverlap, class AABBColliderComponent* other);
@@ -99,6 +100,7 @@ protected:
 
     // Game specific
     bool mIsOnGround;
+    std::string name = "";
 
 private:
     friend class Component;
@@ -106,4 +108,5 @@ private:
     // Adds component to Actor (this is automatically called
     // in the component constructor)
     void AddComponent(class Component* c);
+
 };

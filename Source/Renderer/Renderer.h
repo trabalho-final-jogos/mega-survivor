@@ -38,6 +38,7 @@ public:
     void Present();
 
     // Getters
+	void DrawDebugRect();
     class Texture* GetTexture(const std::string& fileName);
 	class Shader* GetBaseShader() const { return mBaseShader; }
 

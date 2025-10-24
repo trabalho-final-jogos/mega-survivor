@@ -29,5 +29,8 @@ out vec2 fragTexCoord;
 void main()
 {
     // Transform the vertex position to clip space
-	gl_Position = uOrthoProj * uWorldTransform * vec4(inPosition, 0.0, 1.0);
+    vec4 worldPos = uWorldTransform * vec4(inPosition, 0.0, 1.0);
+    worldPos -= vec4(uCameraPos, 0.0, 0.0);
+	gl_Position = uOrthoProj * worldPos;
+	fragTexCoord = (inTexCoord * uTexRect.zw) + uTexRect.xy;
 }

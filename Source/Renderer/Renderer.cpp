@@ -9,8 +9,9 @@ Renderer::Renderer(SDL_Window *window)
 , mWindow(window)
 , mContext(nullptr)
 , mOrthoProjection(Matrix4::Identity)
+, mSpriteVerts(nullptr)
 {
-
+    //mBaseShader = new Shader();
 }
 
 Renderer::~Renderer()
@@ -65,6 +66,7 @@ bool Renderer::Initialize(float width, float height)
     mOrthoProjection = Matrix4::CreateOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     mBaseShader->SetMatrixUniform("uOrthoProj", mOrthoProjection);
 
+    mBaseShader->SetIntegerUniform("uTexture", 0);
 
     // Activate shader
     mBaseShader->SetActive();
@@ -98,6 +100,7 @@ void Renderer::Clear()
 void Renderer::Draw(RendererMode mode, const Matrix4 &modelMatrix, const Vector2 &cameraPos, VertexArray *vertices,
                     const Vector3 &color, Texture *texture, const Vector4 &textureRect, float textureFactor)
 {
+    mBaseShader->SetActive();
     mBaseShader->SetMatrixUniform("uWorldTransform", modelMatrix);
     mBaseShader->SetVectorUniform("uColor", color);
     mBaseShader->SetVectorUniform("uTexRect", textureRect);
@@ -171,17 +174,31 @@ bool Renderer::LoadShaders()
 	// Create sprite shader
 	mBaseShader = new Shader();
 	if (!mBaseShader->Load("../Shaders/Base")) {
+	    SDL_Log("Erro: Falha ao carregar shader Base");
 		return false;
 	}
 
 	mBaseShader->SetActive();
-
+    SDL_Log("Shader carregado com sucesso!");
     return true;
 }
 
 void Renderer::CreateSpriteVerts()
 {
+    float vertices[] = {
+        // Posição (x, y)  // Coord. Textura (u,v)
+        -0.5f,  0.5f,   0.0f, 1.0f,
+         0.5f,  0.5f,   1.0f, 1.0f,
+         0.5f, -0.5f,   1.0f, 0.0f,
+        -0.5f, -0.5f,   0.0f, 0.0f
+    };
 
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    mSpriteVerts = new VertexArray(vertices, 4, indices, 6);
 }
 
 
@@ -209,3 +226,4 @@ Texture* Renderer::GetTexture(const std::string& fileName)
     }
     return tex;
 }
+

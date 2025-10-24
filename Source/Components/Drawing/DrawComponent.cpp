@@ -22,5 +22,35 @@ DrawComponent::~DrawComponent()
 
 void DrawComponent::Draw(Renderer *renderer)
 {
+    // TEMPORARY: Draw a red rectangle for testing if (!mIsVisible) return;
+
+    if (!mIsVisible) return;
+
+    Vector2 worldPos = mOwner->GetPosition();
+    Vector2 cameraPos = mOwner->GetGame()->GetCameraPos();
+    Vector2 screenPos = worldPos - cameraPos;
+
+    SDL_Log("DRAW - World: (%.1f, %.1f), Screen: (%.1f, %.1f)",
+            worldPos.x, worldPos.y, screenPos.x, screenPos.y);
+
+    // Use screenPos para desenhar?
+    // Ou worldPos com cameraPos no DrawRect?
+
+    Vector2 size(32.0f, 32.0f);
+    Vector3 color(1.0f, 0.0f, 0.0f);
+
+    // Tente AMBAS as abordagens:
+
+    // Abordagem 1: worldPos + cameraPos no DrawRect
+    renderer->DrawRect(
+        worldPos,       // Posição mundial
+        size,
+        0.0f,
+        color,
+        cameraPos,      // Posição da câmera
+        RendererMode::TRIANGLES
+    );
+
+    SDL_Log("DrawRect called with worldPos + cameraPos");
 
 }

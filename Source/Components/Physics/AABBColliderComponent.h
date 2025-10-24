@@ -13,7 +13,8 @@ enum class ColliderLayer
 {
     Player,
     Enemy,
-    Blocks
+    Blocks,
+    PowerUp,
 };
 
 class AABBColliderComponent : public Component
@@ -25,6 +26,7 @@ public:
     ~AABBColliderComponent() override;
 
     bool Intersect(const AABBColliderComponent& b) const;
+    bool ShouldCollide(ColliderLayer a, ColliderLayer b);
 
     float DetectHorizontalCollision(RigidBodyComponent *rigidBody);
     float DetectVertialCollision(RigidBodyComponent *rigidBody);
@@ -32,6 +34,7 @@ public:
     Vector2 GetMin() const;
     Vector2 GetMax() const;
     ColliderLayer GetLayer() const { return mLayer; }
+    void SetSize(Vector2 size);
 
     // Drawing for debug purposes
     void DebugDraw(class Renderer* renderer) override;

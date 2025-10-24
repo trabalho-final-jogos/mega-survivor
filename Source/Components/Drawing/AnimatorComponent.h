@@ -19,7 +19,6 @@ public:
 
     // Use to change the FPS of the animation
     void SetAnimFPS(float fps) { mAnimFPS = fps; }
-
     // Set the current active animation
     void SetAnimation(const std::string& name);
 
@@ -28,6 +27,11 @@ public:
 
     // Add an animation of the corresponding name to the animation map
     void AddAnimation(const std::string& name, const std::vector<int>& images);
+
+    void SetFlipHorizontal(bool flip) { mFlipHorizontal = flip; }
+    void SetTexture(Texture* texture);
+
+    bool LoadSheet(const std::string& texturePath, const std::string& dataPath);
 
 private:
     bool LoadSpriteSheetData(const std::string& dataPath);
@@ -58,5 +62,7 @@ private:
     int mHeight;
 
     float mTextureFactor;
+
+    bool mFlipHorizontal;
 };
 

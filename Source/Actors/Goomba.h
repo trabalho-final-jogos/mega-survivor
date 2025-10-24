@@ -9,7 +9,7 @@
 class Goomba : public Actor
 {
 public:
-    explicit Goomba(Game* game, float forwardSpeed = 100.0f, float deathTime = 0.5f);
+    explicit Goomba(Game* game, float forwardSpeed = 80.0f, float deathTime = 0.5f);
 
     void OnUpdate(float deltaTime) override;
     void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;

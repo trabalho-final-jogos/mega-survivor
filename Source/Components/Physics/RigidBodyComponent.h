@@ -10,7 +10,7 @@ class RigidBodyComponent : public Component
 {
 public:
     // Lower update order to update first
-    RigidBodyComponent(class Actor* owner, float mass = 1.0f, float friction = 0.0f,
+    RigidBodyComponent(class Actor* owner, float mass = 1.0f, float friction = 0.2f,
                        bool applyGravity = true, int updateOrder = 10);
 
     void Update(float deltaTime) override;
@@ -24,6 +24,7 @@ public:
     void SetApplyGravity(const bool applyGravity) { mApplyGravity = applyGravity; }
 
     void ApplyForce(const Vector2 &force);
+    float getMass() { return mMass; }
 
 private:
     bool mApplyGravity;

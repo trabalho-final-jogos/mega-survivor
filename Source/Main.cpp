@@ -14,6 +14,7 @@ int main(int argc, char** argv)
     bool success = game.Initialize();
     if (success)
     {
+        SDL_Log("AAAAAA");
         game.RunLoop();
     }
     game.Shutdown();

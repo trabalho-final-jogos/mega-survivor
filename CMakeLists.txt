@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(PROJECT_NAME "tp3-smb")
 project(${PROJECT_NAME})
 
-find_package(SDL2 2.32.2 EXACT REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -51,6 +51,10 @@ add_executable(${PROJECT_NAME}
         Source/Components/Drawing/AnimatorComponent.h
         Source/Components/Drawing/RectComponent.cpp
         Source/Components/Drawing/RectComponent.h
+        Source/Actors/QuestionBlock.cpp
+        Source/Actors/QuestionBlock.h
+        Source/Actors/Mushroom.h
+        Source/Actors/Mushroom.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image)
+target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image OpenGL::GL)

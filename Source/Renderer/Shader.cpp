@@ -99,7 +99,11 @@ void Shader::SetFloatUniform(const char *name, float value) const
 
 void Shader::SetIntegerUniform(const char *name, int value) const
 {
+	// Find the uniform by this name
+	GLuint loc = glGetUniformLocation(mShaderProgram, name);
 
+	// Send the float data to the uniform
+	glUniform1i(loc, value);
 }
 
 bool Shader::CompileShader(const std::string& fileName, GLenum shaderType, GLuint& outShader)

@@ -15,8 +15,12 @@ public:
 
     void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;
     void OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) override;
+    void Grow();
+
+    void Shrink();
 
     void Kill() override;
+    bool isBig() { return mIsBig; };
 
 private:
     void ManageAnimations();
@@ -25,7 +29,11 @@ private:
     float mJumpSpeed;
     bool mIsRunning;
     bool mIsDead;
-
+    bool mIsBig = false;
+    bool mIsInvulnerable;
+    float mInvulnerabilityTimer;
+    const float INVULNERABILITY_DURATION = 1.5f;
+    float mGrowTimer = 0.0f;
     class RigidBodyComponent* mRigidBodyComponent;
     class AnimatorComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
