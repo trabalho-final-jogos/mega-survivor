@@ -38,15 +38,11 @@ Goomba::Goomba(Game* game, float forwardSpeed, float deathTime)
         mRigidBodyComponent->SetVelocity(Vector2(-forwardSpeed, 0.0f));
         mColliderComponent = new class AABBColliderComponent(
                 this,
-                0, 0, // dx, dy
+                0, 0,
                 Game::TILE_SIZE, Game::TILE_SIZE,
                 ColliderLayer::Enemy,
                 false
         );
-
-
-
-
 }
 
 void Goomba::Kill()
@@ -91,16 +87,12 @@ void Goomba::OnHorizontalCollision(const float minOverlap, AABBColliderComponent
                 }
         }
 
-        // Se colidiu com blocos (Layer::Block) ou outros inimigos (Layer::Enemy)
         if (other->GetLayer() == ColliderLayer::Blocks || other->GetLayer() == ColliderLayer::Enemy) {
-                // Inverte a direção baseada no sinal da sobreposição
                 Vector2 currentVelocity = mRigidBodyComponent->GetVelocity();
 
                 if (minOverlap < 0) {
-                        // Colisão pela direita - deve ir para a esquerda
                         mRigidBodyComponent->SetVelocity(Vector2(-mForwardSpeed, currentVelocity.y));
                 } else {
-                        // Colisão pela esquerda - deve ir para a direita
                         mRigidBodyComponent->SetVelocity(Vector2(mForwardSpeed, currentVelocity.y));
                 }
         }

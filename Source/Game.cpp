@@ -71,30 +71,22 @@ void Game::InitializeActors()
     mLevelData = LoadLevel("../Assets/Levels/Level1-1/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     BuildLevel(mLevelData, LEVEL_WIDTH,LEVEL_HEIGHT);
     UpdateCamera();
-    // 2. Verifica se o carregamento foi bem-sucedido antes de tentar imprimir
     if (mLevelData)
     {
-        // Mensagem inicial para facilitar a localização no log
         SDL_Log("--- Imprimindo Matriz Completa do Nível (%d x %d) ---", LEVEL_HEIGHT, LEVEL_WIDTH);
 
-        // Loop pelas LINHAS (índice 'i')
         for (int i = 0; i < LEVEL_HEIGHT; ++i)
         {
-            // std::stringstream é uma forma eficiente de construir uma string
             std::stringstream ss;
 
-            // Loop pelas COLUNAS (índice 'j')
             for (int j = 0; j < LEVEL_WIDTH; ++j)
             {
-                // Adiciona o número (ID do tile) e uma vírgula à string da linha
                 ss << mLevelData[i][j] << ",";
             }
 
-            // Imprime a string da linha inteira de uma só vez
             SDL_Log("%s", ss.str().c_str());
         }
 
-        // Mensagem final para indicar que a impressão terminou
         SDL_Log("--- Fim da Matriz do Nível ---");
     }
     else
@@ -102,7 +94,7 @@ void Game::InitializeActors()
         SDL_Log("ERRO: mLevelData é nulo. A matriz do nível não foi carregada e não pode ser impressa.");
     }
 
-    // ... o resto do seu código de inicialização (criar Mario, etc.) ...
+
 }
 
 int **Game::LoadLevel(const std::string& fileName, int width, int height)
@@ -118,34 +110,27 @@ int **Game::LoadLevel(const std::string& fileName, int width, int height)
     if (!file.is_open())
     {
         SDL_Log("Erro: Nao foi possivel abrir o arquivo de nivel '%s'", fileName.c_str());
-        // Libera a memória alocada antes de retornar com falha
         for (int i = 0; i < height; ++i) { delete[] levelData[i]; }
         delete[] levelData;
         return nullptr;
     }
 
-    // 3. Lê o arquivo linha por linha
     std::string line;
     int currentRow = 0;
     while (std::getline(file, line))
     {
-        // Se já lemos todas as linhas esperadas, paramos
         if (currentRow >= height) {
             break;
         }
 
-        // 4. Usa o seu helper para dividir a linha em um vetor de inteiros
         std::vector<int> parsedRow = CSVHelper::Split(line);
 
-        // Verifica se a linha tem a largura correta
         if (parsedRow.size() != width)
         {
             SDL_Log("Erro na linha %d do nivel: largura esperada %d, mas encontrou %zu", currentRow, width, parsedRow.size());
-            // Lida com o erro (pode ser melhorado, mas por enquanto vamos pular a linha)
             continue;
         }
 
-        // 5. Copia os dados do vetor para a nossa matriz C-style
         for (int col = 0; col < width; ++col)
         {
             levelData[currentRow][col] = parsedRow[col];
@@ -168,34 +153,27 @@ void Game::BuildLevel(int** levelData, int width, int height)
         return;
     }
 
-    // Percorre cada célula da matriz do nível.
-    // 'i' representa a linha (coordenada Y da grade).
     for (int i = 0; i < height; ++i)
     {
-        // 'j' representa a coluna (coordenada X da grade).
         for (int j = 0; j < width; ++j)
         {
             int tileID = levelData[i][j];
 
-            // Pula as células vazias (assumindo que -1 ou outro número negativo seja vazio).
-            // Se 0 for um bloco, essa verificação pode ser removida ou alterada.
             if (tileID < 0)
             {
                 continue;
             }
 
-            // Calcula a posição do CENTRO do tile no mundo do jogo.
-            // Isso converte as coordenadas da grade (i, j) em coordenadas de pixel (x, y).
             Vector2 pos(
                 static_cast<float>(j * TILE_SIZE) + (TILE_SIZE / 2.0f),
                 static_cast<float>(i * TILE_SIZE) + (TILE_SIZE / 2.0f)
             );
 
-            // Cria o ator apropriado com base no ID do tile.
+
             switch (tileID)
             {
                 // --- PERSONAGEM ---
-                case 16: // ID para a posição inicial do Mario
+                case 16:
                     SDL_Log("criou o mario");
                     mMario = new Mario(this);
                     mMario->SetPosition(pos);
@@ -206,7 +184,6 @@ void Game::BuildLevel(int** levelData, int width, int height)
                     spawner->SetPosition(pos);
                 }
                     break;
-                // --- BLOCOS (IDs 0 a 15) ---
                 case 0: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockA.png"); b->SetPosition(pos); } break;
                 case 1: { auto b = new QuestionBlock(this, "../Assets/Sprites/Blocks/BlockC.png", "Block Coin"); b->SetPosition(pos); } break;
                 case 2: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockF.png"); b->SetPosition(pos); } break;
@@ -222,7 +199,6 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 case 12: { auto b = new Block(this, "../Assets/Sprites/Blocks/BlockG.png"); b->SetPosition(pos); } break;
                 case 13: { auto b = new QuestionBlock(this, "../Assets/Sprites/Blocks/BlockC.png", "Block Mushroom"); b->SetPosition(pos); } break;
 
-                // Adicione aqui outros cases para canos, inimigos, etc.
             }
         }
     }
@@ -321,25 +297,15 @@ void Game::UpdateCamera()
         return;
     }
 
-    // 2. Pega a posição do Mario
     Vector2 marioPos = mMario->GetPosition();
 
-    // 1. Trava o Y da câmera no topo do nível (Y=0)
-    // (O sistema de coordenadas da sua projeção começa com Y=0 no topo)
     mCameraPos.y = 0.0f;
 
-    // 2. Define onde a câmera "gostaria" de estar
-    // Para centralizar o Mario, o canto esquerdo (mCameraPos.x)
-    // deve ser a posição do Mario MENOS metade da tela.
     float halfScreenWidth = WINDOW_WIDTH / 2.0f;
     mCameraPos.x = marioPos.x - halfScreenWidth;
 
-    // 3. Trava a câmera na borda ESQUERDA (x = 0)
-    // A câmera não pode ir para a esquerda de 0.
     mCameraPos.x = std::max(0.0f, mCameraPos.x);
 
-    // 4. Trava a câmera na borda DIREITA
-    // A câmera não pode ir além do fim do nível.
     float levelWidth = LEVEL_WIDTH * TILE_SIZE;
     mCameraPos.x = std::min(mCameraPos.x, levelWidth - WINDOW_WIDTH);
 }
@@ -410,18 +376,13 @@ void Game::GenerateOutput()
 
     if (bgTexture)
     {
-        // 3. Pega as dimensões REAIS da textura do fundo
         float bgWidth = static_cast<float>(bgTexture->GetWidth());
         float bgHeight = static_cast<float>(bgTexture->GetHeight());
 
-        // 4. Calcula a posição do CENTRO do fundo NO MUNDO
-        // Se o nível começa em (0,0), o centro está em (largura/2, altura/2)
         Vector2 bgPos(bgWidth / 2.0f, bgHeight / 2.0f);
 
-        // 5. O TAMANHO do objeto a ser desenhado é o tamanho total da textura
         Vector2 bgSize(bgWidth, bgHeight);
 
-        // 6. Desenha o fundo usando suas coordenadas de MUNDO
         mRenderer->DrawTexture(
             bgPos,                  // Posição do CENTRO do fundo no MUNDO
             bgSize,                 // Tamanho TOTAL do fundo

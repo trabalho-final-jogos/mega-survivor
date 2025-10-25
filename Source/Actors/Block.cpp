@@ -46,7 +46,6 @@ Block::Block(Game* game, const std::string &texturePath, std::string name)
 
 void Block::StartBounce()
 {
-    // Só inicia se puder quicar E não estiver quicando no momento
     if (!mCanBounce || mIsBouncing)
     {
         return;
@@ -54,7 +53,6 @@ void Block::StartBounce()
 
     mIsBouncing = true;
     mBounceTimer = 0.0f;
-    // Garante que a posição original está atualizada
     mOriginalPosition = GetPosition();
 }
 void Block::OnUpdate(float deltaTime)
@@ -65,13 +63,13 @@ void Block::OnUpdate(float deltaTime)
     }
     mBounceTimer += deltaTime;
 
-    const float BOUNCE_HEIGHT = 6.0f;   // Altura máxima do pulo do bloco (em pixels)
-    const float BOUNCE_DURATION = 0.25f; // Duração total (ida e volta)
+    const float BOUNCE_HEIGHT = 6.0f;
+    const float BOUNCE_DURATION = 0.25f;
     const float halfDuration = BOUNCE_DURATION / 2.0f;
 
     float offsetY = 0.0f;
 
-    if (mBounceTimer < halfDuration) // Fase de subida
+    if (mBounceTimer < halfDuration)
     {
         offsetY = Math::Lerp(0.0f, -BOUNCE_HEIGHT, mBounceTimer / halfDuration);
     }

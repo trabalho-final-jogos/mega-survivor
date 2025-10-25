@@ -10,10 +10,8 @@ Coin::Coin(Game* game, const Vector2& initialPos)
     , mVerticalSpeed(UP_SPEED)
 {
     SetPosition(initialPos);
-    // A moeda pode ter um tamanho diferente, ajuste se necessário
-    SetScale(Vector2(Game::TILE_SIZE * 0.8f, Game::TILE_SIZE * 0.8f));
+    SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 
-    // Cria o componente de sprite
     mSprite = new AnimatorComponent(
             this,
             "../Assets/Sprites/Collectables/Coin.png",
@@ -32,7 +30,7 @@ void Coin::OnUpdate(float deltaTime)
     if (mLifeTimer <= 0.0f)
     {
         SetState(ActorState::Destroy);
-        return; 
+        return;
     }
 
     Vector2 pos = GetPosition();

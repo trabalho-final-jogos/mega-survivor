@@ -54,7 +54,6 @@ bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const
     Vector2 otherMin = b.GetMin();
     Vector2 otherMax = b.GetMax();
 
-    // Muda os sinais > para >=, < para <= para permitir tocar na borda
     bool noOverlapX = thisMin.x >= otherMax.x || otherMin.x >= thisMax.x;
     bool noOverlapY = thisMin.y >= otherMax.y || otherMin.y >= thisMax.y;
 
@@ -68,8 +67,8 @@ float AABBColliderComponent::GetMinVerticalOverlap(AABBColliderComponent* b) con
     Vector2 otherMin = b->GetMin();
     Vector2 otherMax = b->GetMax();
 
-    float overlapBottom = otherMax.y - thisMin.y; // nosso topo vs fundo do outro
-    float overlapTop    = otherMin.y - thisMax.y; // nosso fundo vs topo do outro
+    float overlapBottom = otherMax.y - thisMin.y;
+    float overlapTop    = otherMin.y - thisMax.y;
 
     return (std::abs(overlapTop) < std::abs(overlapBottom)) ? overlapTop : overlapBottom;
 }
@@ -82,10 +81,10 @@ float AABBColliderComponent::GetMinHorizontalOverlap(AABBColliderComponent* b) c
     Vector2 otherMax = b->GetMax();
 
     // Calcula sobreposição horizontal
-    float overlapLeft  = otherMax.x - thisMin.x;   // positivo → empurra para a direita
-    float overlapRight = otherMin.x - thisMax.x;  // negativo → empurra para a esquerda
+    float overlapLeft  = otherMax.x - thisMin.x;
+    float overlapRight = otherMin.x - thisMax.x;
 
-    // Considera toque na borda como colisão mínima
+
     if (overlapLeft >= 0.0f && overlapRight <= 0.0f)
         return (std::abs(overlapLeft) < std::abs(overlapRight)) ? overlapLeft : overlapRight;
 
@@ -100,14 +99,14 @@ float AABBColliderComponent::DetectVertialCollision(RigidBodyComponent *rigidBod
     for (auto other : colliders)
     {
         if (other == this || !other->IsEnabled()) continue;
-        ColliderLayer myLayer = GetLayer(); // Pega a NOSSA camada
-        ColliderLayer otherLayer = other->GetLayer(); // Pega a camada DO OUTRO
+        ColliderLayer myLayer = GetLayer();
+        ColliderLayer otherLayer = other->GetLayer();
 
-        // Regra: Inimigos (Enemy) ignoram PowerUps e vice-versa
+
         if ((myLayer == ColliderLayer::Enemy && otherLayer == ColliderLayer::PowerUp) ||
             (myLayer == ColliderLayer::PowerUp && otherLayer == ColliderLayer::Enemy))
         {
-            continue; // Pula para o próximo colisor, ignorando esta colisão
+            continue;
         }
 
         if (Intersect(*other))
@@ -130,14 +129,14 @@ float AABBColliderComponent::DetectHorizontalCollision(RigidBodyComponent *rigid
     {
         if (other == this || !other->IsEnabled()) continue;
 
-        ColliderLayer myLayer = GetLayer(); // Pega a NOSSA camada
-        ColliderLayer otherLayer = other->GetLayer(); // Pega a camada DO OUTRO
+        ColliderLayer myLayer = GetLayer();
+        ColliderLayer otherLayer = other->GetLayer();
 
-        // Regra: Inimigos (Enemy) ignoram PowerUps e vice-versa
+
         if ((myLayer == ColliderLayer::Enemy && otherLayer == ColliderLayer::PowerUp) ||
             (myLayer == ColliderLayer::PowerUp && otherLayer == ColliderLayer::Enemy))
         {
-            continue; // Pula para o próximo colisor, ignorando esta colisão
+            continue;
         }
 
         if (Intersect(*other))
@@ -160,7 +159,6 @@ float AABBColliderComponent::DetectHorizontalCollision(RigidBodyComponent *rigid
 
 void AABBColliderComponent::ResolveHorizontalCollisions(RigidBodyComponent *rigidBody, const float minXOverlap)
 {
-    // Só resolve se houver colisão real
     if (std::abs(minXOverlap) < 0.01f)
         return;
 
@@ -169,7 +167,6 @@ void AABBColliderComponent::ResolveHorizontalCollisions(RigidBodyComponent *rigi
     mOwner->SetPosition(pos);
 
     Vector2 vel = rigidBody->GetVelocity();
-    // Zera velocidade apenas na direção da colisão
     if ((minXOverlap > 0 && vel.x < 0) || (minXOverlap < 0 && vel.x > 0))
         vel.x = 0.0f;
 
@@ -214,39 +211,31 @@ bool AABBColliderComponent::ShouldCollide(ColliderLayer a, ColliderLayer b)
     SDL_Log("Checking collision: %d vs %d -> %s", a, b, ShouldCollide(a,b) ? "YES" : "NO");
 
     // I
-    // mpede colisão de um layer com ele mesmo
     if (a == b) return false;
 
-    // Evita colisão entre inimigos e power-ups (Goomba x Cogumelo)
     if ((a == ColliderLayer::Enemy && b == ColliderLayer::PowerUp) ||
         (a == ColliderLayer::PowerUp && b == ColliderLayer::Enemy))
         return false;
 
-    // Permite colisão entre Player e PowerUp (Mario pega cogumelo)
     if ((a == ColliderLayer::Player && b == ColliderLayer::PowerUp) ||
         (a == ColliderLayer::PowerUp && b == ColliderLayer::Player))
         return true;
 
-    // Permite colisão entre PowerUp e blocos (para andar e quicar)
     if ((a == ColliderLayer::PowerUp && b == ColliderLayer::Blocks) ||
         (a == ColliderLayer::Blocks && b == ColliderLayer::PowerUp))
         return true;
 
-    // Permite colisão entre inimigos e blocos
     if ((a == ColliderLayer::Enemy && b == ColliderLayer::Blocks) ||
         (a == ColliderLayer::Blocks && b == ColliderLayer::Enemy))
         return true;
 
-    // Permite colisão entre Player e inimigos
     if ((a == ColliderLayer::Player && b == ColliderLayer::Enemy) ||
         (a == ColliderLayer::Enemy && b == ColliderLayer::Player))
         return true;
 
-    // Permite colisão entre Player e blocos
     if ((a == ColliderLayer::Player && b == ColliderLayer::Blocks) ||
         (a == ColliderLayer::Blocks && b == ColliderLayer::Player))
         return true;
 
-    // Por padrão, não colide
     return false;
 }

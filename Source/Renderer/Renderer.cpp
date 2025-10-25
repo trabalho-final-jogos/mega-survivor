@@ -186,7 +186,6 @@ bool Renderer::LoadShaders()
 void Renderer::CreateSpriteVerts()
 {
     float vertices[] = {
-        // Posição (x, y)  // Coord. Textura (u,v)
         -0.5f,  0.5f,   0.0f, 1.0f,
          0.5f,  0.5f,   1.0f, 1.0f,
          0.5f, -0.5f,   1.0f, 0.0f,

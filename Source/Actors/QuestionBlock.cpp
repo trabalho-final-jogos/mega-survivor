@@ -21,24 +21,19 @@ QuestionBlock::QuestionBlock(Game* game, const std::string& texturePath, std::st
 
 void QuestionBlock::StartBounce()
 {
-    // Só faz algo se o bloco ainda não foi ativado
     if (mIsEmpty)
         return;
 
-    // Faz o "pulo" do bloco (subir e descer)
     Block::StartBounce();
 
-    // Marca como vazio
     mIsEmpty = true;
 
-    // Troca a textura para o bloco vazio
     auto animator = GetComponent<AnimatorComponent>();
     if (animator && mEmptyBlockTexture)
     {
         animator->SetTexture(mEmptyBlockTexture);
     }
 
-    // Solta o item (exemplo)
     Vector2 itemPos = GetPosition() + Vector2(Game::TILE_SIZE*0.1, -Game::TILE_SIZE/2);
     if (name == "Block Mushroom") {
         new Mushroom(GetGame(), GetPosition() + Vector2(0, -Game::TILE_SIZE));
@@ -50,6 +45,5 @@ void QuestionBlock::StartBounce()
 
 void QuestionBlock::OnUpdate(float deltaTime)
 {
-    // Mantém o comportamento normal de bounce do Block
     Block::OnUpdate(deltaTime);
 }

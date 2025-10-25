@@ -24,7 +24,6 @@ void Spawner::OnUpdate(float deltaTime)
         Vector2 marioPos = mario->GetPosition();
         Vector2 spawnerPos = GetPosition();
 
-        // Cria o Goomba se o jogador estiver próximo
         if (distance < mSpawnDistance)
         {
 

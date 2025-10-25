@@ -26,11 +26,11 @@ Mario::Mario(Game* game, const float forwardSpeed, const float jumpSpeed)
     name = "Mario";
     SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
      mDrawComponent = new AnimatorComponent(
-        this,                                       // owner
-        "../Assets/Sprites/Mario/Mario.png",         // texturePath
-        "../Assets/Sprites/Mario/Mario.json",                                         // dataPath (vazio, pois não há animação ainda)
-        Game::TILE_SIZE,                            // width do frame (32)
-        Game::TILE_SIZE                             // height do frame (32)
+        this,
+        "../Assets/Sprites/Mario/Mario.png",
+        "../Assets/Sprites/Mario/Mario.json",
+        Game::TILE_SIZE,
+        Game::TILE_SIZE
     );
     mDrawComponent->SetFlipHorizontal(false);
     mDrawComponent->AddAnimation("idle", std::vector<int>{1});
@@ -52,7 +52,8 @@ void Mario::OnProcessInput(const uint8_t* state)
 
     float velX = mRigidBodyComponent->GetVelocity().x;
 
-    const float maxForce = 800.0f; // ajustável
+    const float maxForce = 800.0f;
+
 
     Vector2 force = Vector2::Zero;
 
@@ -91,22 +92,17 @@ void Mario::OnUpdate(float deltaTime)
 {
     if (mIsInvulnerable)
     {
-        // Decrementa o timer
         mInvulnerabilityTimer -= deltaTime;
 
-        // Efeito de piscar (alterna visibilidade)
         if (mDrawComponent)
         {
-            // Pisca a cada ~0.1 segundos (ajuste conforme necessário)
             bool show = static_cast<int>(mInvulnerabilityTimer * 10.0f) % 2 == 0;
-            mDrawComponent->SetVisible(show); // Assumindo que AnimatorComponent tem SetVisible
+            mDrawComponent->SetVisible(show);
         }
 
-        // Se o tempo acabou...
         if (mInvulnerabilityTimer <= 0.0f)
         {
             mIsInvulnerable = false;
-            // Garante que o sprite fique visível no final
             if (mDrawComponent)
             {
                 mDrawComponent->SetVisible(true);
@@ -120,11 +116,11 @@ void Mario::OnUpdate(float deltaTime)
 
         if (!Math::NearlyZero(velocity.y))
         {
-            SetOffGround(); // Ou mIsOnGround = false;
+            SetOffGround();
         }
     }
 
-    if (GetPosition().y > (Game::WINDOW_HEIGHT + Game::TILE_SIZE)) // Adiciona um buffer
+    if (GetPosition().y > (Game::WINDOW_HEIGHT + Game::TILE_SIZE))
     {
         Kill();
     }
@@ -224,20 +220,16 @@ void Mario::OnVerticalCollision(const float minOverlap, AABBColliderComponent* o
         }
     }else if (otherLayer == ColliderLayer::Blocks)
     {
-        // Verifica se a colisão foi DE BAIXO PARA CIMA
         if (minOverlap > 0.0f)
         {
-            // Pega o Ator do colisor (o Bloco)
             Actor* blockActor = other->GetOwner();
 
             Block* block = dynamic_cast<Block*>(blockActor);
-            // Se a conversão funcionou (é realmente um Bloco)...
             if (block)
             {
                 block->StartBounce();
             }
 
-            // Opcional: Zera a velocidade Y do Mario para ele "bater a cabeça"
             if(mRigidBodyComponent)
             {
                 Vector2 vel = mRigidBodyComponent->GetVelocity();
@@ -265,7 +257,6 @@ void Mario::Grow()
     const std::string bigJsonPath = "../Assets/Sprites/SuperMario/SuperMario.json";
 
     if (mDrawComponent->LoadSheet(bigTexturePath, bigJsonPath)) {
-        // Adiciona animações
         mDrawComponent->AddAnimation("idle", {0});
         mDrawComponent->AddAnimation("run", {6,7,8});
         mDrawComponent->AddAnimation("jump", {2});
