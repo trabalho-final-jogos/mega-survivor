@@ -10,6 +10,7 @@
 #include "../Game.h"
 #include "../Components/Component.h"
 #include <algorithm>
+#include <typeinfo>
 
 Actor::Actor(Game* game)
         : mState(ActorState::Active)
@@ -26,11 +27,17 @@ Actor::~Actor()
 {
     mGame->RemoveActor(this);
 
-    for(auto component : mComponents)
+    SDL_Log("Actor::~Actor deleting components: this=%p, type=%s, numComponents=%zu",
+            (void*)this, typeid(*this).name(), mComponents.size());
+
+    for (auto component : mComponents)
     {
+        SDL_Log("Deleting component: %p, type=%s", (void*)component, typeid(*component).name());
         delete component;
     }
     mComponents.clear();
+
+    SDL_Log("Actor::~Actor finished: this=%p", (void*)this);
 }
 
 void Actor::Update(float deltaTime)

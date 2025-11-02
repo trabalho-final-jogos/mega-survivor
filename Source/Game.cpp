@@ -20,7 +20,7 @@
 #include "Actors/Block.h"
 #include "Actors/Goomba.h"
 #include "Actors/Spawner.h"
-#include "Actors/Mario.h"
+#include "Actors/Player.h"
 #include "Actors/QuestionBlock.h"
 
 Game::Game()
@@ -33,6 +33,7 @@ Game::Game()
         ,mCameraPos(Vector2::Zero)
         ,mMario(nullptr)
         ,mLevelData(nullptr)
+        , mMouseWorldPos(Vector2::Zero)
 {
 
 }
@@ -68,8 +69,11 @@ bool Game::Initialize()
 void Game::InitializeActors()
 {
     //mRenderer->DrawDebugRect();
-    mLevelData = LoadLevel("../Assets/Levels/Level1-1/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
-    BuildLevel(mLevelData, LEVEL_WIDTH,LEVEL_HEIGHT);
+    //mLevelData = LoadLevel("../Assets/Levels/Level1-1/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    //BuildLevel(mLevelData, LEVEL_WIDTH,LEVEL_HEIGHT);
+    SDL_Log("criou o mario");
+    mMario = new Player(this);
+    mMario->SetPosition(Vector2(TILE_SIZE/2, TILE_SIZE/2));
     UpdateCamera();
     if (mLevelData)
     {
@@ -175,7 +179,7 @@ void Game::BuildLevel(int** levelData, int width, int height)
                 // --- PERSONAGEM ---
                 case 16:
                     SDL_Log("criou o mario");
-                    mMario = new Mario(this);
+                    mMario = new Player(this);
                     mMario->SetPosition(pos);
                     break;
 
@@ -258,6 +262,8 @@ void Game::UpdateGame(float deltaTime)
 
     // Update camera position
     UpdateCamera();
+
+    UpdateMouseWorldPos();
 }
 
 void Game::UpdateActors(float deltaTime)
@@ -292,24 +298,33 @@ void Game::UpdateActors(float deltaTime)
 
 void Game::UpdateCamera()
 {
-    if (!mMario)
-    {
-        return;
-    }
+    if (!mMario) { return; }
 
     Vector2 marioPos = mMario->GetPosition();
 
-    mCameraPos.y = 0.0f;
+    // --- USA A RESOLUÇÃO VIRTUAL ---
+    float halfScreenWidth = VIRTUAL_WIDTH / 2.0f;
+    float halfScreenHeight = VIRTUAL_HEIGHT / 2.0f;
+    // --------------------------------
 
-    float halfScreenWidth = WINDOW_WIDTH / 2.0f;
+    // 1. Centraliza a câmera no Mario
     mCameraPos.x = marioPos.x - halfScreenWidth;
+    mCameraPos.y = marioPos.y - halfScreenHeight;
 
-    mCameraPos.x = std::max(0.0f, mCameraPos.x);
-
+    // 2. Clamping (Limites)
     float levelWidth = LEVEL_WIDTH * TILE_SIZE;
-    mCameraPos.x = std::min(mCameraPos.x, levelWidth - WINDOW_WIDTH);
-}
+    float levelHeight = LEVEL_HEIGHT * TILE_SIZE;
 
+    mCameraPos.x = std::max(0.0f, mCameraPos.x); // Trava Esquerda
+
+    // --- USA A RESOLUÇÃO VIRTUAL ---
+    mCameraPos.x = std::min(mCameraPos.x, levelWidth - VIRTUAL_WIDTH); // Trava Direita
+
+    mCameraPos.y = std::max(0.0f, mCameraPos.y); // Trava Topo
+
+    // --- USA A RESOLUÇÃO VIRTUAL ---
+    mCameraPos.y = std::min(mCameraPos.y, levelHeight - VIRTUAL_HEIGHT); // Trava Fundo
+}
 void Game::AddActor(Actor* actor)
 {
     if (mUpdatingActors)
@@ -418,13 +433,32 @@ void Game::GenerateOutput()
     mRenderer->Present();
 }
 
+void Game::UpdateMouseWorldPos() {
+    int screenX, screenY;
+    SDL_GetMouseState(&screenX, &screenY);
+
+    // 2. Converte para a Resolução VIRTUAL (ex: 0-640)
+    float virtualX = static_cast<float>(screenX) * (static_cast<float>(VIRTUAL_WIDTH) / static_cast<float>(WINDOW_WIDTH));
+    float virtualY = static_cast<float>(screenY) * (static_cast<float>(VIRTUAL_HEIGHT) / static_cast<float>(WINDOW_HEIGHT));
+
+    // 3. Converte para Coordenadas do MUNDO (adicionando a câmera)
+    mMouseWorldPos.x = virtualX + mCameraPos.x;
+    mMouseWorldPos.y = virtualY + mCameraPos.y;
+}
+
 
 void Game::Shutdown()
 {
+    float i = 0.f;
+    SDL_Log("Game::Shutdown start");
     while (!mActors.empty()) {
-        delete mActors.back();
+        Actor* actor = mActors.back();
+        SDL_Log("Deleting actor: %s (%p)", typeid(*actor).name(), (void*)actor);
+        mActors.pop_back();            // remove do vetor ANTES de deletar
+        delete actor;                 // crash provavelmente aqui
+        SDL_Log("Deleted actor: %p", (void*)actor);
     }
-
+    SDL_Log("ATORES");
     // Delete level data
     if (mLevelData) {
         for (int i = 0; i < LEVEL_HEIGHT; ++i) {

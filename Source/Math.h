@@ -112,8 +112,25 @@ public:
 	// NOLINTBEGIN
 	float x;
 	float y;
+	[[nodiscard]] Vector2 Rotate(float angleRad) const
+	{
+		// Fórmula da matriz de rotação 2D:
+		// x' = x*cos(θ) - y*sin(θ)
+		// y' = x*sin(θ) + y*cos(θ)
+		float newX = x * std::cos(angleRad) - y * std::sin(angleRad);
+		float newY = x * std::sin(angleRad) + y * std::cos(angleRad);
+
+		return Vector2(newX, newY);
+	}
+
 	// NOLINTEND
 
+
+	[[nodiscard]] Vector2 Perpendicular() const
+	{
+		// A regra matemática: troca x/y e nega o novo y
+		return Vector2(y, -x);
+	}
 	constexpr Vector2()
 	: x(0.0f)
 	, y(0.0f)

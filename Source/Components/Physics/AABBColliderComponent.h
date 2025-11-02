@@ -15,6 +15,7 @@ enum class ColliderLayer
     Enemy,
     Blocks,
     PowerUp,
+    PlayerProjectile
 };
 
 class AABBColliderComponent : public Component

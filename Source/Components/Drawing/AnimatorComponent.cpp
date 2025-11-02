@@ -122,7 +122,7 @@ void AnimatorComponent::Draw(Renderer* renderer) {
     renderer->DrawTexture(
         worldPos,
         mOwner->GetScale(),
-        0.0f,
+        mOwner->GetRotation(),
         Vector3(1.0f, 1.0f, 1.0f),
         mSpriteTexture,
         texRect,

@@ -4,11 +4,13 @@
 
 #pragma once
 #include "Actor.h"
+#include "Aim.h"
+#include "weapons/WeaponType.h"
 
-class Mario : public Actor
+class Player : public Actor
 {
 public:
-    explicit Mario(Game* game, float forwardSpeed = 1500.0f, float jumpSpeed = -750.0f);
+    explicit Player(Game* game, float forwardSpeed = 500.0f, float jumpSpeed = -750.0f);
 
     void OnProcessInput(const Uint8* keyState) override;
     void OnUpdate(float deltaTime) override;
@@ -19,10 +21,12 @@ public:
 
     void Shrink();
 
+    void EquipWeapon(WeaponType type);
+
     void Kill() override;
     bool isBig() { return mIsBig; };
     bool isInvulnerable() { return mIsInvulnerable;};
-
+    class Aim* GetAim() const { return mAimer; }
 private:
     void ManageAnimations();
 
@@ -41,4 +45,6 @@ private:
     class ParticleSystemComponent* mFireBalls;
 
     float mFireBallCooldown = 1.0f;
+
+    class Aim* mAimer;
 };

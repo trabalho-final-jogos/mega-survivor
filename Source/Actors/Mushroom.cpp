@@ -1,6 +1,6 @@
 // Mushroom.cpp
 #include "Mushroom.h"
-#include "Mario.h"
+#include "Player.h"
 #include "../Game.h"
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "../Components/Physics/AABBColliderComponent.h"
@@ -95,7 +95,7 @@ void Mushroom::OnHorizontalCollision(float minOverlap, AABBColliderComponent* ot
             mRigidBody->SetVelocity(vel);
         }
     }
-    if (auto mario = dynamic_cast<Mario*>(other->GetOwner()))
+    if (auto mario = dynamic_cast<Player*>(other->GetOwner()))
     {
         mario->Grow();
         SetState(ActorState::Destroy);
@@ -105,7 +105,7 @@ void Mushroom::OnHorizontalCollision(float minOverlap, AABBColliderComponent* ot
 }
 
 void Mushroom::OnVerticalCollision(float minOverlap, AABBColliderComponent *other) {
-    if (auto mario = dynamic_cast<Mario*>(other->GetOwner()))
+    if (auto mario = dynamic_cast<Player*>(other->GetOwner()))
     {
         mario->Grow();
         SetState(ActorState::Destroy);

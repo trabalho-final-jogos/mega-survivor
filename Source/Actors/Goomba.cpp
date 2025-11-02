@@ -4,7 +4,7 @@
 
 #include "Goomba.h"
 
-#include "Mario.h"
+#include "Player.h"
 #include "../Game.h"
 #include "../Components/Drawing/AnimatorComponent.h"
 #include "../Components/Physics/RigidBodyComponent.h"
@@ -77,7 +77,7 @@ void Goomba::OnHorizontalCollision(const float minOverlap, AABBColliderComponent
 {
         if (other->GetLayer() == ColliderLayer::Player) {
                 Actor* player = other->GetOwner();
-                Mario* mario = dynamic_cast<Mario*>(player);
+                Player* mario = dynamic_cast<Player*>(player);
                 if (!mario->isInvulnerable()) {
                         if (mario->isBig()) {
                                 mario->Shrink();
@@ -104,7 +104,7 @@ void Goomba::OnVerticalCollision(const float minOverlap, AABBColliderComponent* 
         if (otherLayer == ColliderLayer::Player) {
                 Actor* player = other->GetOwner();
 
-                Mario* mario = dynamic_cast<Mario*>(player);
+                Player* mario = dynamic_cast<Player*>(player);
                 if (!mario->isInvulnerable()) {
                         if (minOverlap<0) {
                                 if (mario->isBig()) {

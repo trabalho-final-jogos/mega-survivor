@@ -2,7 +2,7 @@
 // Created by Lucas N. Ferreira on 03/08/23.
 //
 
-#include "Mario.h"
+#include "Player.h"
 
 #include <bits/fs_fwd.h>
 
@@ -13,7 +13,14 @@
 #include "../Components/ParticleSystemComponent.h"
 #include "Block.h"
 #include <typeinfo>
-Mario::Mario(Game* game, const float forwardSpeed, const float jumpSpeed)
+#include "weapons/WeaponType.h"
+#include "weapons/main_gun/MainGun.h"
+#include "weapons/boomerang/BoomerangWeapon.h"
+#include "weapons/ice_gun/IceGun.h"
+
+
+
+Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
         : Actor(game)
         , mIsRunning(false)
         , mIsDead(false)
@@ -22,73 +29,92 @@ Mario::Mario(Game* game, const float forwardSpeed, const float jumpSpeed)
         ,mIsBig(false)
         ,mIsInvulnerable(false)
         ,mInvulnerabilityTimer(0.0f)
+        ,mAimer(nullptr)
 {
     name = "Mario";
     SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
      mDrawComponent = new AnimatorComponent(
         this,
-        "../Assets/Sprites/Mario/Mario.png",
-        "../Assets/Sprites/Mario/Mario.json",
+        "../Assets/Sprites/player/player.png",
+        "../Assets/Sprites/player/player.json",
         Game::TILE_SIZE,
         Game::TILE_SIZE
     );
-    mDrawComponent->SetFlipHorizontal(false);
-    mDrawComponent->AddAnimation("idle", std::vector<int>{1});
-    mDrawComponent->AddAnimation("run", std::vector<int>{3, 4, 5});
-    mDrawComponent->AddAnimation("jump", std::vector<int>{2});
-    mDrawComponent->AddAnimation("dead", std::vector<int>{0});
+    mDrawComponent->SetFlipHorizontal(true);
+
+
+    mDrawComponent->AddAnimation("idle", std::vector<int>{0});
+    mDrawComponent->AddAnimation("walk", std::vector<int>{1, 2, 3});
+
     mDrawComponent->SetAnimation("idle");
     mDrawComponent->SetAnimFPS(10.0f);
 
     mRigidBodyComponent = new RigidBodyComponent(this);
 
     mColliderComponent = new AABBColliderComponent(this,0,0,Game::TILE_SIZE,Game::TILE_SIZE, ColliderLayer::Player);
+    SetOnGround();
 
+    mAimer = new Aim(this->GetGame(), this);
+    new MainGun(this);
+    new BoomerangWeapon(this);
+    new IceGun(this);
 }
 
-void Mario::OnProcessInput(const uint8_t* state)
+void Player::OnProcessInput(const uint8_t* state)
 {
+    if (!mRigidBodyComponent)
+    {
+        return;
+    }
+
     mIsRunning = false;
+    Vector2 velocity = Vector2::Zero; // Começa com velocidade zero
 
-    float velX = mRigidBodyComponent->GetVelocity().x;
+    // --- NOVA LÓGICA TOP-DOWN (W/A/S/D) ---
 
-    const float maxForce = 800.0f;
-
-
-    Vector2 force = Vector2::Zero;
-
-    if(state[SDL_SCANCODE_D])
+    // Eixo Y (Norte/Sul)
+    if (state[SDL_SCANCODE_W])
     {
+        velocity.y = -mForwardSpeed; // Y negativo é para CIMA
         mIsRunning = true;
-        if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(false); }
-
-        if(velX < mForwardSpeed)
-        {
-            force.x = maxForce;
-        }
     }
-    else if(state[SDL_SCANCODE_A])
+    if (state[SDL_SCANCODE_S])
     {
+        velocity.y = mForwardSpeed; // Y positivo é para BAIXO
         mIsRunning = true;
-        if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(true); }
-
-        if(velX > -mForwardSpeed)
-        {
-            force.x = -maxForce;
-        }
     }
 
-    mRigidBodyComponent->ApplyForce(force);
-
-    if(state[SDL_SCANCODE_SPACE] && mIsOnGround)
+    // Eixo X (Leste/Oeste)
+    if (state[SDL_SCANCODE_D])
     {
-        Vector2 vel = mRigidBodyComponent->GetVelocity();
-        vel.y = mJumpSpeed;
-        SetOffGround();
-        mRigidBodyComponent->SetVelocity(vel);
+        velocity.x = mForwardSpeed;
+        mIsRunning = true;
+        //if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(true); }
     }
+    if (state[SDL_SCANCODE_A])
+    {
+        velocity.x = -mForwardSpeed;
+        mIsRunning = true;
+        //if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(false); }
+    }
+
+    // Normalizar velocidade diagonal (opcional, mas recomendado)
+    // Se estiver andando na diagonal, a velocidade será > mForwardSpeed.
+    // Isso corrige para que a velocidade diagonal seja a mesma da horizontal/vertical.
+    if (velocity.LengthSq() > mForwardSpeed * mForwardSpeed)
+    {
+        velocity.Normalize();
+        velocity *= mForwardSpeed;
+    }
+
+    // --- REMOVER LÓGICA DE PULO ---
+    // if (state[SDL_SCANCODE_SPACE] && mIsOnGround) { ... } // REMOVIDO
+
+    // --- APLICAÇÃO FINAL ---
+    // Define a velocidade diretamente (controle arcade)
+    mRigidBodyComponent->SetVelocity(velocity);
 }
-void Mario::OnUpdate(float deltaTime)
+void Player::OnUpdate(float deltaTime)
 {
     if (mIsInvulnerable)
     {
@@ -116,18 +142,60 @@ void Mario::OnUpdate(float deltaTime)
 
         if (!Math::NearlyZero(velocity.y))
         {
-            SetOffGround();
+            //SetOffGround();
         }
     }
+    // Pega a posição atual do Mario (que já foi atualizada pela física)
+    Vector2 pos = GetPosition();
 
-    if (GetPosition().y > (Game::WINDOW_HEIGHT + Game::TILE_SIZE))
+    // Pega as "meias-dimensões" do Mario
+    // (Assumindo que a escala do Ator é o tamanho em pixels)
+    float halfWidth = GetScale().x / 2.0f;
+    float halfHeight = GetScale().y / 2.0f; // Use GetScale().y se Mario Grande/Pequeno
+
+    // Calcula os limites do mundo
+    float levelWidth = Game::LEVEL_WIDTH * Game::TILE_SIZE;
+    float levelHeight = Game::LEVEL_HEIGHT * Game::TILE_SIZE;
+
+    // Trava a posição X do Mario
+    pos.x = std::max(halfWidth, pos.x); // Trava na borda Esquerda (0.0 + halfWidth)
+    pos.x = std::min(levelWidth - halfWidth, pos.x); // Trava na borda Direita
+
+    // Trava a posição Y do Mario
+    pos.y = std::max(halfHeight, pos.y); // Trava na borda Superior (0.0 + halfHeight)
+    pos.y = std::min(levelHeight - halfHeight, pos.y); // Trava na borda Inferior
+
+    // Define a posição corrigida (travada)
+    SetPosition(pos);
+
+    // --- NOVA LÓGICA DE FLIP (BASEADA NO MOUSE) ---
+    if (mDrawComponent) // mAnimator é o nome que usamos para o mDrawComponent
     {
-        Kill();
+        // Pega a posição do mouse no MUNDO
+        Vector2 mouseWorldPos = GetGame()->GetMousePos();
+
+        // Pega a posição do Mario no MUNDO
+        Vector2 marioPos = GetPosition();
+
+        // Compara o X do mouse com o X do Mario
+        if (mouseWorldPos.x > marioPos.x)
+        {
+            // Mouse está à direita -> vira para a direita
+            mDrawComponent->SetFlipHorizontal(true);
+        }
+        else if (mouseWorldPos.x < marioPos.x)
+        {
+            // Mouse está à esquerda -> vira para a esquerda
+            mDrawComponent->SetFlipHorizontal(false);
+        }
+        // (Se for igual, mantém o flip anterior)
     }
+
+
     ManageAnimations();
 }
 
-void Mario::ManageAnimations()
+void Player::ManageAnimations()
 {
     if (!mDrawComponent) return;
 
@@ -143,9 +211,9 @@ void Mario::ManageAnimations()
     {
         mDrawComponent->SetAnimation("jump");
     }
-    else if (mIsRunning && std::abs(vel.x) > 10.0f)
+    else if (mIsRunning)
     {
-        mDrawComponent->SetAnimation("run");
+        mDrawComponent->SetAnimation("walk");
     }
     else
     {
@@ -153,7 +221,7 @@ void Mario::ManageAnimations()
     }
 }
 
-void Mario::Kill()
+void Player::Kill()
 {
     mDrawComponent->SetAnimation("dead");
     mIsDead = true;
@@ -162,7 +230,7 @@ void Mario::Kill()
     mColliderComponent->SetEnabled(false);
 }
 
-void Mario::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other)
+void Player::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other)
 {
     ColliderLayer otherLayer = other->GetLayer();
     if (otherLayer == ColliderLayer::Enemy)
@@ -183,7 +251,7 @@ void Mario::OnHorizontalCollision(const float minOverlap, AABBColliderComponent*
     }
 }
 
-void Mario::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other)
+void Player::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other)
 {
 
     ColliderLayer otherLayer = other->GetLayer();
@@ -247,7 +315,7 @@ void Mario::OnVerticalCollision(const float minOverlap, AABBColliderComponent* o
         Grow();
     }
 }
-void Mario::Grow()
+void Player::Grow()
 {
     if (mIsBig) { return; }
 
@@ -272,7 +340,7 @@ void Mario::Grow()
     mColliderComponent->SetSize(Vector2(Game::TILE_SIZE,Game::TILE_SIZE * 2));
 }
 
-void Mario::Shrink() {
+void Player::Shrink() {
     if (!mIsBig) { return; }
 
     mIsBig = false;
@@ -298,4 +366,20 @@ void Mario::Shrink() {
     SetPosition(currentPos + Vector2(0.0f, Game::TILE_SIZE / 2.0f));
     mColliderComponent->SetSize(Vector2(Game::TILE_SIZE,Game::TILE_SIZE));
 
+}
+
+void Player::EquipWeapon(WeaponType type)
+{
+    // (Verificação opcional para ver se já tem a arma)
+    // if (GetComponent<ShotgunComponent>() != nullptr) { return; }
+
+    switch(type)
+    {
+        case WeaponType::Pistol:
+            new MainGun(this); // (Renomeado de PistolComponent)
+            break;
+        case WeaponType::Shotgun:
+            // new ShotgunComponent(this); // (Exemplo futuro)
+            break;
+    }
 }

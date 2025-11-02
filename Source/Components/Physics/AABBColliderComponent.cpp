@@ -109,10 +109,26 @@ float AABBColliderComponent::DetectVertialCollision(RigidBodyComponent *rigidBod
             continue;
         }
 
+        if (myLayer == ColliderLayer::PlayerProjectile && otherLayer == ColliderLayer::PlayerProjectile)
+        {
+            continue; // Pula (ignora colisão)
+        }
+
         if (Intersect(*other))
         {
             float overlap = GetMinVerticalOverlap(other);
-            ResolveVerticalCollisions(rigidBody, overlap);
+            bool shouldResolvePhysics = true;
+            if ((myLayer == ColliderLayer::Player && otherLayer == ColliderLayer::PlayerProjectile) ||
+                (myLayer == ColliderLayer::PlayerProjectile && otherLayer == ColliderLayer::Player))
+            {
+                shouldResolvePhysics = false; // NÃO "empurra"
+            }
+            if (shouldResolvePhysics)
+            {
+                // Aplica a física (empurra e para o movimento)
+                ResolveVerticalCollisions(rigidBody, overlap);
+            }
+
             mOwner->OnVerticalCollision(overlap, other);
             return overlap;
         }
@@ -139,17 +155,25 @@ float AABBColliderComponent::DetectHorizontalCollision(RigidBodyComponent *rigid
             continue;
         }
 
+        if (myLayer == ColliderLayer::PlayerProjectile && otherLayer == ColliderLayer::PlayerProjectile)
+        {
+            continue; // Pula (ignora colisão)
+        }
+
         if (Intersect(*other))
         {
             float overlap = GetMinHorizontalOverlap(other);
-
-            // DEBUG
-            Vector2 thisMin = GetMin();
-            Vector2 thisMax = GetMax();
-            Vector2 otherMin = other->GetMin();
-            Vector2 otherMax = other->GetMax();
-
-            ResolveHorizontalCollisions(rigidBody, overlap);
+            bool shouldResolvePhysics = true;
+            if ((myLayer == ColliderLayer::Player && otherLayer == ColliderLayer::PlayerProjectile) ||
+                (myLayer == ColliderLayer::PlayerProjectile && otherLayer == ColliderLayer::Player))
+            {
+                shouldResolvePhysics = false; // NÃO "empurra"
+            }
+            if (shouldResolvePhysics)
+            {
+                // Aplica a física (empurra e para o movimento)
+                ResolveHorizontalCollisions(rigidBody, overlap);
+            }
             mOwner->OnHorizontalCollision(overlap, other);
             return overlap;
         }
@@ -187,8 +211,8 @@ void AABBColliderComponent::ResolveVerticalCollisions(RigidBodyComponent *rigidB
 
     rigidBody->SetVelocity(vel);
 
-    if (minYOverlap < 0.0f)
-        mOwner->SetOnGround();
+    //if (minYOverlap < 0.0f)
+        //mOwner->SetOnGround();
 }
 
 void AABBColliderComponent::SetSize(Vector2 size) {

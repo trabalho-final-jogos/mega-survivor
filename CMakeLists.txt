@@ -45,8 +45,8 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Goomba.h
         Source/Actors/Spawner.cpp
         Source/Actors/Spawner.h
-        Source/Actors/Mario.cpp
-        Source/Actors/Mario.h
+        Source/Actors/Player.cpp
+        Source/Actors/Player.h
         Source/Components/Drawing/AnimatorComponent.cpp
         Source/Components/Drawing/AnimatorComponent.h
         Source/Components/Drawing/RectComponent.cpp
@@ -55,8 +55,27 @@ add_executable(${PROJECT_NAME}
         Source/Actors/QuestionBlock.h
         Source/Actors/Mushroom.h
         Source/Actors/Mushroom.cpp
-        Source/Actors/Coin.cpp
-        Source/Actors/Coin.h
+        Source/Actors/Aim.cpp
+        Source/Actors/Aim.h
+        Source/Actors/weapons/Projectile.h
+        Source/Actors/weapons/Projectile.cpp
+        Source/Components/WeaponComponent.h
+        Source/Actors/weapons/main_gun/MainGun.h
+        Source/Actors/weapons/main_gun/Bullet.h
+        Source/Actors/weapons/main_gun/Bullet.cpp
+        Source/Actors/weapons/main_gun/MainGun.cpp
+        Source/Components/WeaponComponent.cpp
+        Source/Actors/weapons/WeaponType.h
+        Source/Components/ProjectilePoolComponent.cpp
+        Source/Components/ProjectilePoolComponent.h
+        Source/Actors/weapons/boomerang/BoomerangWeapon.cpp
+        Source/Actors/weapons/boomerang/BoomerangWeapon.h
+        Source/Actors/weapons/boomerang/BoomerangProjectile.cpp
+        Source/Actors/weapons/boomerang/BoomerangProjectile.h
+        Source/Actors/weapons/ice_gun/IceProjectile.cpp
+        Source/Actors/weapons/ice_gun/IceProjectile.h
+        Source/Actors/weapons/ice_gun/IceGun.cpp
+        Source/Actors/weapons/ice_gun/IceGun.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image OpenGL::GL)

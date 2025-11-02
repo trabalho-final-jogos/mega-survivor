@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "Texture.h"
+#include "../Game.h"
 
 Renderer::Renderer(SDL_Window *window)
 : mBaseShader(nullptr)
@@ -63,7 +64,7 @@ bool Renderer::Initialize(float width, float height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Create orthografic projection matrix
-    mOrthoProjection = Matrix4::CreateOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+    mOrthoProjection = Matrix4::CreateOrtho(0.0f, Game::VIRTUAL_WIDTH, Game::VIRTUAL_HEIGHT, 0.0f, -1.0f, 1.0f);
     mBaseShader->SetMatrixUniform("uOrthoProj", mOrthoProjection);
 
     mBaseShader->SetIntegerUniform("uTexture", 0);
