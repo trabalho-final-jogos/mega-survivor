@@ -22,6 +22,9 @@
 #include "Components/Drawing/DrawComponent.h"
 #include "Components/Physics/RigidBodyComponent.h"
 #include "Random.h"
+#include "UI/Screens/HUD.h"
+#include "UI/Screens/MainMenu.h"
+#include "UI/Screens/PausedMenu.h"
 
 Game::Game()
     : mWindow(nullptr),
@@ -439,6 +442,55 @@ void Game::UpdateMouseWorldPos() {
   // 3. Converte para Coordenadas do MUNDO (adicionando a câmera)
   mMouseWorldPos.x = virtualX + mCameraPos.x;
   mMouseWorldPos.y = virtualY + mCameraPos.y;
+}
+
+void Game::SetScene(GameScene nextScene) {
+  if (mAudio) {
+    mAudio->StopAllSounds();
+  }
+
+  UnloadScene();
+
+  switch (nextScene) {
+    case GameScene::MainMenu: {
+      new MainMenu(this, GAME_FONT.data());
+      break;
+    }
+    case GameScene::Level1: {
+      /*
+      mCamera = new Camera(this, Vector3(-300.0f, 0.0f, 0.0f),
+                           Vector3(20.0f, 0.0f, 0.0f),
+                           Vector3(0.0f, 0.0f, 1.0f), 70.0f, 10.0f, 10000.0f);
+
+      mHUD = new HUD(this, GAME_FONT.data());
+      if (mHUD) {
+        mHUD->SetHealth(mShip->GetHealth());
+        mHUD->SetScore(mScore);
+      }
+      */
+
+      if (mAudio) {
+        mAudio->PlaySound("Music.ogg", true);
+      }
+
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+void Game::UnloadScene() {
+  // Use state so we can call this from withing an a actor update
+  for (auto* actor : mActors) {
+    actor->SetState(ActorState::Destroy);
+  }
+
+  // Delete UI screens
+  for (auto ui : mUIStack) {
+    delete ui;
+  }
+  mUIStack.clear();
 }
 
 void Game::Shutdown() {

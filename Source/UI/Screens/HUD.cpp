@@ -1,7 +1,7 @@
 // HUD.cpp
 #include "HUD.h"
 #include "../../Game.h"
-#include "PauseMenu.h"
+#include "PausedMenu.h"
 #include "UIScreen.h"
 
 HUD::HUD(class Game* game, const std::string& fontName)

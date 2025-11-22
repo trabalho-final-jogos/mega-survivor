@@ -1,5 +1,5 @@
 // PauseMenu.cpp
-#include "PauseMenu.h"
+#include "PausedMenu.h"
 #include "../../Game.h"
 #include "../UIButton.h"
 #include "../UIRect.h"

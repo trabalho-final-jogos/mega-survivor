@@ -9,7 +9,12 @@
 #pragma once
 #include <SDL.h>
 #include <vector>
+#include "Audio/AudioSystem.h"
 #include "Renderer/Renderer.h"
+
+constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
+
+enum class GameScene { MainMenu, PausedMenu, Level1 };
 
 class Game {
  public:
@@ -25,6 +30,9 @@ class Game {
   void UpdateActors(float deltaTime);
   void AddActor(class Actor* actor);
   void RemoveActor(class Actor* actor);
+
+  void SetScene(GameScene scene);
+  void UnloadScene();
 
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }
@@ -86,6 +94,12 @@ class Game {
   // SDL stuff
   SDL_Window* mWindow;
   class Renderer* mRenderer;
+
+  // All UI screens in the game
+  std::vector<class UIScreen*> mUIStack;
+
+  // Audio system
+  AudioSystem* mAudio;
 
   // Track elapsed time since game start
   Uint32 mTicksCount;
