@@ -8,15 +8,13 @@
 
 #include "Game.h"
 
-int main(int argc, char** argv)
-{
-    Game game;
-    bool success = game.Initialize();
-    if (success)
-    {
-        SDL_Log("AAAAAA");
-        game.RunLoop();
-    }
-    game.Shutdown();
-    return 0;
+int main(int argc, char** argv) {
+  Game game;
+  bool success = game.Initialize();
+  if (success) {
+    SDL_Log("Init game successful, entering run loop");
+    game.RunLoop();
+  }
+  game.Shutdown();
+  return 0;
 }
