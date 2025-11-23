@@ -5,19 +5,21 @@
 #include "MainMenu.h"
 #include "../../Game.h"
 #include "../UIButton.h"
+#include "SDL.h"
 
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   // Adiciona a logo do jogo centralizada no topo da tela
   // Ajuste o caminho conforme necessário
-  AddImage("../Assets/Logo.png", Vector2(0.0f, 0.0f), 0.6f, 0.0f, 100);
+  // AddImage("../Assets/Logo.png", Vector2(0.0f, 0.0f), 0.6f, 0.0f, 100);
+  AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 1.5f, 0.0f, 64, 1024, 100);
 
   // Cria e configura o botão "Iniciar Jogo"
   UIButton* startButton = AddButton(
       "New game",
       [this]() {
-        Close();                                // Fecha a tela de menu
-        mGame->SetScene(GameScene::Level1);     // Inicia o jogo
+        Close();                             // Fecha a tela de menu
+        mGame->SetScene(GameScene::Level1);  // Inicia o jogo
       },
       Vector2(0.0f, -150.0f),  // Posição centralizada
       1.0f, 0.0f, 40, 1024, 101);

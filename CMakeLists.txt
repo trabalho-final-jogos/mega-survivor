@@ -103,6 +103,8 @@ add_executable(${PROJECT_NAME}
         Source/Audio/AudioSystem.h
         Source/Renderer/Font.cpp
         Source/Renderer/Font.h
+        Source/UI/Screens/Level1.cpp
+        Source/UI/Screens/Level1.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)

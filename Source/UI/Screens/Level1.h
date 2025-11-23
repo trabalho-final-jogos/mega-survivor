@@ -1,6 +1,4 @@
-//
-// Created by Lucas N. Ferreira on 08/09/23.
-//
+
 
 #pragma once
 #include "UIScreen.h"

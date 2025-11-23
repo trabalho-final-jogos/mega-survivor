@@ -32,6 +32,7 @@ Game::Game()
       mRenderer(nullptr),
       mTicksCount(0),
       mIsRunning(true),
+      mAudio(nullptr),
       mIsDebugging(false),
       mUpdatingActors(false),
       mCameraPos(Vector2::Zero),
@@ -47,7 +48,20 @@ bool Game::Initialize() {
     return false;
   }
 
-  mWindow = SDL_CreateWindow("TP3: Super Mario Bros", 0, 0, WINDOW_WIDTH,
+  // Init SDL_Image
+  int imgFlags = IMG_INIT_PNG;
+  if (!(IMG_Init(imgFlags) & imgFlags)) {
+    SDL_Log("Unable to initialize SDL_image: %s", IMG_GetError());
+    return false;
+  }
+
+  // Initialize SDL_ttf
+  if (TTF_Init() != 0) {
+    SDL_Log("Failed to initialize SDL_ttf");
+    return false;
+  }
+
+  mWindow = SDL_CreateWindow("Mega Survivors", 0, 0, WINDOW_WIDTH,
                              WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
   if (!mWindow) {
     SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -62,6 +76,11 @@ bool Game::Initialize() {
 
   mTicksCount = SDL_GetTicks();
   mIsDebugging = true;
+
+  mAudio = new AudioSystem(16);
+
+  SetScene(GameScene::MainMenu);
+
   return true;
 }
 
@@ -309,6 +328,7 @@ void Game::UpdateCamera() {
   mCameraPos.y =
       std::min(mCameraPos.y, levelHeight - VIRTUAL_HEIGHT);  // Trava Fundo
 }
+
 void Game::AddActor(Actor* actor) {
   if (mUpdatingActors) {
     mPendingActors.emplace_back(actor);
@@ -427,11 +447,11 @@ void Game::SetScene(GameScene nextScene) {
 
   switch (nextScene) {
     case GameScene::MainMenu: {
-      new MainMenu(this, GAME_FONT.data());
+      new MainMenu(this, std::string(GAME_FONT));
       break;
     }
     case GameScene::Level1: {
-      new Level1(this, GAME_FONT.data());
+      new Level1(this, std::string(GAME_FONT));
 
       if (mAudio) {
         mAudio->PlaySound("Music.ogg", true);
