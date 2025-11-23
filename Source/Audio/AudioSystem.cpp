@@ -10,6 +10,7 @@ SoundHandle SoundHandle::Invalid;
 AudioSystem::AudioSystem(int numChannels) {
   Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
   Mix_AllocateChannels(numChannels);
+  Mix_Volume(-1, MIX_MAX_VOLUME / 4);  // Set default volume to 25%
   mChannels.resize(numChannels);
 }
 

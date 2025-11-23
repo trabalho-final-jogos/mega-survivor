@@ -92,6 +92,10 @@ int** Game::LoadLevel(const std::string& fileName, int width, int height) {
   int** levelData = new int*[height];
   for (int i = 0; i < height; ++i) {
     levelData[i] = new int[width];
+
+    for (int j = 0; j < width; ++j) {
+      levelData[i][j] = -1;
+    }
   }
 
   // 2. Abre o arquivo para leitura
@@ -387,6 +391,10 @@ void Game::RemoveCollider(AABBColliderComponent* collider) {
 void Game::GenerateOutput() {
   // Clear back buffer
   mRenderer->Clear();
+
+  for (auto drawable : mDrawables) {
+    drawable->Draw(mRenderer);
+  }
 
   // Draw UI screens
   mRenderer->DrawUI();

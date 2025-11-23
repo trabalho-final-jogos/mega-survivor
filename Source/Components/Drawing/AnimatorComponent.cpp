@@ -71,28 +71,38 @@ bool AnimatorComponent::LoadSpriteSheetData(const std::string& dataPath) {
     return false;
   }
 
-  nlohmann::json spriteSheetData = nlohmann::json::parse(spriteSheetFile);
+  try {
+    nlohmann::json spriteSheetData = nlohmann::json::parse(spriteSheetFile);
 
-  if (spriteSheetData.is_null()) {
-    SDL_Log("Failed to parse sprite sheet data file: %s", dataPath.c_str());
+    if (spriteSheetData.is_null()) {
+      SDL_Log("Failed to parse sprite sheet data file: %s", dataPath.c_str());
+      return false;
+    }
+
+    auto textureWidth =
+        static_cast<float>(spriteSheetData["meta"]["size"]["w"].get<int>());
+    auto textureHeight =
+        static_cast<float>(spriteSheetData["meta"]["size"]["h"].get<int>());
+
+    for (const auto& frame : spriteSheetData["frames"]) {
+      int x = frame["frame"]["x"].get<int>();
+      int y = frame["frame"]["y"].get<int>();
+      int w = frame["frame"]["w"].get<int>();
+      int h = frame["frame"]["h"].get<int>();
+
+      float u = static_cast<float>(x) / textureWidth;
+      float v = static_cast<float>(y) / textureHeight;
+      float uw = static_cast<float>(w) / textureWidth;
+      float vh = static_cast<float>(h) / textureHeight;
+
+      mSpriteSheetData.emplace_back(u, v + vh, uw, -vh);
+    }
+  } catch (const std::exception& e) {
+    SDL_Log("JSON Parsing Error in %s: %s", dataPath.c_str(), e.what());
     return false;
-  }
-
-  auto textureWidth =
-      static_cast<float>(spriteSheetData["meta"]["size"]["w"].get<int>());
-  auto textureHeight =
-      static_cast<float>(spriteSheetData["meta"]["size"]["h"].get<int>());
-
-  for (const auto& frame : spriteSheetData["frames"]) {
-    int x = frame["frame"]["x"].get<int>();
-    int y = frame["frame"]["y"].get<int>();
-    int w = frame["frame"]["w"].get<int>();
-    int h = frame["frame"]["h"].get<int>();
-
-    mSpriteSheetData.emplace_back(static_cast<float>(x) / textureWidth,
-                                  static_cast<float>(y) / textureHeight,
-                                  static_cast<float>(w) / textureWidth,
-                                  static_cast<float>(h) / textureHeight);
+  } catch (...) {
+    SDL_Log("Unknown error parsing JSON file: %s", dataPath.c_str());
+    return false;
   }
 
   return true;
@@ -104,7 +114,7 @@ void AnimatorComponent::Draw(Renderer* renderer) {
 
   const Vector2& worldPos = mOwner->GetPosition();
   const Vector2& cameraPos = mOwner->GetGame()->GetCameraPos();
-  Vector4 texRect(0.0f, 0.0f, 1.0f, 1.0f);  // Default: textura inteira
+  Vector4 texRect(0.0f, 1.0f, 1.0f, -1.0f);  // Default: textura inteira
 
   auto animIter = mAnimations.find(mAnimName);
   if (animIter != mAnimations.end()) {

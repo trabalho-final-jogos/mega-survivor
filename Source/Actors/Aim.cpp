@@ -37,7 +37,6 @@ void Aim::OnUpdate(float deltaTime) {
 
   // 5. Calcula a nova posição da mira
   Vector2 aimerPos = playerPos + (direction * AIMER_RADIUS);
-  // 6. Define a SUA PRÓPRIA posição
-  SDL_Log("Vector2: x = %.2f, y = %.2f", aimerPos.x, aimerPos.y);
+
   SetPosition(aimerPos);
 }

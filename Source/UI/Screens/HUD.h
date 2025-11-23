@@ -12,15 +12,14 @@ class HUD : public UIScreen {
  public:
   HUD(class Game* game, const std::string& fontName);
 
-  void SetHealth(int health);
   void SetScore(int score);
 
   void HandleKeyPress(int key) override;
 
+  void SetXPBar(float percentage);
+
  private:
   // HUD elements
-  UIImage* mHealth1;
-  UIImage* mHealth2;
-  UIImage* mHealth3;
+  UIImage* mXpBar;
   UIText* mScore;
 };
