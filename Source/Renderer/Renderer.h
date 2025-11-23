@@ -1,72 +1,92 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <SDL2/SDL.h>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "../Math.h"
-#include "VertexArray.h"
 #include "Texture.h"
+#include "VertexArray.h"
 
-enum class RendererMode
-{
-    TRIANGLES,
-    LINES
-};
+enum class RendererMode { TRIANGLES, LINES };
 
-class Renderer
-{
-public:
-	Renderer(SDL_Window* window);
-	~Renderer();
+class Renderer {
+ public:
+  Renderer(SDL_Window* window);
+  ~Renderer();
 
-	bool Initialize(float width, float height);
-	void Shutdown();
+  bool Initialize(float width, float height);
+  void Shutdown();
 
-    void DrawRect(const Vector2 &position, const Vector2 &size,  float rotation,
-                  const Vector3 &color, const Vector2 &cameraPos, RendererMode mode);
+  void DrawRect(const Vector2& position,
+                const Vector2& size,
+                float rotation,
+                const Vector3& color,
+                const Vector2& cameraPos,
+                RendererMode mode);
 
-    void DrawTexture(const Vector2 &position, const Vector2 &size,  float rotation,
-                     const Vector3 &color, Texture *texture,
-                     const Vector4 &textureRect = Vector4::UnitRect,
-                     const Vector2 &cameraPos = Vector2::Zero, bool flip = false,
-                     float textureFactor = 1.0f);
+  void DrawTexture(const Vector2& position,
+                   const Vector2& size,
+                   float rotation,
+                   const Vector3& color,
+                   Texture* texture,
+                   const Vector4& textureRect = Vector4::UnitRect,
+                   const Vector2& cameraPos = Vector2::Zero,
+                   bool flip = false,
+                   float textureFactor = 1.0f);
 
-    void DrawGeometry(const Vector2 &position, const Vector2 &size,  float rotation,
-                      const Vector3 &color, const Vector2 &cameraPos, VertexArray *vertexArray, RendererMode mode);
+  void DrawGeometry(const Vector2& position,
+                    const Vector2& size,
+                    float rotation,
+                    const Vector3& color,
+                    const Vector2& cameraPos,
+                    VertexArray* vertexArray,
+                    RendererMode mode);
 
-    void Clear();
-    void Present();
+  void AddUIElement(class UIElement* comp);
+  void RemoveUIElement(class UIElement* comp);
 
-    // Getters
-	void DrawDebugRect();
-    class Texture* GetTexture(const std::string& fileName);
-	class Shader* GetBaseShader() const { return mBaseShader; }
+  void Clear();
+  void Present();
 
-private:
-    void Draw(RendererMode mode, const Matrix4 &modelMatrix, const Vector2 &cameraPos, VertexArray *vertices,
-              const Vector3 &color,  Texture *texture = nullptr, const Vector4 &textureRect = Vector4::UnitRect, float textureFactor = 1.0f);
+  // Getters
+  void DrawDebugRect();
+  class Texture* GetTexture(const std::string& fileName);
+  class Shader* GetBaseShader() const { return mBaseShader; }
 
-	bool LoadShaders();
-    void CreateSpriteVerts();
+ private:
+  void Draw(RendererMode mode,
+            const Matrix4& modelMatrix,
+            const Vector2& cameraPos,
+            VertexArray* vertices,
+            const Vector3& color,
+            Texture* texture = nullptr,
+            const Vector4& textureRect = Vector4::UnitRect,
+            float textureFactor = 1.0f);
 
-	// Game
-	class Game* mGame;
+  bool LoadShaders();
+  void CreateSpriteVerts();
 
-	// Basic shader
-	class Shader* mBaseShader;
+  // Game
+  class Game* mGame;
 
-    // Sprite vertex array
-    class VertexArray *mSpriteVerts;
+  // Basic shader
+  class Shader* mBaseShader;
 
-	// Window
-	SDL_Window* mWindow;
+  // Sprite vertex array
+  class VertexArray* mSpriteVerts;
 
-	// OpenGL context
-	SDL_GLContext mContext;
+  // Window
+  SDL_Window* mWindow;
 
-	// Ortho projection for 2D shaders
-	Matrix4 mOrthoProjection;
+  // OpenGL context
+  SDL_GLContext mContext;
 
-    // Map of textures loaded
-    std::unordered_map<std::string, class Texture*> mTextures;
+  // Ortho projection for 2D shaders
+  Matrix4 mOrthoProjection;
+
+  // UI screens to draw
+  std::vector<class UIElement*> mUIComps;
+
+  // Map of textures loaded
+  std::unordered_map<std::string, class Texture*> mTextures;
 };

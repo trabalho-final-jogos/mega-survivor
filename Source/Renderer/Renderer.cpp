@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include <GL/glew.h>
+#include <algorithm>
 #include "../Game.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -125,6 +126,19 @@ void Renderer::Draw(RendererMode mode,
     glDrawElements(GL_TRIANGLES, vertices->GetNumIndices(), GL_UNSIGNED_INT,
                    nullptr);
   }
+}
+
+void Renderer::AddUIElement(UIElement* comp) {
+  mUIComps.emplace_back(comp);
+
+  std::sort(mUIComps.begin(), mUIComps.end(), [](UIElement* a, UIElement* b) {
+    return a->GetDrawOrder() < b->GetDrawOrder();
+  });
+}
+
+void Renderer::RemoveUIElement(UIElement* comp) {
+  auto iter = std::find(mUIComps.begin(), mUIComps.end(), comp);
+  mUIComps.erase(iter);
 }
 
 void Renderer::DrawRect(const Vector2& position,
