@@ -252,11 +252,19 @@ void Game::ProcessInput() {
       case SDL_QUIT:
         Quit();
         break;
+
+      case SDL_KEYDOWN:               // ADD: Detect key presses
+        if (event.key.repeat == 0) {  // Ignore repeat
+          for (auto ui : mUIStack) {
+            ui->HandleKeyPress(event.key.keysym.sym);  // Pass SDL key code
+          }
+        }
+        break;
     }
   }
 
+  // Handle actors (continuous keys)
   const Uint8* state = SDL_GetKeyboardState(nullptr);
-
   for (auto actor : mActors) {
     actor->ProcessInput(state);
   }

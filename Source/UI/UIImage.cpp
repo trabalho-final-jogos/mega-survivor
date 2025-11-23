@@ -50,6 +50,9 @@ void UIImage::Draw(class Shader* shader) {
   // Set uTextureFactor
   shader->SetFloatUniform("uTextureFactor", 1.0f);
 
+  // Set uTexRect
+  shader->SetVectorUniform("uTexRect", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+
   // Set current texture
   mTexture->SetActive();
 

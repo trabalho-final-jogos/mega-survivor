@@ -33,7 +33,7 @@ void UIRect::Draw(class Shader* shader) {
 
   // Set uTextureFactor and color
   shader->SetFloatUniform("uTextureFactor", 0.0f);
-  shader->SetVectorUniform("uBaseColor", mColor);
+  shader->SetVectorUniform("uColor", Vector3(mColor.x, mColor.y, mColor.z));
 
   // Draw quad
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

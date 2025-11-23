@@ -57,7 +57,7 @@ void UIText::Draw(class Shader* shader) {
   if (!mTexture || !mIsVisible)
     return;
 
-  // 1. BACKGROUND (solid color quad - NO TEXTURE)
+  // 1. BACKGROUND (solid color quad)
   Matrix4 bgScale = Matrix4::CreateScale(
       (static_cast<float>(mTexture->GetWidth()) + mMargin.x * 2.0f) * mScale,
       (static_cast<float>(mTexture->GetHeight()) + mMargin.y * 2.0f) * mScale,
@@ -67,13 +67,11 @@ void UIText::Draw(class Shader* shader) {
   Matrix4 bgWorld = bgScale * bgTrans;
 
   shader->SetMatrixUniform("uWorldTransform", bgWorld);
-  shader->SetFloatUniform("uTextureFactor", 0.0f);  // Solid color [file:9]
-  shader->SetVectorUniform("uColor",
-                           Vector3(mBackgroundColor));  // Blue BG [file:9]
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
-                 nullptr);  // NO texture active!
+  shader->SetFloatUniform("uTextureFactor", 0.0f);                // Solid color
+  shader->SetVectorUniform("uColor", Vector3(mBackgroundColor));  // Blue BG
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-  // 2. TEXT (texture over background)
+  // 2. TEXT (texture - FLIP V to fix mirroring)
   Matrix4 textScale = Matrix4::CreateScale(
       static_cast<float>(mTexture->GetWidth()) * mScale,
       static_cast<float>(mTexture->GetHeight()) * mScale, 1.0f);
@@ -82,8 +80,9 @@ void UIText::Draw(class Shader* shader) {
   Matrix4 textWorld = textScale * textTrans;
 
   shader->SetMatrixUniform("uWorldTransform", textWorld);
-  shader->SetFloatUniform("uTextureFactor", 1.0f);  // Full texture [file:9]
-  shader->SetVectorUniform("uColor", mTextColor);   // White multiply [file:9]
-  mTexture->SetActive();                            // Bind font texture
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);  // Draw text quad
+  shader->SetFloatUniform("uTextureFactor", 1.0f);  // Full texture
+  shader->SetVectorUniform("uColor", mTextColor);   // White multiply
+  shader->SetVectorUniform("uTexRect", Vector4(0.0f, 1.0f, 1.0f, -1.0f));
+  mTexture->SetActive();
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }

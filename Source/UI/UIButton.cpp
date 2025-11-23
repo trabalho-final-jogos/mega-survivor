@@ -37,11 +37,15 @@ void UIButton::OnClick() {
 }
 
 void UIButton::Draw(class Shader* shader) {
-  /*if (mHighlighted) {
-    mBackgroundColor.w = 1.0f;
-  } else {
-    mBackgroundColor.w = 0.5f;
-  }*/
+  // Simulate alpha with brightness for Vector3
+  Vector3 highlightColor = mBackgroundColor * (mHighlighted ? 1.2f : 0.7f);
+
+  // Temporarily change background color for highlight effect
+  Vector3 oldBgColor = mBackgroundColor;
+  mBackgroundColor = highlightColor;
 
   UIText::Draw(shader);
+
+  // Restore original color
+  mBackgroundColor = oldBgColor;
 }
