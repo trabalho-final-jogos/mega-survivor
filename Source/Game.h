@@ -72,18 +72,22 @@ class Game {
 
   // Game specific
   const class Player* GetPlayer() { return mMario; }
+  void SetPlayer(class Player* player) { mMario = player; }
 
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter
+
+  // Level loading
+  int** LoadLevel(const std::string& fileName, int width, int height);
+  void BuildLevel(int** levelData, int width, int height);
+  void SetLevelData(int** data) { mLevelData = data; }
+
+  void UpdateCamera();
 
  private:
   void ProcessInput();
   void UpdateGame(float deltaTime);
-  void UpdateCamera();
   void GenerateOutput();
   void UpdateMouseWorldPos();
-  // Level loading
-  int** LoadLevel(const std::string& fileName, int width, int height);
-  void BuildLevel(int** levelData, int width, int height);
 
   // All the actors in the game
   std::vector<class Actor*> mActors;

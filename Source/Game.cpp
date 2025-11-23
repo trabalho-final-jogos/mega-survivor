@@ -23,6 +23,7 @@
 #include "Components/Physics/RigidBodyComponent.h"
 #include "Random.h"
 #include "UI/Screens/HUD.h"
+#include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
 #include "UI/Screens/PausedMenu.h"
 
@@ -66,33 +67,6 @@ bool Game::Initialize() {
 
 void Game::InitializeActors() {
   // mRenderer->DrawDebugRect();
-  // mLevelData = LoadLevel("../Assets/Levels/Level1-1/level1-1.csv",
-  // LEVEL_WIDTH, LEVEL_HEIGHT); BuildLevel(mLevelData,
-  // LEVEL_WIDTH,LEVEL_HEIGHT);
-  SDL_Log("criou o mario");
-  mMario = new Player(this);
-  mMario->SetPosition(Vector2(TILE_SIZE / 2, TILE_SIZE / 2));
-  UpdateCamera();
-  if (mLevelData) {
-    SDL_Log("--- Imprimindo Matriz Completa do Nível (%d x %d) ---",
-            LEVEL_HEIGHT, LEVEL_WIDTH);
-
-    for (int i = 0; i < LEVEL_HEIGHT; ++i) {
-      std::stringstream ss;
-
-      for (int j = 0; j < LEVEL_WIDTH; ++j) {
-        ss << mLevelData[i][j] << ",";
-      }
-
-      SDL_Log("%s", ss.str().c_str());
-    }
-
-    SDL_Log("--- Fim da Matriz do Nível ---");
-  } else {
-    SDL_Log(
-        "ERRO: mLevelData é nulo. A matriz do nível não foi carregada e não "
-        "pode ser impressa.");
-  }
 }
 
 int** Game::LoadLevel(const std::string& fileName, int width, int height) {
@@ -457,17 +431,7 @@ void Game::SetScene(GameScene nextScene) {
       break;
     }
     case GameScene::Level1: {
-      /*
-      mCamera = new Camera(this, Vector3(-300.0f, 0.0f, 0.0f),
-                           Vector3(20.0f, 0.0f, 0.0f),
-                           Vector3(0.0f, 0.0f, 1.0f), 70.0f, 10.0f, 10000.0f);
-
-      mHUD = new HUD(this, GAME_FONT.data());
-      if (mHUD) {
-        mHUD->SetHealth(mShip->GetHealth());
-        mHUD->SetScore(mScore);
-      }
-      */
+      new Level1(this, GAME_FONT.data());
 
       if (mAudio) {
         mAudio->PlaySound("Music.ogg", true);
