@@ -16,8 +16,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
   UIButton* startButton = AddButton(
       "New game",
       [this]() {
-        Close();                                        // Fecha a tela de menu
-        new SceneFade(mGame, GameScene::Level1, 1.0f);  // Inicia o jogo
+        Close();                                // Fecha a tela de menu
+        mGame->SetScene(GameScene::Level1);     // Inicia o jogo
       },
       Vector2(0.0f, -150.0f),  // Posição centralizada
       1.0f, 0.0f, 40, 1024, 101);
