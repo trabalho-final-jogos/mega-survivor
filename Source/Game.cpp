@@ -380,32 +380,6 @@ void Game::GenerateOutput() {
   // Clear back buffer
   mRenderer->Clear();
 
-  Texture* bgTexture =
-      mRenderer->GetTexture("../Assets/Sprites/Background.png");
-
-  if (bgTexture) {
-    float bgWidth = static_cast<float>(bgTexture->GetWidth());
-    float bgHeight = static_cast<float>(bgTexture->GetHeight());
-
-    Vector2 bgPos(bgWidth / 2.0f, bgHeight / 2.0f);
-
-    Vector2 bgSize(bgWidth, bgHeight);
-
-    mRenderer->DrawTexture(
-        bgPos,                            // Posição do CENTRO do fundo no MUNDO
-        bgSize,                           // Tamanho TOTAL do fundo
-        0.0f,                             // Rotação
-        Vector3(1.0f, 1.0f, 1.0f),        // Cor (branco)
-        bgTexture,                        // A textura grande
-        Vector4(0.0f, 0.0f, 1.0f, 1.0f),  // textureRect (usa a textura inteira)
-        GetCameraPos(),                   // <<--- PASSA A CÂMERA ATUAL
-        false,                            // flip
-        1.0f                              // textureFactor
-    );
-  } else {
-    SDL_Log("Erro: Nao foi possivel carregar a textura do fundo.");
-  }
-
   for (auto drawable : mDrawables) {
     drawable->Draw(mRenderer);
 

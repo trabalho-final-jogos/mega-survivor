@@ -23,6 +23,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       },
       Vector2(0.0f, -150.0f),  // Posição centralizada
       1.0f, 0.0f, 40, 1024, 101);
+
   // Configura cores: fundo azul, texto branco
   startButton->SetBackgroundColor(
       Vector4(0.0f, 0.0f, 1.0f, 1.0f));                  // RGB: Azul
@@ -36,6 +37,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       },
       Vector2(0.0f, -220.0f),  // Posição abaixo do primeiro botão
       1.0f, 0.0f, 40, 1024, 101);
+
   // Configura cores: fundo azul, texto branco
   quitButton->SetBackgroundColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));  // RGB: Azul
   quitButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));  // RGB: Branco
