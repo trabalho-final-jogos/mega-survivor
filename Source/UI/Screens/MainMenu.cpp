@@ -5,7 +5,6 @@
 #include "MainMenu.h"
 #include "../../Game.h"
 #include "../UIButton.h"
-#include "SceneFade.h"
 
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {

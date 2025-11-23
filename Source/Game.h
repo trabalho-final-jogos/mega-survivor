@@ -52,6 +52,13 @@ class Game {
   void RemoveDrawable(class DrawComponent* drawable);
   std::vector<class DrawComponent*>& GetDrawables() { return mDrawables; }
 
+  // UI functions
+  void PushUI(class UIScreen* screen) { mUIStack.emplace_back(screen); }
+  const std::vector<class UIScreen*>& GetUIStack() { return mUIStack; }
+
+  void SetPaused(bool paused) { mIsPaused = paused; }
+  bool IsPaused() const { return mIsPaused; }
+
   // Collider functions
   void AddCollider(class AABBColliderComponent* collider);
   void RemoveCollider(class AABBColliderComponent* collider);
@@ -108,6 +115,7 @@ class Game {
   bool mIsRunning;
   bool mIsDebugging;
   bool mUpdatingActors;
+  bool mIsPaused{false};
 
   // Game-specific
   class Player* mMario;

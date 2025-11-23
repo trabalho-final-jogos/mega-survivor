@@ -1,29 +1,30 @@
 #pragma once
-#include <string>
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <string>
 
-class Texture
-{
-public:
-	Texture();
-	~Texture();
+class Texture {
+ public:
+  Texture();
+  ~Texture();
 
-	bool Load(const std::string& fileName);
-	void Unload();
+  bool Load(const std::string& fileName);
+  void Unload();
 
-	void SetActive(int index = 0) const;
+  void SetActive(int index = 0) const;
 
-    static GLenum SDLFormatToGL(SDL_PixelFormat* fmt);
+  static GLenum SDLFormatToGL(SDL_PixelFormat* fmt);
 
-	int GetWidth() const { return mWidth; }
-	int GetHeight() const { return mHeight; }
+  void CreateFromSurface(struct SDL_Surface* surface);
 
-	unsigned int GetTextureID() const { return mTextureID; }
+  int GetWidth() const { return mWidth; }
+  int GetHeight() const { return mHeight; }
 
-private:
-	unsigned int mTextureID;
-	int mWidth;
-	int mHeight;
+  unsigned int GetTextureID() const { return mTextureID; }
+
+ private:
+  unsigned int mTextureID;
+  int mWidth;
+  int mHeight;
 };

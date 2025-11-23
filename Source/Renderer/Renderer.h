@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../Math.h"
+#include "Font.h"
 #include "Texture.h"
 #include "VertexArray.h"
 
@@ -51,6 +52,7 @@ class Renderer {
   // Getters
   void DrawDebugRect();
   class Texture* GetTexture(const std::string& fileName);
+  class Font* GetFont(const std::string& fileName);
   class Shader* GetBaseShader() const { return mBaseShader; }
 
  private:
@@ -89,4 +91,7 @@ class Renderer {
 
   // Map of textures loaded
   std::unordered_map<std::string, class Texture*> mTextures;
+
+  // Map of fonts loaded
+  std::unordered_map<std::string, class Font*> mFonts;
 };

@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <algorithm>
 #include "../Game.h"
+#include "../UI/UIElement.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "VertexArray.h"
@@ -215,6 +216,23 @@ void Renderer::CreateSpriteVerts() {
   unsigned int indices[] = {0, 1, 2, 2, 3, 0};
 
   mSpriteVerts = new VertexArray(vertices, 4, indices, 6);
+}
+
+Font* Renderer::GetFont(const std::string& fileName) {
+  auto iter = mFonts.find(fileName);
+  if (iter != mFonts.end()) {
+    return iter->second;
+  } else {
+    Font* font = new Font();
+    if (font->Load(fileName)) {
+      mFonts.emplace(fileName, font);
+    } else {
+      font->Unload();
+      delete font;
+      font = nullptr;
+    }
+    return font;
+  }
 }
 
 Texture* Renderer::GetTexture(const std::string& fileName) {
