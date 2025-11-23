@@ -25,9 +25,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       1.0f, 0.0f, 40, 1024, 101);
 
   // Configura cores: fundo azul, texto branco
-  startButton->SetBackgroundColor(
-      Vector4(0.0f, 0.0f, 1.0f, 1.0f));                  // RGB: Azul
-  startButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));  // RGB: Branco
+  startButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 0.5f));
+  startButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
 
   // Cria e configura o botão "Fechar Jogo"
   UIButton* quitButton = AddButton(
@@ -39,8 +38,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       1.0f, 0.0f, 40, 1024, 101);
 
   // Configura cores: fundo azul, texto branco
-  quitButton->SetBackgroundColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));  // RGB: Azul
-  quitButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));  // RGB: Branco
+  quitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  quitButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 void MainMenu::HandleKeyPress(int key) {

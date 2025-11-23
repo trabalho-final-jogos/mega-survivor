@@ -46,6 +46,8 @@ class Renderer {
   void AddUIElement(class UIElement* comp);
   void RemoveUIElement(class UIElement* comp);
 
+  void DrawUI();
+
   void Clear();
   void Present();
 

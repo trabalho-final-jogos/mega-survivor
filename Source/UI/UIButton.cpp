@@ -37,11 +37,11 @@ void UIButton::OnClick() {
 }
 
 void UIButton::Draw(class Shader* shader) {
-  if (mHighlighted) {
+  /*if (mHighlighted) {
     mBackgroundColor.w = 1.0f;
   } else {
     mBackgroundColor.w = 0.5f;
-  }
+  }*/
 
   UIText::Draw(shader);
 }

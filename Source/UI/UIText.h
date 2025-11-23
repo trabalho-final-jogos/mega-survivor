@@ -27,7 +27,7 @@ class UIText : public UIImage {
 
   void SetText(const std::string& name);
   void SetTextColor(const Vector3& color);
-  void SetBackgroundColor(const Vector4& color) { mBackgroundColor = color; }
+  void SetBackgroundColor(const Vector3& color) { mBackgroundColor = color; }
 
  protected:
   std::string mText;
@@ -39,5 +39,5 @@ class UIText : public UIImage {
   Vector2 mMargin;
 
   Vector3 mTextColor;
-  Vector4 mBackgroundColor;
+  Vector3 mBackgroundColor;
 };

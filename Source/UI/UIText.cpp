@@ -21,7 +21,7 @@ UIText::UIText(class Game* game,
       mPointSize(pointSize),
       mWrapLength(wrapLength),
       mTextColor(Color::White),
-      mBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f),
+      mBackgroundColor(0.0f, 0.0f, 1.0f),
       mMargin(Vector2(50.0f, 10.f)) {
   SetText(text);
 }
@@ -57,26 +57,33 @@ void UIText::Draw(class Shader* shader) {
   if (!mTexture || !mIsVisible)
     return;
 
-  // Draw Text Background
-  Matrix4 scaleMat = Matrix4::CreateScale(
-      (static_cast<float>(mTexture->GetWidth()) + mMargin.x) * mScale,
-      (static_cast<float>(mTexture->GetHeight()) + mMargin.y) * mScale, 1.0f);
-
-  // Translate to position on screen
-  Matrix4 transMat =
+  // 1. BACKGROUND (solid color quad - NO TEXTURE)
+  Matrix4 bgScale = Matrix4::CreateScale(
+      (static_cast<float>(mTexture->GetWidth()) + mMargin.x * 2.0f) * mScale,
+      (static_cast<float>(mTexture->GetHeight()) + mMargin.y * 2.0f) * mScale,
+      1.0f);
+  Matrix4 bgTrans =
       Matrix4::CreateTranslation(Vector3(mOffset.x, mOffset.y, 0.0f));
+  Matrix4 bgWorld = bgScale * bgTrans;
 
-  // Set world transform
-  Matrix4 world = scaleMat * transMat;
-  shader->SetMatrixUniform("uWorldTransform", world);
+  shader->SetMatrixUniform("uWorldTransform", bgWorld);
+  shader->SetFloatUniform("uTextureFactor", 0.0f);  // Solid color [file:9]
+  shader->SetVectorUniform("uColor",
+                           Vector3(mBackgroundColor));  // Blue BG [file:9]
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
+                 nullptr);  // NO texture active!
 
-  // Set uTextureFactor and color
-  shader->SetFloatUniform("uTextureFactor", 0.0f);
-  shader->SetVectorUniform("uBaseColor", mBackgroundColor);
+  // 2. TEXT (texture over background)
+  Matrix4 textScale = Matrix4::CreateScale(
+      static_cast<float>(mTexture->GetWidth()) * mScale,
+      static_cast<float>(mTexture->GetHeight()) * mScale, 1.0f);
+  Matrix4 textTrans =
+      Matrix4::CreateTranslation(Vector3(mOffset.x, mOffset.y, 0.0f));
+  Matrix4 textWorld = textScale * textTrans;
 
-  // Draw quad
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-  // Draw text
-  UIImage::Draw(shader);
+  shader->SetMatrixUniform("uWorldTransform", textWorld);
+  shader->SetFloatUniform("uTextureFactor", 1.0f);  // Full texture [file:9]
+  shader->SetVectorUniform("uColor", mTextColor);   // White multiply [file:9]
+  mTexture->SetActive();                            // Bind font texture
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);  // Draw text quad
 }

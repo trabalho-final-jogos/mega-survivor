@@ -56,7 +56,7 @@ bool Renderer::Initialize(float width, float height) {
   CreateSpriteVerts();
 
   // Set the clear color to light grey
-  glClearColor(0.419f, 0.549f, 1.0f, 1.0f);
+  glClearColor(0.1f, 0.15f, 0.4f, 1.0f);
 
   // Enable alpha blending on textures
   glEnable(GL_BLEND);
@@ -194,6 +194,26 @@ void Renderer::DrawGeometry(const Vector2& position,
 void Renderer::Present() {
   // Swap the buffers
   SDL_GL_SwapWindow(mWindow);
+}
+
+void Renderer::DrawUI() {
+  mBaseShader->SetActive();
+  mSpriteVerts->SetActive();
+
+  mBaseShader->SetVectorUniform("uCameraPos", Vector2::Zero);
+
+  // Set ortho projection for UI (centered at 0,0, Y up)
+  Matrix4 uiProj = Matrix4::CreateOrtho(
+      -Game::VIRTUAL_WIDTH / 2.0f, Game::VIRTUAL_WIDTH / 2.0f,
+      -Game::VIRTUAL_HEIGHT / 2.0f, Game::VIRTUAL_HEIGHT / 2.0f, -1.0f, 1.0f);
+  mBaseShader->SetMatrixUniform("uOrthoProj", uiProj);
+
+  for (auto ui : mUIComps) {
+    ui->Draw(mBaseShader);
+  }
+
+  // Restore original ortho projection
+  mBaseShader->SetMatrixUniform("uOrthoProj", mOrthoProjection);
 }
 
 bool Renderer::LoadShaders() {

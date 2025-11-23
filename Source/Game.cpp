@@ -380,16 +380,8 @@ void Game::GenerateOutput() {
   // Clear back buffer
   mRenderer->Clear();
 
-  for (auto drawable : mDrawables) {
-    drawable->Draw(mRenderer);
-
-    if (mIsDebugging) {
-      // Call draw for actor components
-      for (auto comp : drawable->GetOwner()->GetComponents()) {
-        comp->DebugDraw(mRenderer);
-      }
-    }
-  }
+  // Draw UI screens
+  mRenderer->DrawUI();
 
   // Swap front buffer and back buffer
   mRenderer->Present();
