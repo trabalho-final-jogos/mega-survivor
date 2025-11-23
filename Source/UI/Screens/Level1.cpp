@@ -1,25 +1,24 @@
 #include "Level1.h"
-#include "../../Game.h"
 #include "../../Actors/Player.h"
+#include "../../Game.h"
 
-Level1::Level1(Game* game, const std::string& fontName) : UIScreen(game, fontName) {
-  // 1. Load Level Data
-  int** level = mGame->LoadLevel("../Assets/Levels/Level1-1/level1-1.csv", Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
+Level1::Level1(Game* game, const std::string& fontName)
+    : UIScreen(game, fontName) {
+  int** level = mGame->LoadLevel("../Assets/Levels/Level1-1/level1-1.csv",
+                                 Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
   mGame->SetLevelData(level);
 
-  // 2. Build Level (create blocks, enemies, etc.)
+  SDL_Log("Level data loaded for Level 1-1");
+
   mGame->BuildLevel(level, Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
 
-  // 3. Create Player (Mario)
-  // Check if player already exists (shouldn't if cleaned up correctly)
+  SDL_Log("Level 1-1 built successfully");
+
   if (!mGame->GetPlayer()) {
-      Player* mario = new Player(mGame);
-      mario->SetPosition(Vector2(Game::TILE_SIZE / 2, Game::TILE_SIZE / 2));
-      mGame->SetPlayer(mario);
+    Player* player = new Player(mGame);
+    player->SetPosition(Vector2(Game::TILE_SIZE / 2, Game::TILE_SIZE / 2));
+    mGame->SetPlayer(player);
   }
 
-  // 4. Update Camera to center on Mario immediately
   mGame->UpdateCamera();
-
-  // Note: Music is currently played in Game::SetScene, so we don't need to play it here.
 }

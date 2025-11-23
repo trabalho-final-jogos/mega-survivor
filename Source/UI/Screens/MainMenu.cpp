@@ -11,7 +11,6 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   // Adiciona a logo do jogo centralizada no topo da tela
   // Ajuste o caminho conforme necessário
-  // AddImage("../Assets/Logo.png", Vector2(0.0f, 0.0f), 0.6f, 0.0f, 100);
   AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   // Cria e configura o botão "Iniciar Jogo"

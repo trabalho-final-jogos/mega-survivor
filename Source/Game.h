@@ -71,8 +71,8 @@ class Game {
   void SetCameraPos(const Vector2& position) { mCameraPos = position; };
 
   // Game specific
-  const class Player* GetPlayer() { return mMario; }
-  void SetPlayer(class Player* player) { mMario = player; }
+  const class Player* GetPlayer() { return mPlayer; }
+  void SetPlayer(class Player* player) { mPlayer = player; }
 
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter
 
@@ -122,7 +122,7 @@ class Game {
   bool mIsPaused{false};
 
   // Game-specific
-  class Player* mMario;
+  class Player* mPlayer;
   int** mLevelData;
 
   Vector2 mMouseWorldPos;

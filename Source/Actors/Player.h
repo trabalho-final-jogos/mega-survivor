@@ -7,44 +7,48 @@
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
-class Player : public Actor
-{
-public:
-    explicit Player(Game* game, float forwardSpeed = 500.0f, float jumpSpeed = -750.0f);
+class Player : public Actor {
+ public:
+  explicit Player(Game* game,
+                  float forwardSpeed = 500.0f,
+                  float jumpSpeed = -750.0f);
 
-    void OnProcessInput(const Uint8* keyState) override;
-    void OnUpdate(float deltaTime) override;
+  void OnProcessInput(const Uint8* keyState) override;
+  void OnUpdate(float deltaTime) override;
 
-    void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;
-    void OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) override;
-    void Grow();
+  void OnHorizontalCollision(const float minOverlap,
+                             AABBColliderComponent* other) override;
+  void OnVerticalCollision(const float minOverlap,
+                           AABBColliderComponent* other) override;
+  void Grow();
 
-    void Shrink();
+  void Shrink();
 
-    void EquipWeapon(WeaponType type);
+  void EquipWeapon(WeaponType type);
 
-    void Kill() override;
-    bool isBig() { return mIsBig; };
-    bool isInvulnerable() { return mIsInvulnerable;};
-    class Aim* GetAim() const { return mAimer; }
-private:
-    void ManageAnimations();
+  void Kill() override;
+  bool isBig() { return mIsBig; };
+  bool isInvulnerable() { return mIsInvulnerable; };
+  class Aim* GetAim() const { return mAimer; }
 
-    float mForwardSpeed;
-    float mJumpSpeed;
-    bool mIsRunning;
-    bool mIsDead;
-    bool mIsBig = false;
-    bool mIsInvulnerable;
-    float mInvulnerabilityTimer;
-    const float INVULNERABILITY_DURATION = 1.5f;
-    float mGrowTimer = 0.0f;
-    class RigidBodyComponent* mRigidBodyComponent;
-    class AnimatorComponent* mDrawComponent;
-    class AABBColliderComponent* mColliderComponent;
-    class ParticleSystemComponent* mFireBalls;
+ private:
+  void ManageAnimations();
 
-    float mFireBallCooldown = 1.0f;
+  float mForwardSpeed;
+  float mJumpSpeed;
+  bool mIsRunning;
+  bool mIsDead;
+  bool mIsBig = false;
+  bool mIsInvulnerable;
+  float mInvulnerabilityTimer;
+  const float INVULNERABILITY_DURATION = 1.5f;
+  float mGrowTimer = 0.0f;
+  class RigidBodyComponent* mRigidBodyComponent;
+  class AnimatorComponent* mDrawComponent;
+  class AABBColliderComponent* mColliderComponent;
+  class ParticleSystemComponent* mFireBalls;
 
-    class Aim* mAimer;
+  float mFireBallCooldown = 1.0f;
+
+  class Aim* mAimer;
 };

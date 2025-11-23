@@ -36,7 +36,7 @@ Game::Game()
       mIsDebugging(false),
       mUpdatingActors(false),
       mCameraPos(Vector2::Zero),
-      mMario(nullptr),
+      mPlayer(nullptr),
       mLevelData(nullptr),
       mMouseWorldPos(Vector2::Zero) {}
 
@@ -157,9 +157,9 @@ void Game::BuildLevel(int** levelData, int width, int height) {
       switch (tileID) {
         // --- PERSONAGEM ---
         case 16:
-          SDL_Log("criou o mario");
-          mMario = new Player(this);
-          mMario->SetPosition(pos);
+          SDL_Log("Player created at position (%.1f, %.1f)", pos.x, pos.y);
+          mPlayer = new Player(this);
+          mPlayer->SetPosition(pos);
           break;
 
         case 10: {
@@ -305,11 +305,11 @@ void Game::UpdateActors(float deltaTime) {
 }
 
 void Game::UpdateCamera() {
-  if (!mMario) {
+  if (!mPlayer) {
     return;
   }
 
-  Vector2 marioPos = mMario->GetPosition();
+  Vector2 marioPos = mPlayer->GetPosition();
 
   // --- USA A RESOLUÇÃO VIRTUAL ---
   float halfScreenWidth = VIRTUAL_WIDTH / 2.0f;
