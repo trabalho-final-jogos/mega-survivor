@@ -30,10 +30,12 @@ bool Texture::Load(const std::string& fileName) {
   glGenTextures(1, &mTextureID);
   glBindTexture(GL_TEXTURE_2D, mTextureID);
 
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, formattedSurface->pitch / 4);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA,
                GL_UNSIGNED_BYTE,
                formattedSurface->pixels  // Agora usamos a superfície convertida
   );
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   SDL_FreeSurface(surface);
   SDL_FreeSurface(formattedSurface);
@@ -72,6 +74,7 @@ void Texture::CreateFromSurface(SDL_Surface* surface) {
   glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / 4);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, surface->pixels);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   // Use linear filtering
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

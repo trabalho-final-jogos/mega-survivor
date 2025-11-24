@@ -95,7 +95,7 @@ bool AnimatorComponent::LoadSpriteSheetData(const std::string& dataPath) {
       float uw = static_cast<float>(w) / textureWidth;
       float vh = static_cast<float>(h) / textureHeight;
 
-      mSpriteSheetData.emplace_back(u, v + vh, uw, -vh);
+      mSpriteSheetData.emplace_back(u, v, uw, vh);
     }
   } catch (const std::exception& e) {
     SDL_Log("JSON Parsing Error in %s: %s", dataPath.c_str(), e.what());
@@ -114,7 +114,7 @@ void AnimatorComponent::Draw(Renderer* renderer) {
 
   const Vector2& worldPos = mOwner->GetPosition();
   const Vector2& cameraPos = mOwner->GetGame()->GetCameraPos();
-  Vector4 texRect(0.0f, 1.0f, 1.0f, -1.0f);  // Default: textura inteira
+  Vector4 texRect(0.0f, 0.0f, 1.0f, 1.0f);  // Default: textura inteira
 
   auto animIter = mAnimations.find(mAnimName);
   if (animIter != mAnimations.end()) {

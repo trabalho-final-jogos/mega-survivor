@@ -7,10 +7,12 @@
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
+constexpr float PLAYER_BASE_SPEED{200.0f};
+
 class Player : public Actor {
  public:
   explicit Player(Game* game,
-                  float forwardSpeed = 500.0f,
+                  float forwardSpeed = PLAYER_BASE_SPEED,
                   float jumpSpeed = -750.0f);
 
   void OnProcessInput(const Uint8* keyState) override;
