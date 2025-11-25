@@ -3,12 +3,15 @@ cmake_minimum_required(VERSION 3.26)
 set(CMAKE_CXX_STANDARD 17)
 
 # Configurando o nome e executável do projeto
-set(PROJECT_NAME "tp3-smb")
+set(PROJECT_NAME "mega-survivor")
 project(${PROJECT_NAME})
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_executable(${PROJECT_NAME}
@@ -76,6 +79,32 @@ add_executable(${PROJECT_NAME}
         Source/Actors/weapons/ice_gun/IceProjectile.h
         Source/Actors/weapons/ice_gun/IceGun.cpp
         Source/Actors/weapons/ice_gun/IceGun.h
+        Source/UI/UIButton.cpp
+        Source/UI/UIButton.h
+        Source/UI/UIElement.h
+        Source/UI/UIElement.cpp
+        Source/UI/UIImage.cpp
+        Source/UI/UIImage.h
+        Source/UI/UIRect.cpp
+        Source/UI/UIRect.h
+        Source/UI/UIText.cpp
+        Source/UI/UIText.h
+        Source/UI/Screens/UIScreen.cpp
+        Source/UI/Screens/UIScreen.h
+        Source/UI/Screens/MainMenu.cpp
+        Source/UI/Screens/MainMenu.h
+        Source/UI/Screens/PausedMenu.cpp
+        Source/UI/Screens/PausedMenu.h
+        Source/UI/Screens/HUD.cpp
+        Source/UI/Screens/HUD.h
+        Source/UI/Screens/GameOver.cpp
+        Source/UI/Screens/GameOver.h
+        Source/Audio/AudioSystem.cpp
+        Source/Audio/AudioSystem.h
+        Source/Renderer/Font.cpp
+        Source/Renderer/Font.h
+        Source/UI/Screens/Level1.cpp
+        Source/UI/Screens/Level1.h
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)
