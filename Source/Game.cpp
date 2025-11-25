@@ -25,6 +25,7 @@
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
+#include "UI/Screens/MetaProg.h"
 #include "UI/Screens/PausedMenu.h"
 
 Game::Game()
@@ -432,6 +433,7 @@ void Game::SetScene(GameScene nextScene) {
       new MainMenu(this, std::string(GAME_FONT));
       break;
     }
+
     case GameScene::Level1: {
       new Level1(this, std::string(GAME_FONT));
 
@@ -439,6 +441,11 @@ void Game::SetScene(GameScene nextScene) {
         mAudio->PlaySound("Music.ogg", true);
       }
 
+      break;
+    }
+
+    case GameScene::UpgradeStore: {
+      new MetaProg(this, std::string(GAME_FONT));
       break;
     }
     default:
