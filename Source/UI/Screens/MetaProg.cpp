@@ -1,6 +1,7 @@
 #include "MetaProg.h"
-#include "../../Components/UpgradeManager.h"
 #include "../../Game.h"
+#include "../../Managers/ColorPalette.h"
+#include "../../Managers/UpgradeManager.h"
 
 MetaProg::MetaProg(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
@@ -34,7 +35,8 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
         pos, 0.3f, 0.0f, 32, 256, 102);
 
     if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
-      but[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));  // Red tint
+      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_light");
+      but[i]->SetBackgroundColor(_color);  // Red tint
     } else {
       but[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));  // Green tint
     }

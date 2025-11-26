@@ -3,6 +3,7 @@
 //
 
 #include "UIText.h"
+#include "../Managers/ColorPalette.h"
 #include "../Renderer/Font.h"
 #include "../Renderer/Shader.h"
 #include "../Renderer/Texture.h"
@@ -20,7 +21,7 @@ UIText::UIText(class Game* game,
       mFont(font),
       mPointSize(pointSize),
       mWrapLength(wrapLength),
-      mTextColor(Color::White),
+      mTextColor(ColorPalette::GetInstance().GetColorAsVec3("UI_Text")),
       mBackgroundColor(0.0f, 0.0f, 1.0f),
       mMargin(Vector2(50.0f, 10.f)) {
   SetText(text);

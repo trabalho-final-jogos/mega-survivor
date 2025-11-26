@@ -1,6 +1,6 @@
 #pragma once
 #include <array>
-#include "../../Components/UpgradeManager.h"
+#include "../../Managers/UpgradeManager.h"
 #include "UIScreen.h"
 
 const int cols = 3;
