@@ -4,11 +4,12 @@
 #include "../../../Components/ProjectilePoolComponent.h"
 #include "../../Aim.h"
 
-class BoomerangWeapon : public WeaponComponent
+class BoomerangGun : public WeaponComponent
 {
 public:
-    BoomerangWeapon(class Actor* owner, int updateOrder = 100);
+    BoomerangGun(class Actor* owner,int updateOrder = 100);
     void OnUpdate(float deltaTime) override;
+    void LevelUp() override;
 
 private:
     void FireShot();

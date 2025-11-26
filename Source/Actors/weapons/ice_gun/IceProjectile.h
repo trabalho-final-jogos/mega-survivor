@@ -8,8 +8,8 @@ public:
     IceProjectile(class Game* game, int width, int height);
 
     // Sobrescreve Awake para tocar a animação de gelo
-    void Awake(Actor* owner, const Vector2 &position, float rotation,
-               float lifetime) override;
+    void Awake(Actor *owner, const Vector2 &position, float rotation,
+               float lifetime, const Vector2 &velocity, float damage, float areaScale) override;
 
     // Sobrescreve as colisões para aplicar o efeito "slow"
     void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;

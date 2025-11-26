@@ -15,7 +15,7 @@ AuraActor::AuraActor(Game* game, Player* owner)
     , mCollider(nullptr)
     , mLevel(0)
     // Cor Padrão: Azul claro, 20% Opaco (Alpha = 0.2f)
-    , mAuraColor(1.0f, 0.4f, 0.0f, 0.25f)
+    , mAuraColor(1.0f, 0.4f, 0.0f)
     , mHitTimer(0.0f)
 {
     // 1. Cria o Colisor (mas NÃO um componente de desenho)
@@ -47,20 +47,18 @@ void AuraActor::LevelUp()
             mAreaScale = 1.5f; // 1.5x o tamanho do Player
             mDamage = 5.0f;
             mHitCooldown = 1.0f; // 1 tick de dano por segundo
-            mAuraColor = Vector4(1.0f, 0.4f, 0.0f, 0.25f);
+            mAuraColor = Vector3(1.0f, 0.4f, 0.0f);
             break;
         case 2:
             mAreaScale = 2.0f; // 2.0x o tamanho
             mDamage = 8.0f;
-            mAuraColor.w = 0.25f; // 25% Alpha (um pouco mais visível)
-            mAuraColor = Vector4(1.0f, 0.3f, 0.0f, 0.3f);
+            mAuraColor = Vector3(1.0f, 0.3f, 0.0f);
             break;
         case 3:
             mAreaScale = 2.5f;
             mDamage = 12.0f;
             mHitCooldown = 0.8f; // Ticks mais rápidos
-            mAuraColor.w = 0.3f; // 30% Alpha
-            mAuraColor = Vector4(1.0f, 0.3f, 0.0f, 0.35f);
+            mAuraColor = Vector3(1.0f, 0.3f, 0.0f);
             break;
         default: // Níveis > 3
             mAreaScale += 0.5f;

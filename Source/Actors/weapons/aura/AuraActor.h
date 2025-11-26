@@ -33,7 +33,7 @@ private:
     float mDamage;
     float mAreaScale;   // Multiplicador de tamanho
     float mHitCooldown; // Tempo (seg) entre "ticks" de dano no *mesmo* inimigo
-    Vector4 mAuraColor; // A cor semi-transparente (R, G, B, A)
+    Vector3 mAuraColor; // A cor semi-transparente (R, G, B, A)
     
     // --- Estado ---
     std::vector<Actor*> mEnemiesHitThisTick; // Inimigos já atingidos neste tick

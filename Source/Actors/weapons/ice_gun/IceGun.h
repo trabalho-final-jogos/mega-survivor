@@ -13,12 +13,12 @@ class Aim;
 class IceGun : public WeaponComponent
 {
 public:
-    IceGun(class Actor* owner, int updateOrder = 100);
+    IceGun(class Actor* owner,int updateOrder = 100);
     ~IceGun();
 
     // Implementa a lógica de cooldown e disparo automático
     void OnUpdate(float deltaTime) override;
-
+    void LevelUp() override;
 private:
     void FireShot(); // Dispara o leque
 

@@ -6,7 +6,7 @@
 #include "../../../Components/Physics/RigidBodyComponent.h"
 
 MainGun::MainGun(Actor* owner, int updateOrder)
-    : WeaponComponent(owner, updateOrder) // Chama a base
+    : WeaponComponent(owner, WeaponType::MainGun ,updateOrder) // Chama a base
     , mProjectilePool(nullptr)
     , mAimer(nullptr)
     , mBurstVelocity(Vector2::Zero) // Inicializa a velocidade da rajada
@@ -34,6 +34,8 @@ MainGun::MainGun(Actor* owner, int updateOrder)
 
     // 4. Guarda o ponteiro da mira (Aim*)
     mAimer = player->GetAim();
+
+    LevelUp();
 }
 
 MainGun::~MainGun()
@@ -41,6 +43,48 @@ MainGun::~MainGun()
     // A MainGun é a dona do pool, então ela o apaga
     // (O Game é o dono das balas, o destrutor do pool DEVE estar VAZIO)
     delete mProjectilePool;
+}
+void MainGun::LevelUp()
+{
+    mLevel++; // Sobe o nível
+    SDL_Log("MainGun subiu para o Nível %d!", mLevel);
+
+    // Define as estatísticas com base no novo nível
+    switch(mLevel)
+    {
+        case 1:
+            mCooldownTime = 0.8f;
+            mBurstCount = 3;
+            mBurstDelay = 0.12f;
+            mProjectileSpeed = 600.0f;
+            mProjectileLifetime = 1.0f;
+            mDamage = 10.0f;
+            mAreaScale = 1.0f; // 100% do tamanho
+            break;
+        case 2:
+            mCooldownTime = 0.7f; // Cooldown menor
+            mBurstCount = 3;
+            mBurstDelay = 0.12f;
+            mProjectileSpeed = 600.0f;
+            mProjectileLifetime = 1.0f;
+            mDamage = 15.0f; // Dano maior
+            mAreaScale = 1.0f;
+            break;
+        case 3:
+            mCooldownTime = 0.7f;
+            mBurstCount = 4; // Mais um projétil na rajada
+            mBurstDelay = 0.10f; // Rajada mais rápida
+            mProjectileSpeed = 600.0f;
+            mProjectileLifetime = 1.0f;
+            mDamage = 15.0f;
+            mAreaScale = 1.2f; // 20% maior
+            break;
+            // Adicione mais 'case' para Nível 4, 5, etc.
+        default:
+            // Se o nível máximo for atingido, apenas melhora o dano
+            mDamage += 5.0f;
+            break;
+    }
 }
 
 void MainGun::OnUpdate(float deltaTime)
@@ -56,12 +100,12 @@ void MainGun::OnUpdate(float deltaTime)
         {
             FireShot(); // Dispara (agora usa a velocidade guardada)
             mBurstShotsLeft--;
-            mBurstTimer = BURST_DELAY;
+            mBurstTimer = mBurstDelay;
 
             if (mBurstShotsLeft == 0)
             {
                 mIsFiringBurst = false;
-                mCooldownTimer = COOLDOWN_TIME;
+                mCooldownTimer = mCooldownTime;
             }
         }
     }
@@ -70,7 +114,7 @@ void MainGun::OnUpdate(float deltaTime)
     {
         // --- INICIA UMA NOVA RAJADA ---
         mIsFiringBurst = true;
-        mBurstShotsLeft = BURST_COUNT;
+        mBurstShotsLeft = mBurstCount;
         mBurstTimer = 0.0f; // Dispara o primeiro tiro imediatamente
 
         // --- CORREÇÃO DO BUG: CALCULA A VELOCIDADE *UMA VEZ* E GUARDA ---
@@ -88,7 +132,7 @@ void MainGun::OnUpdate(float deltaTime)
         Vector2 playerVelocity = player->GetComponent<RigidBodyComponent>()->GetVelocity();
 
         // Calcula a velocidade final da bala e guarda no membro da classe
-        mBurstVelocity = (direction * PROJECTILE_SPEED) + playerVelocity;
+        mBurstVelocity = (direction * mProjectileSpeed) + playerVelocity;
         // ----------------------------------------------------
     }
 }
@@ -105,9 +149,9 @@ void MainGun::FireShot()
     if (p)
     {
         // "Acorda" a bala na posição atual do jogador
-        p->Awake(mOwner, playerPos, mOwner->GetRotation(), PROJECTILE_LIFETIME);
+        p->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime, mBurstVelocity, mDamage, mAreaScale);
 
         // --- USA A VELOCIDADE GUARDADA ---
-        p->GetComponent<RigidBodyComponent>()->SetVelocity(mBurstVelocity);
+        //p->GetComponent<RigidBodyComponent>()->SetVelocity(mBurstVelocity);
     }
 }

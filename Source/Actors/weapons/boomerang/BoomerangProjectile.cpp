@@ -31,14 +31,14 @@ BoomerangProjectile::BoomerangProjectile(Game* game, int width, int height)
   mDrawComponent->SetVisible(false);
 }
 
-void BoomerangProjectile::Awake(Actor* owner,
-                                const Vector2& position,
+void BoomerangProjectile::Awake(Actor *owner,
+                                const Vector2 &position,
                                 float rotation,
-                                float lifetime) {
+                                float lifetime, const Vector2 &velocity, float damage, float areaScale) {
   // 1. Chama a base (define mShooter, Posição, Vida, Estado, Ativa
   // Colisor/Desenho)
   //    Passamos Vector2::Zero para a velocidade da base, pois não a usaremos.
-  Projectile::Awake(owner, position, rotation, lifetime);
+    Projectile::Awake(owner, position, rotation, lifetime, velocity,damage, areaScale);
 
   // 2. Reseta o estado da curva de Bézier
   mTimeElapsed = 0.0f;

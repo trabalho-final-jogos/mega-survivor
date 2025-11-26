@@ -19,11 +19,11 @@ IceProjectile::IceProjectile(Game* game, int width, int height)
     }
 }
 
-void IceProjectile::Awake(Actor* owner, const Vector2 &position, float rotation,
-                           float lifetime)
+void IceProjectile::Awake(Actor *owner, const Vector2 &position, float rotation,
+                          float lifetime, const Vector2 &velocity, float damage, float areaScale)
 {
     // 1. Chama a lógica base (ativa o ator, define pos/vel, etc.)
-    Projectile::Awake(owner, position, rotation, lifetime);
+    Projectile::Awake(owner, position, rotation, lifetime,velocity,damage, areaScale);
 
     // 2. Define a animação "fly_ice" para tocar
     if (mDrawComponent)

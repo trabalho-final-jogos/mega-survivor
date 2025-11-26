@@ -40,16 +40,19 @@ void Projectile::Kill()
         mRigidBodyComponent->SetVelocity(Vector2::Zero);
 }
 
-void Projectile::Awake(Actor* owner, const Vector2 &position, float rotation, float lifetime)
+void Projectile::Awake(Actor* owner, const Vector2 &position, float rotation,
+                     float lifetime, const Vector2& velocity,
+                     float damage, float areaScale)
 {
-        mShooter = owner;
-        mLifeTime = lifetime;
-        mIsDead = false;
-        SetState(ActorState::Active);
-        mDrawComponent->SetVisible(true);
-        mColliderComponent->SetEnabled(true);
-        SetPosition(position);
-        SetRotation(rotation);
+    mShooter = owner;
+    mLifeTime = lifetime;
+    mIsDead = false;
+    SetState(ActorState::Active);
+    mDrawComponent->SetVisible(true);
+    mColliderComponent->SetEnabled(true);
+    SetPosition(position);
+    SetRotation(rotation);
+    mRigidBodyComponent->SetVelocity(velocity);
 }
 
 void Projectile::OnUpdate(float deltaTime)
