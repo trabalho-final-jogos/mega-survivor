@@ -241,20 +241,35 @@ void Game::ProcessInput() {
         Quit();
         break;
 
-      case SDL_KEYDOWN:               // ADD: Detect key presses
-        if (event.key.repeat == 0) {  // Ignore repeat
-          for (auto ui : mUIStack) {
-            ui->HandleKeyPress(event.key.keysym.sym);  // Pass SDL key code
+      case SDL_KEYDOWN:
+        if (event.key.repeat == 0) {
+          if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (mCurrentScene == GameScene::Level1) {
+              if (!mIsPaused) {
+                SetPaused(true);
+                new PausedMenu(this, std::string(GAME_FONT));
+              }
+            } else {
+              if (!mUIStack.empty()) {
+                mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
+              }
+            }
+          } else {
+            if (!mUIStack.empty()) {
+              mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
+            }
           }
         }
         break;
     }
   }
 
-  // Handle actors (continuous keys)
-  const Uint8* state = SDL_GetKeyboardState(nullptr);
-  for (auto actor : mActors) {
-    actor->ProcessInput(state);
+  if (!mIsPaused) {
+    // Handle actors (continuous keys)
+    const Uint8* state = SDL_GetKeyboardState(nullptr);
+    for (auto actor : mActors) {
+      actor->ProcessInput(state);
+    }
   }
 }
 
@@ -266,10 +281,12 @@ void Game::UpdateGame(float deltaTime) {
   }
 
   // Update all actors and pending actors
-  UpdateActors(deltaTime);
+  if (!mIsPaused) {
+    UpdateActors(deltaTime);
 
-  // Update camera position
-  UpdateCamera();
+    // Update camera position
+    UpdateCamera();
+  }
 
   UpdateMouseWorldPos();
 }
@@ -416,6 +433,8 @@ void Game::SetScene(GameScene nextScene) {
   }
 
   UnloadScene();
+
+  mCurrentScene = nextScene;
 
   switch (nextScene) {
     case GameScene::MainMenu: {

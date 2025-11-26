@@ -115,6 +115,8 @@ class Game {
   // Track elapsed time since game start
   Uint32 mTicksCount;
 
+  GameScene mCurrentScene;
+
   // Track if we're updating actors right now
   bool mIsRunning;
   bool mIsDebugging;
