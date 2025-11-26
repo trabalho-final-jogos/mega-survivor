@@ -65,11 +65,32 @@ void Goomba::OnUpdate(float deltaTime)
 
                 }
         }
-        float bottomOfLevel = Game::LEVEL_HEIGHT * Game::TILE_SIZE;
+        const Player* player = GetGame()->GetPlayer();
 
-        if (GetPosition().y > (bottomOfLevel + (Game::TILE_SIZE * 2)))
+        if (player)
         {
-                SetState(ActorState::Destroy);
+                Vector2 playerPos = player->GetPosition();
+                Vector2 myPos = GetPosition();
+
+                // 2. Calcula o vetor direção
+                Vector2 direction = playerPos - myPos;
+
+                // 3. Normaliza para ter apenas a direção (comprimento 1)
+                if (direction.LengthSq() > 0.0f)
+                {
+                        direction.Normalize();
+                }
+
+                // 4. Aplica o movimento (usando a velocidade e o fator de slow)
+                // (Lembrando de não usar gravidade no eixo Y em top-down)
+                if (mRigidBodyComponent)
+                {
+                        // Se você tem lógica de slow (mSpeedFactor), use-a aqui
+                        // float speed = mWalkSpeed * mSpeedFactor;
+                        float speed = mForwardSpeed; // Simples por enquanto
+
+                        mRigidBodyComponent->SetVelocity(direction * speed);
+                }
         }
 }
 

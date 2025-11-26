@@ -168,7 +168,7 @@ void Game::BuildLevel(int** levelData, int width, int height) {
           break;
 
         case 10: {
-          auto spawner = new Spawner(this, 400.f);
+          auto spawner = new Spawner(this);
           spawner->SetPosition(pos);
         } break;
         case 0: {
