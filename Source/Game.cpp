@@ -276,6 +276,12 @@ void Game::ProcessInput() {
 }
 
 void Game::UpdateGame(float deltaTime) {
+  for (auto* ui : mUIStack) {
+    if (ui->GetState() == UIScreen::UIState::Active) {
+      ui->Update(deltaTime);
+    }
+  }
+
   // Update all actors and pending actors
   UpdateActors(deltaTime);
 

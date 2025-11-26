@@ -1,42 +1,140 @@
 #include "MetaProg.h"
-#include "../../Actors/Player.h"
+#include "../../Components/UpgradeManager.h"
 #include "../../Game.h"
 
 MetaProg::MetaProg(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
-  // Adiciona a logo do jogo centralizada no topo da tela
-  // Ajuste o caminho conforme necessário
-  AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+  auto& mgr = UpgradeManager::GetInstance();
 
-  // Cria e configura o botão "Iniciar Jogo"
-  UIButton* startButton = AddButton(
-      "New game",
-      [this]() {
-        Close();                             // Fecha a tela de menu
-        mGame->SetScene(GameScene::Level1);  // Inicia o jogo
-      },
-      Vector2(0.0f, -100.0f),  // Posição centralizada
-      0.5f, 0.0f, 40, 1024, 101);
+  AddText("Upgrades", Vector2(0.0f, 150.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  // Configura cores: fundo azul, texto branco
-  startButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
-  startButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+  mCurrencyText = AddText("Currency: " + std::to_string(mgr.GetCurrency()),
+                          Vector2(200.0f, 100.0f), 0.3f, 0.0f, 32, 512, 100);
 
-  // Cria e configura o botão "Fechar Jogo"
-  UIButton* quitButton = AddButton(
-      "Exit",
-      [this]() {
-        mGame->Quit();  // Fecha o jogo
-      },
-      Vector2(0.0f, -150.0f),  // Posição abaixo do primeiro botão
-      0.5f, 0.0f, 40, 1024, 101);
+  UIButton* but[7];
 
-  mSelectedButtonIndex = 0;
-  if (!mButtons.empty()) {
-    mButtons[0]->SetHighlighted(true);
+  for (size_t i = 0; i < statButtons.size(); ++i) {
+    int col = i % cols;
+    int row = i / cols;
+    Vector2 pos(startX + col * spacingX, startY - row * spacingY);
+
+    std::string buttonText =
+        statButtons[i].first + " (Lvl " +
+        std::to_string(mgr.GetUpgradeLevel(statButtons[i].second)) +
+        ") - Cost: " +
+        std::to_string(mgr.GetUpgradeCost(statButtons[i].second));
+
+    but[i] = AddButton(
+        buttonText,
+        [&mgr, type = statButtons[i].second]() {
+          if (mgr.CanAfford(type)) {
+            mgr.Purchase(type);
+          }
+        },
+        pos, 0.3f, 0.0f, 32, 256, 102);
+
+    if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
+      but[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));  // Red tint
+    } else {
+      but[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));  // Green tint
+    }
+
+    mUpgradeButtons[i] = but[i];
+
+    mSelectedButtonIndex = 0;
+    if (!mButtons.empty()) {
+      mButtons[0]->SetHighlighted(true);
+    }
+  }
+}
+
+void MetaProg::Update(float deltaTime) {
+  UIScreen::Update(deltaTime);  // Call base
+
+  auto& mgr = UpgradeManager::GetInstance();
+
+  // Refresh currency
+  if (mCurrencyText) {
+    mCurrencyText->SetText("Currency: " + std::to_string(mgr.GetCurrency()));
   }
 
-  // Configura cores: fundo azul, texto branco
-  quitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
-  quitButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+  // Refresh 7 upgrade buttons
+  for (size_t i = 0; i < mUpgradeButtons.size() && mUpgradeButtons[i]; ++i) {
+    // Or recreate buttonText as in ctor:
+    std::string newText =
+        statButtons[i].first + " (Lvl " +  // Assume statButtons local or member
+        std::to_string(
+            static_cast<int>(mgr.GetUpgradeLevel(statButtons[i].second))) +
+        ") - Cost: " +
+        std::to_string(mgr.GetUpgradeCost(statButtons[i].second));
+    mUpgradeButtons[i]->SetText(newText);
+
+    if (!mgr.CanAfford(statButtons[i].second)) {
+      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));
+    } else {
+      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));
+    }
+  }
+}
+
+void MetaProg::HandleKeyPress(int key) {
+  if (mButtons.empty())
+    return;
+
+  int oldIndex = mSelectedButtonIndex;
+
+  switch (key) {
+    case SDLK_UP:
+    case SDLK_w:
+      if (mSelectedButtonIndex > 0)
+        mSelectedButtonIndex -= cols;
+      else
+        mSelectedButtonIndex = static_cast<int>(mButtons.size()) - 1;
+      break;
+
+    case SDLK_DOWN:
+    case SDLK_s:
+      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
+        mSelectedButtonIndex += cols;
+      else
+        mSelectedButtonIndex = 0;
+      break;
+
+    case SDLK_RIGHT:
+    case SDLK_d:
+      if ((mSelectedButtonIndex + 1) % cols != 0 &&
+          mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
+        mSelectedButtonIndex++;
+      break;
+
+    case SDLK_LEFT:
+    case SDLK_a:
+      if (mSelectedButtonIndex % cols != 0)
+        mSelectedButtonIndex--;
+      break;
+
+    case SDLK_RETURN:    // Enter works ✓
+    case SDLK_KP_ENTER:  // Numpad Enter
+      if (mSelectedButtonIndex >= 0 &&
+          mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
+        mButtons[mSelectedButtonIndex]->OnClick();
+      }
+      break;
+
+    case SDLK_ESCAPE:
+      mGame->SetScene(GameScene::MainMenu);
+      break;
+
+    default:
+      break;
+  }
+
+  // Update highlight
+  if (oldIndex != mSelectedButtonIndex) {
+    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size()))
+      mButtons[oldIndex]->SetHighlighted(false);
+    if (mSelectedButtonIndex >= 0 &&
+        mSelectedButtonIndex < static_cast<int>(mButtons.size()))
+      mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+  }
 }
