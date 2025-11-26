@@ -1,17 +1,22 @@
-//
-// Created by Lucas N. Ferreira on 30/09/23.
-//
-
+// Spawner.h
 #pragma once
-
 #include "Actor.h"
+#include "../Math.h"
 
 class Spawner : public Actor
 {
 public:
-    explicit Spawner(Game* game, float spawnDistance);
+    Spawner(class Game* game);
 
     void OnUpdate(float deltaTime) override;
+
 private:
-    float mSpawnDistance;
+    void SpawnEnemy();
+
+    // Temporizador para controlar a frequência de criação
+    float mSpawnTimer;
+    float mSpawnInterval; // Tempo entre inimigos (ex: 1.0s)
+
+    // Dificuldade: diminui o intervalo com o tempo
+    float mDifficultyTimer;
 };

@@ -1,6 +1,7 @@
 #include "Level1.h"
 #include "../../Actors/Player.h"
 #include "../../Game.h"
+#include "../../Actors/Spawner.h"
 
 Level1::Level1(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
@@ -10,14 +11,16 @@ Level1::Level1(Game* game, const std::string& fontName)
 
   SDL_Log("Level data loaded for Level 1-1");
 
-  mGame->BuildLevel(level, Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
+  //mGame->BuildLevel(level, Game::LEVEL_WIDTH, Game::LEVEL_HEIGHT);
 
   SDL_Log("Level 1-1 built successfully");
 
   if (!mGame->GetPlayer()) {
     Player* player = new Player(mGame);
-    player->SetPosition(Vector2(Game::TILE_SIZE / 2, Game::TILE_SIZE / 2));
+    player->SetPosition(Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
     mGame->SetPlayer(player);
+
+    new Spawner(mGame);
   }
 
   mGame->UpdateCamera();
