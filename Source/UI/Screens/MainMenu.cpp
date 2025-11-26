@@ -55,6 +55,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
+    mButtons[0]->SetSelected(true);
   }
 }
 

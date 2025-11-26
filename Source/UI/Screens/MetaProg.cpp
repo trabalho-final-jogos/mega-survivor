@@ -46,6 +46,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
     mSelectedButtonIndex = 0;
     if (!mButtons.empty()) {
       mButtons[0]->SetHighlighted(true);
+      mButtons[0]->SetSelected(true);
     }
   }
 }
@@ -133,10 +134,14 @@ void MetaProg::HandleKeyPress(int key) {
 
   // Update highlight
   if (oldIndex != mSelectedButtonIndex) {
-    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size()))
+    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
+      mButtons[oldIndex]->SetSelected(false);
+    }
     if (mSelectedButtonIndex >= 0 &&
-        mSelectedButtonIndex < static_cast<int>(mButtons.size()))
+        mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+      mButtons[mSelectedButtonIndex]->SetSelected(true);
+    }
   }
 }

@@ -36,6 +36,18 @@ void UIButton::OnClick() {
   }
 }
 
+void UIButton::SetBackgroundColor(const Vector3& color) {
+  mBackgroundColor = color;
+}
+
+void UIButton::SetTextColor(const Vector3& color) {
+  UIText::SetTextColor(color);
+}
+
+void UIButton::SetText(const std::string& text) {
+  UIText::SetText(text);
+}
+
 void UIButton::Draw(class Shader* shader) {
   // Simulate alpha with brightness for Vector3
 

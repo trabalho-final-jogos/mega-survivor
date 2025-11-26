@@ -27,7 +27,9 @@ class UIButton : public UIText {
   void Draw(class Shader* shader) override;
 
   void SetHighlighted(bool sel) { mHighlighted = sel; }
-  void SetBackgroundColor(const Vector3& color) { mBackgroundColor = color; }
+  void SetBackgroundColor(const Vector3& color);
+  void SetTextColor(const Vector3& color);
+  void SetText(const std::string& text);
   void SetScale(float scale) { mScale = scale; }
   void SetSelected(bool sel) { mSelected = sel; }
   bool GetHighlighted() const { return mHighlighted; }
@@ -45,5 +47,5 @@ class UIButton : public UIText {
   // Check if the button is highlighted
   bool mHighlighted;
 
-  bool mSelected;
+  bool mSelected{false};
 };

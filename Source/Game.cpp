@@ -21,6 +21,7 @@
 #include "CSV.h"
 #include "Components/Drawing/DrawComponent.h"
 #include "Components/Physics/RigidBodyComponent.h"
+#include "Managers/ColorPalette.h"
 #include "Random.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
@@ -43,6 +44,8 @@ Game::Game()
 
 bool Game::Initialize() {
   Random::Init();
+
+  ColorPalette::GetInstance().InitializeBasePalette();
 
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -175,33 +178,34 @@ void Game::BuildLevel(int** levelData, int width, int height) {
           auto b = new Block(this, "../Assets/Sprites/Chao/0052.png");
           b->SetPosition(pos);
         } break;
-          case 10: {
+        case 10: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0053.png");
           b->SetPosition(pos);
         } break;
-          case 6: {
+        case 6: {
           auto b = new Block(this, "../Assets/Sprites/Chao/005.png");
           b->SetPosition(pos);
         } break;
-          case 8: {
+        case 8: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0051.png");
           b->SetPosition(pos);
-        } break;case 5: {
+        } break;
+        case 5: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0023.png");
           b->SetPosition(pos);
-        } break;case 1: {
+        } break;
+        case 1: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0021.png");
           b->SetPosition(pos);
         } break;
-          case 2: {
+        case 2: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0024.png");
           b->SetPosition(pos);
         } break;
-          case 4: {
+        case 4: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0022.png");
           b->SetPosition(pos);
         } break;
-
       }
     }
   }
