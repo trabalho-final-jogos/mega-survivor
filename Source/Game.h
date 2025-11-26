@@ -14,7 +14,7 @@
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
-enum class GameScene { MainMenu, PausedMenu, UpgradeStore, Level1 };
+enum class GameScene { MainMenu, UpgradeStore, Level1 };
 
 class Game {
  public:

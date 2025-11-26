@@ -83,8 +83,9 @@ void MetaProg::Update(float deltaTime) {
 }
 
 void MetaProg::HandleKeyPress(int key) {
-  if (mButtons.empty())
+  if (mButtons.empty()) {
     return;
+  }
 
   int oldIndex = mSelectedButtonIndex;
 
