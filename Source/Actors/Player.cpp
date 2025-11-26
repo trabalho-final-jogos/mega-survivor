@@ -28,7 +28,6 @@ Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
       mIsInvulnerable(false),
       mInvulnerabilityTimer(0.0f),
       mAimer(nullptr) {
-  name = "Mario";
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
   mDrawComponent = new AnimatorComponent(
       this, "../Assets/Sprites/player/player.png",
@@ -61,8 +60,6 @@ void Player::OnProcessInput(const uint8_t* state) {
   mIsRunning = false;
   Vector2 velocity = Vector2::Zero;  // Começa com velocidade zero
 
-  // --- NOVA LÓGICA TOP-DOWN (W/A/S/D) ---
-
   // Eixo Y (Norte/Sul)
   if (state[SDL_SCANCODE_W]) {
     velocity.y = -mForwardSpeed;  // Y negativo é para CIMA
@@ -77,28 +74,17 @@ void Player::OnProcessInput(const uint8_t* state) {
   if (state[SDL_SCANCODE_D]) {
     velocity.x = mForwardSpeed;
     mIsRunning = true;
-    // if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(true); }
   }
   if (state[SDL_SCANCODE_A]) {
     velocity.x = -mForwardSpeed;
     mIsRunning = true;
-    // if(mDrawComponent) { mDrawComponent->SetFlipHorizontal(false); }
   }
 
-  // Normalizar velocidade diagonal (opcional, mas recomendado)
-  // Se estiver andando na diagonal, a velocidade será > mForwardSpeed.
-  // Isso corrige para que a velocidade diagonal seja a mesma da
-  // horizontal/vertical.
   if (velocity.LengthSq() > mForwardSpeed * mForwardSpeed) {
     velocity.Normalize();
     velocity *= mForwardSpeed;
   }
 
-  // --- REMOVER LÓGICA DE PULO ---
-  // if (state[SDL_SCANCODE_SPACE] && mIsOnGround) { ... } // REMOVIDO
-
-  // --- APLICAÇÃO FINAL ---
-  // Define a velocidade diretamente (controle arcade)
   mRigidBodyComponent->SetVelocity(velocity);
 }
 void Player::OnUpdate(float deltaTime) {
@@ -115,17 +101,12 @@ void Player::OnUpdate(float deltaTime) {
       if (mDrawComponent) {
         mDrawComponent->SetVisible(true);
       }
-      SDL_Log("Mario nao esta mais invulneravel.");
     }
   }
   if (mRigidBodyComponent) {
     Vector2 velocity = mRigidBodyComponent->GetVelocity();
-
-    if (!Math::NearlyZero(velocity.y)) {
-      // SetOffGround();
-    }
   }
-  // Pega a posição atual do Mario (que já foi atualizada pela física)
+
   Vector2 pos = GetPosition();
 
   // Pega as "meias-dimensões" do Mario
@@ -334,9 +315,6 @@ void Player::Shrink() {
 }
 
 void Player::EquipWeapon(WeaponType type) {
-  // (Verificação opcional para ver se já tem a arma)
-  // if (GetComponent<ShotgunComponent>() != nullptr) { return; }
-
   switch (type) {
     case WeaponType::Pistol:
       new MainGun(this);  // (Renomeado de PistolComponent)
