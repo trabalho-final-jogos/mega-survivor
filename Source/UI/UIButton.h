@@ -27,6 +27,9 @@ class UIButton : public UIText {
   void Draw(class Shader* shader) override;
 
   void SetHighlighted(bool sel) { mHighlighted = sel; }
+  void SetBackgroundColor(const Vector3& color) { mBackgroundColor = color; }
+  void SetScale(float scale) { mScale = scale; }
+  void SetSelected(bool sel) { mSelected = sel; }
   bool GetHighlighted() const { return mHighlighted; }
 
   // Returns true if the point is within the button's bounds
@@ -41,4 +44,6 @@ class UIButton : public UIText {
 
   // Check if the button is highlighted
   bool mHighlighted;
+
+  bool mSelected;
 };
