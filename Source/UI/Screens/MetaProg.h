@@ -24,7 +24,7 @@ class MetaProg : public UIScreen {
       {{"Speed", StatType::Speed},
        {"Damage", StatType::Damage},
        {"Area", StatType::Area},
-       {"Projectiles", StatType::Projectiles},
+       {"Projec", StatType::Projectiles},
        {"Regen", StatType::Regen},
        {"Lucky", StatType::Lucky},
        {"Health", StatType::Health}}};

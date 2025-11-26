@@ -35,10 +35,11 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
         pos, 0.3f, 0.0f, 32, 256, 102);
 
     if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
-      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_light");
-      but[i]->SetBackgroundColor(_color);  // Red tint
+      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
+      but[i]->SetBackgroundColor(_color);
     } else {
-      but[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));  // Green tint
+      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Lime_green");
+      but[i]->SetBackgroundColor(_color);
     }
 
     mUpgradeButtons[i] = but[i];
@@ -52,7 +53,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
 }
 
 void MetaProg::Update(float deltaTime) {
-  UIScreen::Update(deltaTime);  // Call base
+  UIScreen::Update(deltaTime);
 
   auto& mgr = UpgradeManager::GetInstance();
 
@@ -61,7 +62,6 @@ void MetaProg::Update(float deltaTime) {
     mCurrencyText->SetText("Currency: " + std::to_string(mgr.GetCurrency()));
   }
 
-  // Refresh 7 upgrade buttons
   for (size_t i = 0; i < mUpgradeButtons.size() && mUpgradeButtons[i]; ++i) {
     // Or recreate buttonText as in ctor:
     std::string newText =
@@ -73,9 +73,11 @@ void MetaProg::Update(float deltaTime) {
     mUpgradeButtons[i]->SetText(newText);
 
     if (!mgr.CanAfford(statButtons[i].second)) {
-      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));
+      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
+      mUpgradeButtons[i]->SetBackgroundColor(_color);
     } else {
-      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));
+      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Lime_green");
+      mUpgradeButtons[i]->SetBackgroundColor(_color);
     }
   }
 }
