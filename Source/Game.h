@@ -33,6 +33,7 @@ class Game {
 
   void SetScene(GameScene scene);
   void UnloadScene();
+  void ResetGame();
 
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }

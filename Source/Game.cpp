@@ -315,6 +315,11 @@ void Game::UpdateActors(float deltaTime) {
   }
 }
 
+void Game::ResetGame() {
+  UnloadScene();
+  SetScene(GameScene::MainMenu);
+}
+
 void Game::UpdateCamera() {
   if (!mPlayer) {
     return;

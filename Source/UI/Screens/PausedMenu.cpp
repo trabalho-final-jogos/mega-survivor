@@ -24,8 +24,8 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
       "Continue",
       [this]() {
         // só fecha o menu de pausa
-        Close();
         mGame->SetPaused(false);
+        Close();
       },
       Vector2(0.0f, 0.0f), 0.3f, 0.0f, 40, 1024, 101);
 
@@ -34,12 +34,7 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
 
   // Botão "Voltar ao menu"
   UIButton* exitButton = AddButton(
-      "Exit to main menu",
-      [this]() {
-        mGame->SetPaused(false);
-        Close();
-        mGame->SetScene(GameScene::MainMenu);
-      },
+      "Exit to main menu", [this]() { mGame->ResetGame(); },
       Vector2(0.0f, -50.0f), 0.3f, 0.0f, 40, 1024, 101);
 
   exitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
@@ -81,6 +76,11 @@ void PausedMenu::HandleKeyPress(int key) {
           mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
         mButtons[mSelectedButtonIndex]->OnClick();
       }
+      break;
+
+    case SDLK_ESCAPE:
+      mGame->SetPaused(false);
+      Close();
       break;
 
     default:
