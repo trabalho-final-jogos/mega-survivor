@@ -7,8 +7,8 @@ class BoomerangProjectile : public Projectile
 public:
     BoomerangProjectile(class Game* game, int width, int height);
 
-    void Awake(Actor* owner, const Vector2 &position, float rotation,
-               float lifetime) override;
+    void Awake(Actor *owner, const Vector2 &position, float rotation,
+               float lifetime, const Vector2 &velocity, float damage, float areaScale) override;
 
     void OnUpdate(float deltaTime) override;
 

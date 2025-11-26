@@ -14,9 +14,12 @@
 #include "../Game.h"
 #include "Block.h"
 #include "weapons/WeaponType.h"
-#include "weapons/boomerang/BoomerangWeapon.h"
+#include "weapons/boomerang/BoomerangGun.h"
 #include "weapons/ice_gun/IceGun.h"
 #include "weapons/main_gun/MainGun.h"
+#include "weapons/saw_blade/SawGun.h"
+#include "weapons/aura/AuraWeapon.h"
+#include "weapons/laser_beam/LaserGun.h"
 
 Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
     : Actor(game),
@@ -47,9 +50,10 @@ Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
   SetOnGround();
 
   mAimer = new Aim(this->GetGame(), this);
-  new MainGun(this);
-  new BoomerangWeapon(this);
+    /*new MainGun(this);
+  new BoomerangGun(this);
   new IceGun(this);
+*/
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -86,7 +90,122 @@ void Player::OnProcessInput(const uint8_t* state) {
   }
 
   mRigidBodyComponent->SetVelocity(velocity);
+
+
+  //Input de teste para habilitar e desabilitar as armas
+  // ---- Detecção de um toque por tecla (flags estáticas) ----
+static bool keyDown[7] = { false };
+// Usaremos índices 1–6, ignorando o 0.
+
+
+// ---- Tecla 1: Alterna MainGun ----
+if (state[SDL_SCANCODE_1])
+{
+    if (!keyDown[1])
+    {
+        keyDown[1] = true;
+
+        MainGun* gun = GetComponent<MainGun>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::MainGun);
+        } else {
+            EquipWeapon(WeaponType::MainGun);
+        }
+    }
 }
+else keyDown[1] = false;
+
+
+// ---- Tecla 2: Alterna IceGun ----
+if (state[SDL_SCANCODE_2])
+{
+    if (!keyDown[2])
+    {
+        keyDown[2] = true;
+
+        IceGun* gun = GetComponent<IceGun>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::IceGun);
+        } else {
+            EquipWeapon(WeaponType::IceGun);
+        }
+    }
+}
+else keyDown[2] = false;
+
+
+// ---- Tecla 3: Alterna BoomerangGun ----
+if (state[SDL_SCANCODE_3])
+{
+    if (!keyDown[3])
+    {
+        keyDown[3] = true;
+
+        BoomerangGun* gun = GetComponent<BoomerangGun>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::BoomerangGun);
+        } else {
+            EquipWeapon(WeaponType::BoomerangGun);
+        }
+    }
+}
+else keyDown[3] = false;
+
+
+// ---- Tecla 4: Alterna SawGun ----
+if (state[SDL_SCANCODE_4])
+{
+    if (!keyDown[4])
+    {
+        keyDown[4] = true;
+
+        SawGun* gun = GetComponent<SawGun>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::SawGun);
+        } else {
+            EquipWeapon(WeaponType::SawGun);
+        }
+    }
+}
+else keyDown[4] = false;
+
+
+// ---- Tecla 5: Alterna Aura ----
+if (state[SDL_SCANCODE_5])
+{
+    if (!keyDown[5])
+    {
+        keyDown[5] = true;
+
+        AuraWeapon* gun = GetComponent<AuraWeapon>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::Aura);
+        } else {
+            EquipWeapon(WeaponType::Aura);
+        }
+    }
+}
+else keyDown[5] = false;
+
+
+// ---- Tecla 6: Alterna LaserGun ----
+if (state[SDL_SCANCODE_6])
+{
+    if (!keyDown[6])
+    {
+        keyDown[6] = true;
+
+        AuraWeapon* gun = GetComponent<AuraWeapon>();
+        if (gun && gun->IsEnabled()) {
+            UnequipWeapon(WeaponType::LaserGun);
+        } else {
+            EquipWeapon(WeaponType::LaserGun);
+        }
+    }
+}
+else keyDown[6] = false;
+}
+
 void Player::OnUpdate(float deltaTime) {
   if (mIsInvulnerable) {
     mInvulnerabilityTimer -= deltaTime;
@@ -314,13 +433,68 @@ void Player::Shrink() {
   mColliderComponent->SetSize(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 }
 
-void Player::EquipWeapon(WeaponType type) {
-  switch (type) {
-    case WeaponType::Pistol:
-      new MainGun(this);  // (Renomeado de PistolComponent)
-      break;
-    case WeaponType::Shotgun:
-      // new ShotgunComponent(this); // (Exemplo futuro)
-      break;
-  }
+void Player::EquipWeapon(WeaponType type)
+{
+    Component* compToEquip = nullptr;
+    switch(type)
+    {
+        case WeaponType::MainGun: compToEquip = GetComponent<MainGun>(); break;
+        case WeaponType::IceGun: compToEquip = GetComponent<IceGun>(); break;
+        case WeaponType::BoomerangGun: compToEquip = GetComponent<BoomerangGun>(); break;
+        case WeaponType::SawGun: compToEquip = GetComponent<SawGun>(); break;
+        case WeaponType::Aura: compToEquip = GetComponent<AuraWeapon>(); break;
+        case WeaponType::LaserGun: compToEquip = GetComponent<LaserGun>(); break;
+
+    }
+
+    // 2. Se a arma já existe...
+    if (compToEquip != nullptr)
+    {
+        // ...apenas a reativa.
+        compToEquip->SetEnabled(true);
+        SDL_Log("DEBUG: Reativando arma tipo: %d", (int)type);
+    }
+    // 3. Se a arma não existe, cria-a (Nível 1)
+    else
+    {
+        SDL_Log("DEBUG: Criando nova arma tipo: %d", (int)type);
+        switch(type)
+        {
+            case WeaponType::MainGun: new MainGun(this); break;
+            case WeaponType::IceGun: new IceGun(this); break;
+            case WeaponType::BoomerangGun: new BoomerangGun(this); break;
+            case WeaponType::SawGun: new SawGun(this); break;
+            case WeaponType::Aura: new AuraWeapon(this); break;
+            case WeaponType::LaserGun: new LaserGun(this); break;
+
+
+        }
+    }
+
+
+}
+
+void Player::UnequipWeapon(WeaponType type)
+{
+    Component* compToUnequip = nullptr;
+
+    // Encontra o componente da arma pelo tipo
+    switch(type)
+    {
+        case WeaponType::MainGun: compToUnequip = GetComponent<MainGun>(); break;
+        case WeaponType::IceGun: compToUnequip = GetComponent<IceGun>(); break;
+        case WeaponType::BoomerangGun: compToUnequip = GetComponent<BoomerangGun>(); break;
+        case WeaponType::SawGun: compToUnequip = GetComponent<SawGun>(); break;
+        case WeaponType::Aura: compToUnequip = GetComponent<AuraWeapon>(); break;
+        case WeaponType::LaserGun: compToUnequip = GetComponent<LaserGun>(); break;
+
+    }
+
+    // Se encontramos a arma...
+    if (compToUnequip != nullptr)
+    {
+        SDL_Log("DEBUG: Desativando arma tipo: %d", (int)type);
+        // Apenas a desativa. Ela continua a existir.
+        compToUnequip->SetEnabled(false);
+    }
 }

@@ -6,8 +6,11 @@
 // Este enum define os "IDs" para todos os tipos de armas no jogo.
 enum class WeaponType
 {
-    Pistol,
-    Shotgun,
-    LaserBeam
+    MainGun,
+    IceGun,
+    BoomerangGun,
+    LaserGun,
+    SawGun,
+    Aura
     // Adicione mais tipos aqui no futuro
 };

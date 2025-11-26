@@ -1,10 +1,11 @@
 #include "WeaponComponent.h"
 #include "../Actors/Actor.h"
 
-WeaponComponent::WeaponComponent(class Actor* owner, int updateOrder)
+WeaponComponent::WeaponComponent(class Actor* owner, WeaponType type, int updateOrder)
     : Component(owner, updateOrder)
+    , mType(type)
+    , mLevel(0) // Todas as armas começam no nível 0 (ainda não equipadas)
 {
-    // O construtor base (Component) já registra este componente no Actor
 }
 
 void WeaponComponent::Update(float deltaTime)

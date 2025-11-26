@@ -11,7 +11,7 @@
 #include "../../../Math.h" // Para ToRadians e Vector2::Perpendicular
 
 IceGun::IceGun(Actor* owner, int updateOrder)
-    : WeaponComponent(owner, updateOrder)
+    : WeaponComponent(owner, WeaponType::IceGun,updateOrder)
     , mProjectilePool(nullptr)
     , mAim(nullptr)
     , mCooldownTimer(0.0f)
@@ -50,6 +50,9 @@ void IceGun::OnUpdate(float deltaTime)
     }
 }
 
+void IceGun::LevelUp() {
+}
+
 void IceGun::FireShot()
 {
     if (!mAim) { return; }
@@ -85,8 +88,8 @@ void IceGun::FireShot()
         Vector2 finalVelocity = (shotDirection * PROJECTILE_SPEED) + playerVelocity;
 
         // 4c. "Acorda" o projétil
-        p->Awake(mOwner, playerPos, mOwner->GetRotation(), PROJECTILE_LIFETIME);
-        p->GetComponent<RigidBodyComponent>()->SetVelocity(finalVelocity);
+        p->Awake(mOwner, playerPos, mOwner->GetRotation(), PROJECTILE_LIFETIME, finalVelocity);
+        // /p->GetComponent<RigidBodyComponent>()->SetVelocity(finalVelocity);
 
         // 4d. Incrementa o ângulo para o próximo tiro
         currentAngle += angleIncrement;

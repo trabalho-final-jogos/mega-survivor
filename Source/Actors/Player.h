@@ -28,6 +28,8 @@ class Player : public Actor {
 
   void EquipWeapon(WeaponType type);
 
+  void UnequipWeapon(WeaponType type);
+
   void Kill() override;
   bool isBig() { return mIsBig; };
   bool isInvulnerable() { return mIsInvulnerable; };

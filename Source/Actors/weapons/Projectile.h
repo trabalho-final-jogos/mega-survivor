@@ -16,7 +16,9 @@ public:
     virtual void Kill();
 
     // "Acorda" o projétil do pool
-    virtual void Awake(Actor* owner, const Vector2 &position, float rotation, float lifetime);
+    virtual void Awake(Actor* owner, const Vector2 &position, float rotation,
+                       float lifetime, const Vector2& velocity,
+                       float damage = 1.0f, float areaScale = 1.0f);
 
     // Update padrão (verifica o tempo de vida)
     void OnUpdate(float deltaTime) override;
