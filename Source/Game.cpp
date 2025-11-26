@@ -167,62 +167,41 @@ void Game::BuildLevel(int** levelData, int width, int height) {
           mPlayer->SetPosition(pos);
           break;
 
-        case 10: {
-          auto spawner = new Spawner(this);
-          spawner->SetPosition(pos);
-        } break;
-        case 0: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockA.png");
-          b->SetPosition(pos);
-        } break;
-        case 1: {
-          auto b = new QuestionBlock(
-              this, "../Assets/Sprites/Blocks/BlockC.png", "Block Coin");
-          b->SetPosition(pos);
-        } break;
-        case 2: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockF.png");
-          b->SetPosition(pos);
-        } break;
-        case 3: {
-          auto b = new Block(this, "../Assets/Sprites/Collectables/Coin.png");
-          b->SetPosition(pos);
-        } break;
-        case 4: {
-          auto b =
-              new Block(this, "../Assets/Sprites/Blocks/BlockB.png", "Block B");
-          b->SetPosition(pos);
-        } break;
-        case 5: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockE.png");
-          b->SetPosition(pos);
-        } break;
-        case 6: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockI.png");
-          b->SetPosition(pos);
-        } break;
-        // case 7: { auto b = new Block(this,
-        // "../Assets/Sprites/Blocks/BlockH.png"); b->SetPosition(pos); } break;
-        case 8: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockD.png");
+        case 11: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/071.png");
           b->SetPosition(pos);
         } break;
         case 9: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockH.png");
+          auto b = new Block(this, "../Assets/Sprites/Chao/0052.png");
+          b->SetPosition(pos);
+        } break;
+          case 10: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0053.png");
+          b->SetPosition(pos);
+        } break;
+          case 6: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/005.png");
+          b->SetPosition(pos);
+        } break;
+          case 8: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0051.png");
+          b->SetPosition(pos);
+        } break;case 5: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0023.png");
+          b->SetPosition(pos);
+        } break;case 1: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0021.png");
+          b->SetPosition(pos);
+        } break;
+          case 2: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0024.png");
+          b->SetPosition(pos);
+        } break;
+          case 4: {
+          auto b = new Block(this, "../Assets/Sprites/Chao/0022.png");
           b->SetPosition(pos);
         } break;
 
-        // case 11: { auto b = new Block(this,
-        // "../Assets/Sprites/Blocks/BlockL.png"); b->SetPosition(pos); } break;
-        case 12: {
-          auto b = new Block(this, "../Assets/Sprites/Blocks/BlockG.png");
-          b->SetPosition(pos);
-        } break;
-        case 13: {
-          auto b = new QuestionBlock(
-              this, "../Assets/Sprites/Blocks/BlockC.png", "Block Mushroom");
-          b->SetPosition(pos);
-        } break;
       }
     }
   }
@@ -491,7 +470,7 @@ void Game::Shutdown() {
     delete[] mLevelData;
     mLevelData = nullptr;
   }
-
+  SDL_Log("LVL");
   mRenderer->Shutdown();
   delete mRenderer;
   mRenderer = nullptr;

@@ -66,8 +66,8 @@ bool AnimatorComponent::LoadSpriteSheetData(const std::string& dataPath) {
   std::ifstream spriteSheetFile(dataPath);
 
   if (!spriteSheetFile.is_open()) {
-    SDL_Log("Failed to open sprite sheet data file: %s (called from %s)",
-            dataPath.c_str(), mOwner->GetName().c_str());
+    //SDL_Log("Failed to open sprite sheet data file: %s (called from %s)",
+    //        dataPath.c_str(), mOwner->GetName().c_str());
     return false;
   }
 

@@ -21,11 +21,11 @@ Block::Block(Game* game, const std::string& texturePath, std::string name)
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 
   auto mdraw = new AnimatorComponent(this, texturePath, "", Game::TILE_SIZE,
-                                     Game::TILE_SIZE);
+                                     Game::TILE_SIZE, 1);
   mdraw->SetFlipHorizontal(false);
 
-  new AABBColliderComponent(this, 0, 0, Game::TILE_SIZE, Game::TILE_SIZE,
-                            ColliderLayer::Blocks, true);
+  //new AABBColliderComponent(this, 0, 0, Game::TILE_SIZE, Game::TILE_SIZE,
+  //                          ColliderLayer::Blocks, true);
 }
 
 void Block::StartBounce() {

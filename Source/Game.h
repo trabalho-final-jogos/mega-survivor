@@ -41,8 +41,8 @@ class Game {
   static const int WINDOW_HEIGHT = 720;
   static const int VIRTUAL_WIDTH = 640;
   static const int VIRTUAL_HEIGHT = 360;
-  static const int LEVEL_WIDTH = 215;
-  static const int LEVEL_HEIGHT = 200;
+  static const int LEVEL_WIDTH = 60;
+  static const int LEVEL_HEIGHT = 60;
   static const int TILE_SIZE = 32;
   static const int SPAWN_DISTANCE = 700;
   static const int FPS = 60;
