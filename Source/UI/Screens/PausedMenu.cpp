@@ -16,8 +16,8 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
   // Título
   AddText("PAUSED", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  Vector3 textColors =
-      ColorPalette::GetInstance().GetColorAsVec3("Yellow_bright");
+  Vector4 textColors =
+      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
 
   // Botão "Continuar"
   UIButton* continueButton = AddButton(
@@ -29,7 +29,7 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
       },
       Vector2(0.0f, 0.0f), 0.3f, 0.0f, 40, 1024, 101);
 
-  continueButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  continueButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   continueButton->SetTextColor(textColors);
 
   // Botão "Voltar ao menu"
@@ -37,7 +37,7 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
       "Exit to main menu", [this]() { mGame->ResetGame(); },
       Vector2(0.0f, -50.0f), 0.3f, 0.0f, 40, 1024, 101);
 
-  exitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  exitButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   exitButton->SetTextColor(textColors);
 
   mSelectedButtonIndex = 0;

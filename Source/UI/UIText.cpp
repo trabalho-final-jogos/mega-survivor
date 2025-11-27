@@ -21,8 +21,8 @@ UIText::UIText(class Game* game,
       mFont(font),
       mPointSize(pointSize),
       mWrapLength(wrapLength),
-      mTextColor(ColorPalette::GetInstance().GetColorAsVec3("UI_Text")),
-      mBackgroundColor(0.0f, 0.0f, 1.0f),
+      mTextColor(ColorPalette::GetInstance().GetColorAsVec4("UI_Text")),
+      mBackgroundColor(0.0f, 0.0f, 1.0f, 1.0f),
       mMargin(Vector2(50.0f, 10.f)) {
   SetText(text);
 }
@@ -42,7 +42,7 @@ void UIText::SetText(const std::string& text) {
   mTexture = mFont->RenderText(mText, mTextColor, mPointSize, mWrapLength);
 }
 
-void UIText::SetTextColor(const Vector3& color) {
+void UIText::SetTextColor(const Vector4& color) {
   // Clear out previous title texture if it exists
   if (mTexture) {
     mTexture->Unload();
@@ -69,7 +69,7 @@ void UIText::Draw(class Shader* shader) {
 
   shader->SetMatrixUniform("uWorldTransform", bgWorld);
   shader->SetFloatUniform("uTextureFactor", 0.0f);                // Solid color
-  shader->SetVectorUniform("uColor", Vector3(mBackgroundColor));  // Blue BG
+  shader->SetVectorUniform("uColor", Vector4(mBackgroundColor));  // Blue BG
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
   // 2. TEXT (texture - FLIP V to fix mirroring)

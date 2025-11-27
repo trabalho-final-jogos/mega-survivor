@@ -35,10 +35,10 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
         pos, 0.3f, 0.0f, 32, 256, 102);
 
     if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
-      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
       but[i]->SetBackgroundColor(_color);
     } else {
-      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Lime_green");
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Lime_green");
       but[i]->SetBackgroundColor(_color);
     }
 
@@ -73,10 +73,10 @@ void MetaProg::Update(float deltaTime) {
     mUpgradeButtons[i]->SetText(newText);
 
     if (!mgr.CanAfford(statButtons[i].second)) {
-      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
       mUpgradeButtons[i]->SetBackgroundColor(_color);
     } else {
-      auto _color = ColorPalette::GetInstance().GetColorAsVec3("Lime_green");
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Lime_green");
       mUpgradeButtons[i]->SetBackgroundColor(_color);
     }
   }

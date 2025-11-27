@@ -233,7 +233,7 @@ void AABBColliderComponent::DebugDraw(class Renderer* renderer) {
   renderer->DrawRect(mOwner->GetPosition() + mOffset,
                      Vector2((float)mWidth, (float)mHeight),
                      mOwner->GetRotation(),
-                     ColorPalette::GetInstance().GetColorAsVec3("Debug_Hitbox"),
+                     ColorPalette::GetInstance().GetColorAsVec4("Debug_Hitbox"),
                      mOwner->GetGame()->GetCameraPos(), RendererMode::LINES);
 }
 

@@ -31,7 +31,7 @@ void Font::Unload() {
 }
 
 Texture* Font::RenderText(const std::string& text,
-                          const Vector3& color /*= Color::White*/,
+                          const Vector4& color /*= Color::White*/,
                           int pointSize /*= 24*/,
                           unsigned wrapLength /*= 900*/) {
   Texture* texture = nullptr;

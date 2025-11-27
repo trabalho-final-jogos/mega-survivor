@@ -36,11 +36,11 @@ void UIButton::OnClick() {
   }
 }
 
-void UIButton::SetBackgroundColor(const Vector3& color) {
+void UIButton::SetBackgroundColor(const Vector4& color) {
   mBackgroundColor = color;
 }
 
-void UIButton::SetTextColor(const Vector3& color) {
+void UIButton::SetTextColor(const Vector4& color) {
   UIText::SetTextColor(color);
 }
 
@@ -55,10 +55,10 @@ void UIButton::Draw(class Shader* shader) {
     return;
   }
 
-  Vector3 oldBgColor = mBackgroundColor;
+  Vector4 oldBgColor = mBackgroundColor;
 
   if (mHighlighted) {
-    Vector3 highlightColor = mBackgroundColor * 1.2f;
+    Vector4 highlightColor = mBackgroundColor * 1.2f;
     mBackgroundColor = highlightColor;
   }
 

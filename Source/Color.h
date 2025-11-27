@@ -11,6 +11,8 @@ class Color {
 
   // Conversions
   Vector3 ToVector3() const;
+  Vector4 ToVector4() const;
+  static Vector4 HexToVec4(uint32_t hex);
   static Color HexToColor(uint32_t hex);
   static Vector3 HexToVec3(uint32_t hex);  // Fixed: now includes alpha
 

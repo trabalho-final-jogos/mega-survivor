@@ -288,6 +288,22 @@ void Game::UpdateGame(float deltaTime) {
     UpdateCamera();
   }
 
+  for (auto* ui : mUIStack) {
+    if (ui->GetState() == UIScreen::UIState::Active) {
+      ui->Update(deltaTime);
+    }
+  }
+
+  auto iter = mUIStack.begin();
+  while (iter != mUIStack.end()) {
+    if ((*iter)->GetState() == UIScreen::UIState::Closing) {
+      delete *iter;
+      iter = mUIStack.erase(iter);
+    } else {
+      iter++;
+    }
+  }
+
   UpdateMouseWorldPos();
 }
 
@@ -471,6 +487,10 @@ void Game::UnloadScene() {
   for (auto* actor : mActors) {
     actor->SetState(ActorState::Destroy);
   }
+
+  mActors.clear();
+  mPendingActors.clear();
+  mPlayer = nullptr;
 
   // Delete UI screens
   for (auto ui : mUIStack) {

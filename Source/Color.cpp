@@ -20,6 +20,12 @@ Vector3 Color::ToVector3() const {
                  static_cast<float>(b) / 255.0f};
 }
 
+Vector4 Color::ToVector4() const {
+  return Vector4{static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f,
+                 static_cast<float>(b) / 255.0f,
+                 static_cast<float>(a) / 255.0f};
+}
+
 // Static: Convert hex to Color
 Color Color::HexToColor(uint32_t hex) {
   return Color(hex);
@@ -34,6 +40,17 @@ Vector3 Color::HexToVec3(uint32_t hex) {
   return Vector3{static_cast<float>(red) / 255.0f,
                  static_cast<float>(green) / 255.0f,
                  static_cast<float>(blue) / 255.0f};
+}
+
+Vector4 Color::HexToVec4(uint32_t hex) {
+  // Extract RGBA from 0xRRGGBBAA format
+  uint8_t red = (hex >> 24) & 0xFF;
+  uint8_t green = (hex >> 16) & 0xFF;
+  uint8_t blue = (hex >> 8) & 0xFF;
+  uint8_t alpha = hex & 0xFF;
+  return Vector4{
+      static_cast<float>(red) / 255.0f, static_cast<float>(green) / 255.0f,
+      static_cast<float>(blue) / 255.0f, static_cast<float>(alpha) / 255.0f};
 }
 
 // Define static color constants

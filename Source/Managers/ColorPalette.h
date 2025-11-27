@@ -18,6 +18,7 @@ class ColorPalette {
   Color GetColor(const std::string& name) const;
   bool HasColor(const std::string& name) const;
   Vector3 GetColorAsVec3(const std::string& name) const;
+  Vector4 GetColorAsVec4(const std::string& name) const;
 
   // Initialize your game's base palette
   void InitializeBasePalette();

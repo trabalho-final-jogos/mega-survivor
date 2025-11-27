@@ -23,6 +23,11 @@ Vector3 ColorPalette::GetColorAsVec3(const std::string& name) const {
   return color.ToVector3();
 }
 
+Vector4 ColorPalette::GetColorAsVec4(const std::string& name) const {
+  Color color = GetColor(name);
+  return color.ToVector4();
+}
+
 bool ColorPalette::HasColor(const std::string& name) const {
   return m_colors.find(name) != m_colors.end();
 }

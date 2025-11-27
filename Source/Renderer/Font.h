@@ -17,8 +17,8 @@ class Font {
   // Given string and this font, draw to a texture
   class Texture* RenderText(
       const std::string& text,
-      const Vector3& color =
-          ColorPalette::GetInstance().GetColorAsVec3("UI_Text"),
+      const Vector4& color =
+          ColorPalette::GetInstance().GetColorAsVec4("UI_Text"),
       int pointSize = 30,
       unsigned wrapLength = 900);
 

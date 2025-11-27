@@ -12,8 +12,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  Vector3 textColors =
-      ColorPalette::GetInstance().GetColorAsVec3("Yellow_bright");
+  Vector4 textColors =
+      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
 
   UIButton* startButton = AddButton(
       "New game",
@@ -25,7 +25,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       0.5f, 0.0f, 40, 1024, 101);
 
   // Configura cores: fundo azul, texto branco
-  startButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  startButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   startButton->SetTextColor(textColors);
 
   UIButton* upgradeStoreButton = AddButton(
@@ -37,7 +37,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       Vector2(0.0f, -50.0f),  // Posição centralizada
       0.5f, 0.0f, 40, 1024, 101);
 
-  upgradeStoreButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  upgradeStoreButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   upgradeStoreButton->SetTextColor(textColors);
 
   // Cria e configura o botão "Fechar Jogo"
@@ -49,7 +49,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       Vector2(0.0f, -100.0f),  // Posição abaixo do primeiro botão
       0.5f, 0.0f, 40, 1024, 101);
 
-  quitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  quitButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   quitButton->SetTextColor(textColors);
 
   mSelectedButtonIndex = 0;
