@@ -503,15 +503,11 @@ void Game::UnloadScene() {
 
 void Game::Shutdown() {
   float i = 0.f;
-  SDL_Log("Game::Shutdown start");
   while (!mActors.empty()) {
     Actor* actor = mActors.back();
-    SDL_Log("Deleting actor: %s (%p)", typeid(*actor).name(), (void*)actor);
     mActors.pop_back();  // remove do vetor ANTES de deletar
     delete actor;        // crash provavelmente aqui
-    SDL_Log("Deleted actor: %p", (void*)actor);
   }
-  SDL_Log("ATORES");
   // Delete level data
   if (mLevelData) {
     for (int i = 0; i < LEVEL_HEIGHT; ++i) {
@@ -520,7 +516,6 @@ void Game::Shutdown() {
     delete[] mLevelData;
     mLevelData = nullptr;
   }
-  SDL_Log("LVL");
   mRenderer->Shutdown();
   delete mRenderer;
   mRenderer = nullptr;
