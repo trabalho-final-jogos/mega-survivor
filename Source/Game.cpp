@@ -484,9 +484,11 @@ void Game::SetScene(GameScene nextScene) {
 
 void Game::UnloadScene() {
   // Use state so we can call this from withing an a actor update
-  for (auto* actor : mActors) {
-    actor->SetState(ActorState::Destroy);
+  while (!mActors.empty()) {
+    delete mActors.back();
   }
+
+  mIsPaused = false;
 
   mActors.clear();
   mPendingActors.clear();
