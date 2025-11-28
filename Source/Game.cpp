@@ -39,7 +39,10 @@ Game::Game()
       mCameraPos(Vector2::Zero),
       mPlayer(nullptr),
       mLevelData(nullptr),
-      mMouseWorldPos(Vector2::Zero) {}
+      mMouseWorldPos(Vector2::Zero),
+      mClockStartTime(0),
+      mIsClockRunning(false)
+{}
 
 bool Game::Initialize() {
   Random::Init();
@@ -268,6 +271,34 @@ void Game::UpdateGame(float deltaTime) {
   UpdateCamera();
 
   UpdateMouseWorldPos();
+
+  // --- IMPRIMIR RELÓGIO (TESTE) ---
+
+  // 1. Pega o tempo total em segundos (float)
+  float totalTime = GetClockTime();
+
+  // 2. Converte para Inteiro (para ignorar milissegundos)
+  int totalSeconds = static_cast<int>(totalTime);
+
+  // 3. Calcula Minutos (Divisão inteira por 60)
+  int minutes = totalSeconds / 60;
+
+  // 4. Calcula Segundos Restantes (Resto da divisão por 60)
+  int seconds = totalSeconds % 60;
+
+  // 5. Imprime formatado
+  // %02d significa: "Imprima um inteiro com pelo menos 2 dígitos,
+  // preenchendo com zero à esquerda se necessário" (ex: 05 em vez de 5).
+
+  // DICA: Para não floodar o console (imprimir 60x por segundo),
+  // vamos imprimir apenas quando o segundo mudar.
+  static int lastPrintedSecond = -1;
+
+  if (totalSeconds > lastPrintedSecond)
+  {
+    SDL_Log("Tempo: %02d:%02d", minutes, seconds);
+    lastPrintedSecond = totalSeconds;
+  }
 }
 
 void Game::UpdateActors(float deltaTime) {
@@ -477,4 +508,24 @@ void Game::Shutdown() {
 
   SDL_DestroyWindow(mWindow);
   SDL_Quit();
+}
+
+void Game::StartClock()
+{
+  mIsClockRunning = true;
+  mClockStartTime = SDL_GetTicks();
+
+  SDL_Log("Relógio iniciado!");
+}
+
+float Game::GetClockTime()
+{
+  if (!mIsClockRunning)
+  {
+    return 0.0f;
+  }
+  Uint32 currentTime = SDL_GetTicks();
+  Uint32 elapsedTimeMS = currentTime - mClockStartTime;
+
+  return static_cast<float>(elapsedTimeMS) / 1000.0f;
 }

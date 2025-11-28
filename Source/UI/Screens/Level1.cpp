@@ -19,6 +19,7 @@ Level1::Level1(Game* game, const std::string& fontName)
         player->SetPosition(Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
         mGame->SetPlayer(player);
     }
+		mGame->StartClock();
     new Spawner(mGame);
 
      mGame->UpdateCamera();

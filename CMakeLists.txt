@@ -121,8 +121,11 @@ add_executable(${PROJECT_NAME}
         Source/Actors/weapons/aura/AuraWeapon.h
         Source/Actors/weapons/aura/AuraActor.cpp
         Source/Actors/weapons/aura/AuraActor.h
-
-
+        Source/Actors/enemies/Enemy1.cpp
+        Source/Actors/enemies/Enemy1.h
+        Source/Actors/enemies/EnemyType.h
+        Source/Actors/enemies/Bat.cpp
+        Source/Actors/enemies/Bat.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)
