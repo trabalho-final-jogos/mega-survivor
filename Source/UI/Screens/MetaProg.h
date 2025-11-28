@@ -1,6 +1,6 @@
 #pragma once
 #include <array>
-#include "../../Components/UpgradeManager.h"
+#include "../../Managers/UpgradeManager.h"
 #include "UIScreen.h"
 
 const int cols = 3;
@@ -24,7 +24,7 @@ class MetaProg : public UIScreen {
       {{"Speed", StatType::Speed},
        {"Damage", StatType::Damage},
        {"Area", StatType::Area},
-       {"Projectiles", StatType::Projectiles},
+       {"Projec", StatType::Projectiles},
        {"Regen", StatType::Regen},
        {"Lucky", StatType::Lucky},
        {"Health", StatType::Health}}};

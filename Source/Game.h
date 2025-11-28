@@ -14,7 +14,7 @@
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
-enum class GameScene { MainMenu, PausedMenu, UpgradeStore, Level1 };
+enum class GameScene { MainMenu, UpgradeStore, Level1 };
 
 class Game {
  public:
@@ -33,6 +33,7 @@ class Game {
 
   void SetScene(GameScene scene);
   void UnloadScene();
+  void ResetGame();
 
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }
@@ -114,6 +115,8 @@ class Game {
 
   // Track elapsed time since game start
   Uint32 mTicksCount;
+
+  GameScene mCurrentScene;
 
   // Track if we're updating actors right now
   bool mIsRunning;

@@ -107,8 +107,8 @@ add_executable(${PROJECT_NAME}
         Source/UI/Screens/Level1.h
         Source/UI/Screens/MetaProg.cpp
         Source/UI/Screens/MetaProg.h
-        Source/Components/UpgradeManager.cpp
-        Source/Components/UpgradeManager.h
+        Source/Managers/UpgradeManager.cpp
+        Source/Managers/UpgradeManager.h
         Source/Actors/weapons/laser_beam/LaserGun.cpp
         Source/Actors/weapons/laser_beam/LaserGun.h
         Source/Actors/weapons/saw_blade/SawGun.cpp
@@ -121,8 +121,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/weapons/aura/AuraWeapon.h
         Source/Actors/weapons/aura/AuraActor.cpp
         Source/Actors/weapons/aura/AuraActor.h
-
-
+        Source/Color.cpp
+        Source/Color.h
+        Source/Managers/ColorPalette.cpp
+        Source/Managers/ColorPalette.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)

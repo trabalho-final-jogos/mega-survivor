@@ -26,8 +26,8 @@ class UIText : public UIImage {
   void Draw(class Shader* shader) override;
 
   void SetText(const std::string& name);
-  void SetTextColor(const Vector3& color);
-  void SetBackgroundColor(const Vector3& color) { mBackgroundColor = color; }
+  void SetTextColor(const Vector4& color);
+  void SetBackgroundColor(const Vector4& color) { mBackgroundColor = color; }
 
  protected:
   std::string mText;
@@ -38,6 +38,6 @@ class UIText : public UIImage {
 
   Vector2 mMargin;
 
-  Vector3 mTextColor;
-  Vector3 mBackgroundColor;
+  Vector4 mTextColor;
+  Vector4 mBackgroundColor;
 };

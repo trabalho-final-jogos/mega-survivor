@@ -44,7 +44,7 @@ void HUD::SetScore(int score) {
 void HUD::HandleKeyPress(int key) {
   if (key == SDLK_ESCAPE) {
     // Abre o menu de pausa por cima do HUD
-    new PauseMenu(GetGame(), "../Assets/Fonts/Arial.ttf");
+    new PausedMenu(GetGame(), "../Assets/Fonts/Arial.ttf");
     auto game = GetGame();
     if (game) {
       game->SetPaused(true);

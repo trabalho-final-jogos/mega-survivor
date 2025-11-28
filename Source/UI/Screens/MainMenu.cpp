@@ -4,12 +4,16 @@
 
 #include "MainMenu.h"
 #include "../../Game.h"
+#include "../../Managers/ColorPalette.h"
 #include "../UIButton.h"
 #include "SDL.h"
 
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+
+  Vector4 textColors =
+      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
 
   UIButton* startButton = AddButton(
       "New game",
@@ -21,8 +25,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       0.5f, 0.0f, 40, 1024, 101);
 
   // Configura cores: fundo azul, texto branco
-  startButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
-  startButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+  startButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  startButton->SetTextColor(textColors);
 
   UIButton* upgradeStoreButton = AddButton(
       "Upgrades",
@@ -33,8 +37,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       Vector2(0.0f, -50.0f),  // Posição centralizada
       0.5f, 0.0f, 40, 1024, 101);
 
-  upgradeStoreButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
-  upgradeStoreButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+  upgradeStoreButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  upgradeStoreButton->SetTextColor(textColors);
 
   // Cria e configura o botão "Fechar Jogo"
   UIButton* quitButton = AddButton(
@@ -45,12 +49,13 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       Vector2(0.0f, -100.0f),  // Posição abaixo do primeiro botão
       0.5f, 0.0f, 40, 1024, 101);
 
-  quitButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
-  quitButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+  quitButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  quitButton->SetTextColor(textColors);
 
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
+    mButtons[0]->SetSelected(true);
   }
 }
 
@@ -91,10 +96,14 @@ void MainMenu::HandleKeyPress(int key) {
 
   // Update highlight
   if (oldIndex != mSelectedButtonIndex) {
-    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size()))
+    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
+      mButtons[oldIndex]->SetSelected(false);
+    }
     if (mSelectedButtonIndex >= 0 &&
-        mSelectedButtonIndex < static_cast<int>(mButtons.size()))
+        mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+      mButtons[mSelectedButtonIndex]->SetSelected(true);
+    }
   }
 }
