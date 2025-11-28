@@ -3,9 +3,9 @@
 
 #include "UIScreen.h"
 
-class PauseMenu : public UIScreen {
+class PausedMenu : public UIScreen {
  public:
-  PauseMenu(class Game* game, const std::string& fontName);
+  PausedMenu(class Game* game, const std::string& fontName);
 
   void HandleKeyPress(int key) override;
 };

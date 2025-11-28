@@ -1106,18 +1106,3 @@ namespace Math {
          NearlyEqual(a.z, b.z, epsilon) && NearlyEqual(a.w, b.w, epsilon);
 }
 }  // namespace Math
-
-namespace Color {
-// NOLINTBEGIN
-constexpr Vector3 Black(0.0f, 0.0f, 0.0f);
-constexpr Vector3 White(1.0f, 1.0f, 1.0f);
-constexpr Vector3 Red(1.0f, 0.0f, 0.0f);
-constexpr Vector3 Green(0.0f, 1.0f, 0.0f);
-constexpr Vector3 Blue(0.0f, 0.0f, 1.0f);
-constexpr Vector3 Yellow(1.0f, 1.0f, 0.0f);
-constexpr Vector3 LightYellow(1.0f, 1.0f, 0.88f);
-constexpr Vector3 LightBlue(0.68f, 0.85f, 0.9f);
-constexpr Vector3 LightPink(1.0f, 0.71f, 0.76f);
-constexpr Vector3 LightGreen(0.56f, 0.93f, 0.56f);
-// NOLINTEND
-}  // namespace Color

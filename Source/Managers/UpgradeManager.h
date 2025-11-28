@@ -41,5 +41,5 @@ class UpgradeManager {
   UpgradeManager& operator=(const UpgradeManager&) = delete;
 
   PlayerStatsUpgrade mUpgrades{};
-  int mCurrency{1000};
+  int mCurrency{100000};
 };

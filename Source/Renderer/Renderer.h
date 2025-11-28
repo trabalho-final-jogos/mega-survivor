@@ -21,14 +21,14 @@ class Renderer {
   void DrawRect(const Vector2& position,
                 const Vector2& size,
                 float rotation,
-                const Vector3& color,
+                const Vector4& color,
                 const Vector2& cameraPos,
                 RendererMode mode);
 
   void DrawTexture(const Vector2& position,
                    const Vector2& size,
                    float rotation,
-                   const Vector3& color,
+                   const Vector4& color,
                    Texture* texture,
                    const Vector4& textureRect = Vector4::UnitRect,
                    const Vector2& cameraPos = Vector2::Zero,
@@ -38,7 +38,7 @@ class Renderer {
   void DrawGeometry(const Vector2& position,
                     const Vector2& size,
                     float rotation,
-                    const Vector3& color,
+                    const Vector4& color,
                     const Vector2& cameraPos,
                     VertexArray* vertexArray,
                     RendererMode mode);
@@ -62,7 +62,7 @@ class Renderer {
             const Matrix4& modelMatrix,
             const Vector2& cameraPos,
             VertexArray* vertices,
-            const Vector3& color,
+            const Vector4& color,
             Texture* texture = nullptr,
             const Vector4& textureRect = Vector4::UnitRect,
             float textureFactor = 1.0f);

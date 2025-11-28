@@ -21,6 +21,7 @@
 #include "CSV.h"
 #include "Components/Drawing/DrawComponent.h"
 #include "Components/Physics/RigidBodyComponent.h"
+#include "Managers/ColorPalette.h"
 #include "Random.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
@@ -46,6 +47,8 @@ Game::Game()
 
 bool Game::Initialize() {
   Random::Init();
+
+  ColorPalette::GetInstance().InitializeBasePalette();
 
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -178,33 +181,34 @@ void Game::BuildLevel(int** levelData, int width, int height) {
           auto b = new Block(this, "../Assets/Sprites/Chao/0052.png");
           b->SetPosition(pos);
         } break;
-          case 10: {
+        case 10: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0053.png");
           b->SetPosition(pos);
         } break;
-          case 6: {
+        case 6: {
           auto b = new Block(this, "../Assets/Sprites/Chao/005.png");
           b->SetPosition(pos);
         } break;
-          case 8: {
+        case 8: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0051.png");
           b->SetPosition(pos);
-        } break;case 5: {
+        } break;
+        case 5: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0023.png");
           b->SetPosition(pos);
-        } break;case 1: {
+        } break;
+        case 1: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0021.png");
           b->SetPosition(pos);
         } break;
-          case 2: {
+        case 2: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0024.png");
           b->SetPosition(pos);
         } break;
-          case 4: {
+        case 4: {
           auto b = new Block(this, "../Assets/Sprites/Chao/0022.png");
           b->SetPosition(pos);
         } break;
-
       }
     }
   }
@@ -240,20 +244,35 @@ void Game::ProcessInput() {
         Quit();
         break;
 
-      case SDL_KEYDOWN:               // ADD: Detect key presses
-        if (event.key.repeat == 0) {  // Ignore repeat
-          for (auto ui : mUIStack) {
-            ui->HandleKeyPress(event.key.keysym.sym);  // Pass SDL key code
+      case SDL_KEYDOWN:
+        if (event.key.repeat == 0) {
+          if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (mCurrentScene == GameScene::Level1) {
+              if (!mIsPaused) {
+                SetPaused(true);
+                new PausedMenu(this, std::string(GAME_FONT));
+              }
+            } else {
+              if (!mUIStack.empty()) {
+                mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
+              }
+            }
+          } else {
+            if (!mUIStack.empty()) {
+              mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
+            }
           }
         }
         break;
     }
   }
 
-  // Handle actors (continuous keys)
-  const Uint8* state = SDL_GetKeyboardState(nullptr);
-  for (auto actor : mActors) {
-    actor->ProcessInput(state);
+  if (!mIsPaused) {
+    // Handle actors (continuous keys)
+    const Uint8* state = SDL_GetKeyboardState(nullptr);
+    for (auto actor : mActors) {
+      actor->ProcessInput(state);
+    }
   }
 }
 
@@ -265,10 +284,28 @@ void Game::UpdateGame(float deltaTime) {
   }
 
   // Update all actors and pending actors
-  UpdateActors(deltaTime);
+  if (!mIsPaused) {
+    UpdateActors(deltaTime);
 
-  // Update camera position
-  UpdateCamera();
+    // Update camera position
+    UpdateCamera();
+  }
+
+  for (auto* ui : mUIStack) {
+    if (ui->GetState() == UIScreen::UIState::Active) {
+      ui->Update(deltaTime);
+    }
+  }
+
+  auto iter = mUIStack.begin();
+  while (iter != mUIStack.end()) {
+    if ((*iter)->GetState() == UIScreen::UIState::Closing) {
+      delete *iter;
+      iter = mUIStack.erase(iter);
+    } else {
+      iter++;
+    }
+  }
 
   UpdateMouseWorldPos();
 
@@ -323,6 +360,11 @@ void Game::UpdateActors(float deltaTime) {
   for (auto actor : deadActors) {
     delete actor;
   }
+}
+
+void Game::ResetGame() {
+  UnloadScene();
+  SetScene(GameScene::MainMenu);
 }
 
 void Game::UpdateCamera() {
@@ -444,6 +486,8 @@ void Game::SetScene(GameScene nextScene) {
 
   UnloadScene();
 
+  mCurrentScene = nextScene;
+
   switch (nextScene) {
     case GameScene::MainMenu: {
       new MainMenu(this, std::string(GAME_FONT));
@@ -471,9 +515,15 @@ void Game::SetScene(GameScene nextScene) {
 
 void Game::UnloadScene() {
   // Use state so we can call this from withing an a actor update
-  for (auto* actor : mActors) {
-    actor->SetState(ActorState::Destroy);
+  while (!mActors.empty()) {
+    delete mActors.back();
   }
+
+  mIsPaused = false;
+
+  mActors.clear();
+  mPendingActors.clear();
+  mPlayer = nullptr;
 
   // Delete UI screens
   for (auto ui : mUIStack) {
@@ -484,15 +534,11 @@ void Game::UnloadScene() {
 
 void Game::Shutdown() {
   float i = 0.f;
-  SDL_Log("Game::Shutdown start");
   while (!mActors.empty()) {
     Actor* actor = mActors.back();
-    SDL_Log("Deleting actor: %s (%p)", typeid(*actor).name(), (void*)actor);
     mActors.pop_back();  // remove do vetor ANTES de deletar
     delete actor;        // crash provavelmente aqui
-    SDL_Log("Deleted actor: %p", (void*)actor);
   }
-  SDL_Log("ATORES");
   // Delete level data
   if (mLevelData) {
     for (int i = 0; i < LEVEL_HEIGHT; ++i) {
@@ -501,7 +547,6 @@ void Game::Shutdown() {
     delete[] mLevelData;
     mLevelData = nullptr;
   }
-  SDL_Log("LVL");
   mRenderer->Shutdown();
   delete mRenderer;
   mRenderer = nullptr;

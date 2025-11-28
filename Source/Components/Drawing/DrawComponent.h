@@ -3,28 +3,27 @@
 //
 
 #pragma once
-#include "../Component.h"
+#include <SDL.h>
+#include <vector>
 #include "../../Math.h"
 #include "../../Renderer/Renderer.h"
 #include "../../Renderer/VertexArray.h"
-#include <vector>
-#include <SDL.h>
+#include "../Component.h"
 
-class DrawComponent : public Component
-{
-public:
-    // (Lower draw order corresponds with further back)
-    DrawComponent(class Actor* owner, int drawOrder = 100);
-    ~DrawComponent();
+class DrawComponent : public Component {
+ public:
+  // (Lower draw order corresponds with further back)
+  DrawComponent(class Actor* owner, int drawOrder = 100);
+  ~DrawComponent();
 
-    virtual void Draw(Renderer* renderer);
-    int GetDrawOrder() const { return mDrawOrder; }
+  virtual void Draw(Renderer* renderer);
+  int GetDrawOrder() const { return mDrawOrder; }
 
-    void SetVisible(bool visible) { mIsVisible = visible; }
-    void SetColor(const Vector3& color) { mColor = color; }
+  void SetVisible(bool visible) { mIsVisible = visible; }
+  void SetColor(const Vector4& color) { mColor = color; }
 
-protected:
-    int mDrawOrder;
-    bool mIsVisible;
-    Vector3 mColor;
+ protected:
+  int mDrawOrder;
+  bool mIsVisible;
+  Vector4 mColor;
 };
