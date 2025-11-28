@@ -1,4 +1,5 @@
 #include "MetaProg.h"
+#include <algorithm>
 #include "../../Game.h"
 #include "../../Managers/ColorPalette.h"
 #include "../../Managers/UpgradeManager.h"
@@ -12,7 +13,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
   mCurrencyText = AddText("Currency: " + std::to_string(mgr.GetCurrency()),
                           Vector2(200.0f, 100.0f), 0.3f, 0.0f, 32, 512, 100);
 
-  UIButton* but[7];
+  UIButton* but[statButtons.size() + 1]{nullptr};
 
   for (size_t i = 0; i < statButtons.size(); ++i) {
     int col = i % cols;
@@ -45,10 +46,15 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
     mUpgradeButtons[i] = but[i];
 
     mSelectedButtonIndex = 0;
-    if (!mButtons.empty()) {
-      mButtons[0]->SetHighlighted(true);
-      mButtons[0]->SetSelected(true);
-    }
+  }
+
+  UIButton* escape_but = AddButton(
+      "Exit to main menu", [this]() { mGame->SetScene(GameScene::MainMenu); },
+      Vector2(100.0f, -100.0f), 0.3f, 0.0f, 32, 256, 102);
+
+  if (!mButtons.empty()) {
+    mButtons[0]->SetHighlighted(true);
+    mButtons[0]->SetSelected(true);
   }
 }
 
@@ -100,10 +106,10 @@ void MetaProg::HandleKeyPress(int key) {
 
     case SDLK_DOWN:
     case SDLK_s:
-      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
+      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) + cols)
         mSelectedButtonIndex += cols;
       else
-        mSelectedButtonIndex = 0;
+        mSelectedButtonIndex = static_cast<int>(statButtons.size());
       break;
 
     case SDLK_RIGHT:
@@ -136,6 +142,10 @@ void MetaProg::HandleKeyPress(int key) {
   }
 
   // Update highlight
+
+  mSelectedButtonIndex = std::clamp(mSelectedButtonIndex, 0,
+                                    static_cast<int>(mButtons.size()) - 1);
+
   if (oldIndex != mSelectedButtonIndex) {
     if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
