@@ -83,6 +83,8 @@ class Game {
   void SetLevelData(int** data) { mLevelData = data; }
 
   void UpdateCamera();
+	void StartClock();
+	float GetClockTime();
 
  private:
   void ProcessInput();
@@ -129,4 +131,7 @@ class Game {
   int** mLevelData;
 
   Vector2 mMouseWorldPos;
+
+	Uint32 mClockStartTime;
+	bool mIsClockRunning;
 };
