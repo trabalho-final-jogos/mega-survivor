@@ -49,8 +49,11 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
   }
 
   UIButton* escape_but = AddButton(
-      "Exit to main menu", [this]() { mGame->SetScene(GameScene::MainMenu); },
-      Vector2(100.0f, -100.0f), 0.3f, 0.0f, 32, 256, 102);
+      "Go back", [this]() { mGame->SetScene(GameScene::MainMenu); },
+      Vector2(100.0f, -90.0f), 0.4f, 0.0f, 32, 128, 102);
+
+  escape_but->SetTextColor(
+      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright"));
 
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
