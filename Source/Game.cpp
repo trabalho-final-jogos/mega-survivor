@@ -245,11 +245,10 @@ void Game::ProcessInput() {
 
       case SDL_KEYDOWN:
         if (event.key.repeat == 0) {
-          if (event.key.keysym.sym == SDLK_ESCAPE) {
-            if (!mUIStack.empty()) {
-              mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
-            }
+          if (!mUIStack.empty()) {
+            mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
           }
+
           break;
         }
     }

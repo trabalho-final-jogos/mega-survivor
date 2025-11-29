@@ -12,7 +12,10 @@ constexpr float XP_MAX_SIZE_Y = 70.0f;
 const Vector2 xpBarPos(-280.0f, 210.0f);
 
 HUD::HUD(class Game* game, const std::string& fontName)
-    : UIScreen(game, fontName), mXpBar(nullptr), mScore(nullptr) {
+    : UIScreen(game, fontName),
+      mXpBar(nullptr),
+      mScore(nullptr),
+      mFontName(fontName) {
   const Vector2 basePos(0.0f, 220.0f);
 
   float initialProgress = 0.0f;
@@ -70,7 +73,7 @@ Vector2 HUD::GetXPBarOffset(float bar_progress) {
 
 void HUD::HandleKeyPress(int key) {
   if (key == SDLK_ESCAPE) {
-    new PausedMenu(GetGame(), "../Assets/Fonts/Arial.ttf");
+    new PausedMenu(GetGame(), mFontName);
     auto game = GetGame();
     if (game) {
       game->SetPaused(true);

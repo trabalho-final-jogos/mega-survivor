@@ -21,6 +21,7 @@ class HUD : public UIScreen {
 
  private:
   // HUD elements
+  std::string mFontName;
   float mXpProgress;
   UIText* mScore;
   UIText* mRunTime;
