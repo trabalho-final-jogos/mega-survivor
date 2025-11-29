@@ -433,6 +433,11 @@ void Game::SetScene(GameScene nextScene) {
       new MetaProg(this, std::string(GAME_FONT));
       break;
     }
+
+    case GameScene::CharSelect: {
+      break;
+    }
+
     default:
       break;
   }

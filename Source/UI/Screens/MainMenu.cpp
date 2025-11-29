@@ -11,7 +11,21 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  UIButton* startButton = AddButton(
+  // Seleção de personagem
+  UIButton * charSelectButton = AddButton(
+    "Character Selection",
+    [this]() {
+      Close();
+      mGame->SetScene(GameScene::CharSelect);
+    },
+    Vector2(0.0f, 50.0f),
+    0.5f, 0.0f, 40, 1024, 101
+  );
+
+  charSelectButton->SetBackgroundColor(Vector3(0.01f, 0.01f, 1.0f));
+  charSelectButton->SetTextColor(Vector3(1.0f, 1.0f, 1.0f));
+
+   UIButton* startButton = AddButton(
       "New game",
       [this]() {
         Close();                             // Fecha a tela de menu
