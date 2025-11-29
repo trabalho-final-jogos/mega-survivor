@@ -13,10 +13,6 @@ class Enemy1 : public Enemy {
                   float deathTime = 0.5f);
 
   void OnUpdate(float deltaTime) override;
-  void OnHorizontalCollision(const float minOverlap,
-                             AABBColliderComponent* other) override;
-  void OnVerticalCollision(const float minOverlap,
-                           AABBColliderComponent* other) override;
 
   void Kill() override;
 

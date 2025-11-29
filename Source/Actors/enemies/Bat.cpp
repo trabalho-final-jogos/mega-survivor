@@ -49,21 +49,6 @@ void Bat::OnUpdate(float deltaTime) {
   }
 }
 
-// Colisões simples (causa dano e morre? ou atravessa?)
-// Vamos fazer ele atravessar o player causando dano
-void Bat::OnHorizontalCollision(const float minOverlap,
-                                AABBColliderComponent* other) {
-  if (other->GetLayer() == ColliderLayer::Player) {
-    // other->GetOwner()->ApplyDamage(10.0f); // Se o player tiver vida
-    // Kill(); // Se quiser que o morcego morra ao bater
-  }
-}
-// (Faça o mesmo para Vertical)
-void Bat::OnVerticalCollision(const float minOverlap,
-                              AABBColliderComponent* other) {
-  OnHorizontalCollision(minOverlap, other);
-}
-
 void Bat::SetStats(const float health) {
   mHealth = health;
 }

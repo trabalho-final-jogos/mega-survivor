@@ -65,52 +65,6 @@ void Enemy1::OnUpdate(float deltaTime) {
   }
 }
 
-void Enemy1::OnHorizontalCollision(const float minOverlap,
-                                   AABBColliderComponent* other) {
-  if (other->GetLayer() == ColliderLayer::Player) {
-    Actor* player = other->GetOwner();
-    Player* mario = dynamic_cast<Player*>(player);
-    if (!mario->isInvulnerable()) {
-      if (mario->isBig()) {
-        mario->Shrink();
-      } else {
-        mario->Kill();
-      }
-    }
-  }
-
-  if (other->GetLayer() == ColliderLayer::Blocks ||
-      other->GetLayer() == ColliderLayer::Enemy) {
-    Vector2 currentVelocity = mRigidBody->GetVelocity();
-
-    if (minOverlap < 0) {
-      mRigidBody->SetVelocity(Vector2(-mForwardSpeed, currentVelocity.y));
-    } else {
-      mRigidBody->SetVelocity(Vector2(mForwardSpeed, currentVelocity.y));
-    }
-  }
-}
-
-void Enemy1::OnVerticalCollision(const float minOverlap,
-                                 AABBColliderComponent* other) {
-  ColliderLayer otherLayer = other->GetLayer();
-  if (otherLayer == ColliderLayer::Player) {
-    Actor* player = other->GetOwner();
-
-    Player* mario = dynamic_cast<Player*>(player);
-    if (!mario->isInvulnerable()) {
-      if (minOverlap < 0) {
-        if (mario->isBig()) {
-          mario->Shrink();
-        } else {
-          mario->Kill();
-        }
-      }
-    }
-    SDL_Log("Goomba::OnVerticalCollision %f", minOverlap);
-  }
-}
-
 void Enemy1::SetStats(float health, float speed) {
   mHealth = health;
   mForwardSpeed = speed;
