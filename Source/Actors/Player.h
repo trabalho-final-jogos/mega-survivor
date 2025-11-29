@@ -35,6 +35,9 @@ class Player : public Actor {
   bool isInvulnerable() { return mIsInvulnerable; };
   class Aim* GetAim() const { return mAimer; }
 
+  uint8_t GetCurrentLvl() const { return mCurrentLvl; }
+  uint32_t GetCurrentXP() const { return mCurrentXp; }
+
  private:
   void ManageAnimations();
 
@@ -53,6 +56,9 @@ class Player : public Actor {
   class ParticleSystemComponent* mFireBalls;
 
   float mFireBallCooldown = 1.0f;
+
+  uint8_t mCurrentLvl{0};
+  uint32_t mCurrentXp{0};
 
   class Aim* mAimer;
 };

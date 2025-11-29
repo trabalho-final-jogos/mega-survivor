@@ -3,32 +3,28 @@
 #include <algorithm>
 #include <sstream>
 #include "../../Game.h"
+#include "../../Managers/ColorPalette.h"
 #include "PausedMenu.h"
 #include "UIScreen.h"
 
+constexpr float XP_MAX_SIZE_X = 360.0f;
+constexpr float XP_MAX_SIZE_Y = 70.0f;
+const Vector2 xpBarPos(-280.0f, 210.0f);
+
 HUD::HUD(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName), mXpBar(nullptr), mScore(nullptr) {
-  // Canto superior esquerdo (ajuste fino se quiser)
   const Vector2 basePos(0.0f, 220.0f);
 
-  // Vamos alinhar os 3 segmentos na MESMA coordenada Y da barra
-  const float y = basePos.y;
+  UIImage* xp_bar =
+      AddImage("../Assets/HUD/xp_bar.png", xpBarPos, 0.5f, 0.0f, 110);
 
-  // Barra de fundo (sempre visível) – âncora da barra
-  UIImage* bar = AddImage("../Assets/HUD/xp_bar.png", Vector2(-280.0f, 210.0f),
-                          0.5f, 0.0f, 110);
+  float initialProgress = 0.0f;
+  mXpBar = AddRect(GetXPBarOffset(initialProgress),
+                   GetXPBarSize(initialProgress), 0.5f, 0.0f, 100);
+  mXpBar->SetColor(ColorPalette::GetInstance().GetColorAsVec4("Orange"));
 
   mRunTime = AddText("0:0", basePos, 0.4f, 0.0f, 40, 1024, 50);
   mRunTime->SetBackgroundColor(Vector4::Zero);
-}
-
-void HUD::SetXPBar(float percentage) {
-  if (!mXpBar) {
-    return;
-  }
-
-  // Garante que o percentual está entre 0.0 e 1.0
-  percentage = std::clamp(percentage, 0.0f, 1.0f);
 }
 
 void HUD::Update(float deltaTime) {
@@ -51,6 +47,34 @@ void HUD::SetScore(int score) {
   mScore->SetText(std::to_string(score));
 }
 
+void HUD::SetXPBar(float percentage) {
+  if (!mXpBar) {
+    return;
+  }
+
+  percentage = std::clamp(percentage, 0.0f, 1.0f);
+
+  // Update the visual fill rect
+  mXpBar->SetSize(GetXPBarSize(percentage));
+  mXpBar->SetOffset(GetXPBarOffset(percentage));
+}
+
+Vector2 HUD::GetXPBarSize(float bar_progress) {
+  return Vector2(bar_progress * XP_MAX_SIZE_X, XP_MAX_SIZE_Y);
+}
+
+Vector2 HUD::GetXPBarOffset(float bar_progress) {
+  float currentWidth = bar_progress * XP_MAX_SIZE_X;
+
+  // Left edge of the bar (center minus half width)
+  float leftEdgeX = xpBarPos.x - XP_MAX_SIZE_X / 2.0f;
+
+  // The fill rect's center moves right as it grows
+  float centerX = leftEdgeX + currentWidth / 2.0f;
+
+  return Vector2(centerX, xpBarPos.y);
+}
+
 void HUD::HandleKeyPress(int key) {
   if (key == SDLK_ESCAPE) {
     // Abre o menu de pausa por cima do HUD
@@ -60,5 +84,10 @@ void HUD::HandleKeyPress(int key) {
       game->SetPaused(true);
     }
     // O construtor de UIScreen já faz PushUI(this) no Game
+  }
+
+  if (key == SDLK_UP) {
+    mXpProgress += 0.1f;
+    SetXPBar(mXpProgress);
   }
 }

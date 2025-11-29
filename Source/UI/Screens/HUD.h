@@ -16,10 +16,13 @@ class HUD : public UIScreen {
   void HandleKeyPress(int key) override;
   void SetXPBar(float percentage);
   void Update(float deltaTime) override;
+  Vector2 GetXPBarSize(float bar_progress);
+  Vector2 GetXPBarOffset(float bar_progress);
 
  private:
   // HUD elements
-  UIImage* mXpBar;
+  float mXpProgress;
   UIText* mScore;
   UIText* mRunTime;
+  UIRect* mXpBar;
 };
