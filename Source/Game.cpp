@@ -246,31 +246,20 @@ void Game::ProcessInput() {
       case SDL_KEYDOWN:
         if (event.key.repeat == 0) {
           if (event.key.keysym.sym == SDLK_ESCAPE) {
-            if (mCurrentScene == GameScene::Level1) {
-              if (!mIsPaused) {
-                SetPaused(true);
-                new PausedMenu(this, std::string(GAME_FONT));
-              }
-            } else {
-              if (!mUIStack.empty()) {
-                mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
-              }
-            }
-          } else {
             if (!mUIStack.empty()) {
               mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
             }
           }
+          break;
         }
-        break;
     }
-  }
 
-  if (!mIsPaused) {
-    // Handle actors (continuous keys)
-    const Uint8* state = SDL_GetKeyboardState(nullptr);
-    for (auto actor : mActors) {
-      actor->ProcessInput(state);
+    if (!mIsPaused) {
+      // Handle actors (continuous keys)
+      const Uint8* state = SDL_GetKeyboardState(nullptr);
+      for (auto actor : mActors) {
+        actor->ProcessInput(state);
+      }
     }
   }
 }

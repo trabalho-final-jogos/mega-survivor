@@ -22,7 +22,7 @@ UIImage::UIImage(class Game* game,
                  const float scale,
                  const float angle,
                  int drawOrder)
-    : UIElement(game, offset, scale, angle) {
+    : UIElement(game, offset, scale, angle, drawOrder) {
   mTexture = GetGame()->GetRenderer()->GetTexture(imagePath);
 }
 

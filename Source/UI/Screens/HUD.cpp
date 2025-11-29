@@ -7,7 +7,7 @@
 #include "PausedMenu.h"
 #include "UIScreen.h"
 
-constexpr float XP_MAX_SIZE_X = 360.0f;
+constexpr float XP_MAX_SIZE_X = 455.0f;
 constexpr float XP_MAX_SIZE_Y = 70.0f;
 const Vector2 xpBarPos(-280.0f, 210.0f);
 
@@ -15,13 +15,13 @@ HUD::HUD(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName), mXpBar(nullptr), mScore(nullptr) {
   const Vector2 basePos(0.0f, 220.0f);
 
-  UIImage* xp_bar =
-      AddImage("../Assets/HUD/xp_bar.png", xpBarPos, 0.5f, 0.0f, 110);
-
   float initialProgress = 0.0f;
   mXpBar = AddRect(GetXPBarOffset(initialProgress),
-                   GetXPBarSize(initialProgress), 0.5f, 0.0f, 100);
+                   GetXPBarSize(initialProgress), 0.5f, 0.0f, 50);
   mXpBar->SetColor(ColorPalette::GetInstance().GetColorAsVec4("Orange"));
+
+  UIImage* xp_bar =
+      AddImage("../Assets/HUD/xp_bar.png", xpBarPos, 0.5f, 0.0f, 100);
 
   mRunTime = AddText("0:0", basePos, 0.4f, 0.0f, 40, 1024, 50);
   mRunTime->SetBackgroundColor(Vector4::Zero);
@@ -64,30 +64,16 @@ Vector2 HUD::GetXPBarSize(float bar_progress) {
 }
 
 Vector2 HUD::GetXPBarOffset(float bar_progress) {
-  float currentWidth = bar_progress * XP_MAX_SIZE_X;
-
-  // Left edge of the bar (center minus half width)
-  float leftEdgeX = xpBarPos.x - XP_MAX_SIZE_X / 2.0f;
-
-  // The fill rect's center moves right as it grows
-  float centerX = leftEdgeX + currentWidth / 2.0f;
-
+  float centerX = xpBarPos.x + (bar_progress * XP_MAX_SIZE_X / 4.0f) - 100.0f;
   return Vector2(centerX, xpBarPos.y);
 }
 
 void HUD::HandleKeyPress(int key) {
   if (key == SDLK_ESCAPE) {
-    // Abre o menu de pausa por cima do HUD
     new PausedMenu(GetGame(), "../Assets/Fonts/Arial.ttf");
     auto game = GetGame();
     if (game) {
       game->SetPaused(true);
     }
-    // O construtor de UIScreen já faz PushUI(this) no Game
-  }
-
-  if (key == SDLK_UP) {
-    mXpProgress += 0.1f;
-    SetXPBar(mXpProgress);
   }
 }
