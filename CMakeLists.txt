@@ -130,6 +130,8 @@ add_executable(${PROJECT_NAME}
         Source/Color.h
         Source/Managers/ColorPalette.cpp
         Source/Managers/ColorPalette.h
+        Source/Actors/Enemy.cpp
+        Source/Actors/Enemy.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)
