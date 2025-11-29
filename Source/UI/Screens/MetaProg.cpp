@@ -8,10 +8,13 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   auto& mgr = UpgradeManager::GetInstance();
 
-  AddText("Upgrades", Vector2(0.0f, 150.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddImage("../Assets/Levels/MetaProg/background.png", Vector2(0.0f, 0.0f),
+           0.35f, 0.0f, 50);
+
+  AddText("Upgrades", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   mCurrencyText = AddText("Currency: " + std::to_string(mgr.GetCurrency()),
-                          Vector2(200.0f, 100.0f), 0.3f, 0.0f, 32, 512, 100);
+                          Vector2(250.0f, 150.0f), 0.4f, 0.0f, 32, 512, 100);
 
   UIButton* but[statButtons.size() + 1]{nullptr};
 
@@ -33,7 +36,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
             mgr.Purchase(type);
           }
         },
-        pos, 0.3f, 0.0f, 32, 256, 102);
+        pos, 0.4f, 0.0f, 32, 256, 102);
 
     if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
       auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
@@ -50,7 +53,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
 
   UIButton* escape_but = AddButton(
       "Go back", [this]() { mGame->SetScene(GameScene::MainMenu); },
-      Vector2(100.0f, -90.0f), 0.4f, 0.0f, 32, 128, 102);
+      Vector2(200.0f, -150.0f), 0.5f, 0.0f, 32, 128, 102);
 
   escape_but->SetTextColor(
       ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright"));

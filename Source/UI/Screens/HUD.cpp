@@ -1,6 +1,7 @@
 // HUD.cpp
 #include "HUD.h"
 #include <algorithm>
+#include <sstream>
 #include "../../Game.h"
 #include "PausedMenu.h"
 #include "UIScreen.h"
@@ -8,29 +9,38 @@
 HUD::HUD(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName), mXpBar(nullptr), mScore(nullptr) {
   // Canto superior esquerdo (ajuste fino se quiser)
-  const Vector2 basePos(-220.0f, 350.0f);
+  const Vector2 basePos(0.0f, 220.0f);
 
   // Vamos alinhar os 3 segmentos na MESMA coordenada Y da barra
   const float y = basePos.y;
 
   // Barra de fundo (sempre visível) – âncora da barra
-  UIImage* bar =
-      AddImage("../Assets/HUD/ShieldBar.png", basePos, 0.75f, 0.0f, 110);
+  UIImage* bar = AddImage("../Assets/HUD/xp_bar.png", Vector2(-280.0f, 210.0f),
+                          0.5f, 0.0f, 110);
 
-  // Texto "score:" um pouco abaixo da barra
-  AddText("score: ", basePos + Vector2(0.0f, -40.0f),  // -40 -> desce na tela
-          1.0f);
-
-  // Contador de pontos ao lado do "score:"
-  mScore = AddText("0", basePos + Vector2(100.0f, -40.0f), 1.0f);
+  mRunTime = AddText("0:0", basePos, 0.4f, 0.0f, 40, 1024, 50);
+  mRunTime->SetBackgroundColor(Vector4::Zero);
 }
 
 void HUD::SetXPBar(float percentage) {
-  if (!mXpBar)
+  if (!mXpBar) {
     return;
+  }
 
   // Garante que o percentual está entre 0.0 e 1.0
   percentage = std::clamp(percentage, 0.0f, 1.0f);
+}
+
+void HUD::Update(float deltaTime) {
+  UIScreen::Update(deltaTime);
+
+  std::stringstream ss;
+  ss << static_cast<unsigned>(mGame->GetRunMinutes()) << ":"
+     << static_cast<unsigned>(mGame->GetRunSeconds());
+
+  std::string runTimeText = ss.str();
+
+  mRunTime->SetText(runTimeText);
 }
 
 // Atualiza texto do score

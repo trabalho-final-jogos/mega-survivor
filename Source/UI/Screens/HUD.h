@@ -13,13 +13,13 @@ class HUD : public UIScreen {
   HUD(class Game* game, const std::string& fontName);
 
   void SetScore(int score);
-
   void HandleKeyPress(int key) override;
-
   void SetXPBar(float percentage);
+  void Update(float deltaTime) override;
 
  private:
   // HUD elements
   UIImage* mXpBar;
   UIText* mScore;
+  UIText* mRunTime;
 };

@@ -37,7 +37,7 @@ void UIImage::Draw(class Shader* shader) {
       static_cast<float>(mTexture->GetWidth()) * mScale,
       static_cast<float>(mTexture->GetHeight()) * mScale, 1.0f);
 
-  Matrix4 rotMat = Matrix4::CreateRotationZ(mAngle);
+  Matrix4 rotMat = Matrix4::CreateRotationZ(mAngle + Math::Pi);
 
   // Translate to position on screen
   Matrix4 transMat =
@@ -51,7 +51,7 @@ void UIImage::Draw(class Shader* shader) {
   shader->SetFloatUniform("uTextureFactor", 1.0f);
 
   // Set uTexRect
-  shader->SetVectorUniform("uTexRect", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+  shader->SetVectorUniform("uTexRect", Vector4(0.0f, 0.0f, -1.0f, 1.0f));
 
   // Set current texture
   mTexture->SetActive();

@@ -40,8 +40,8 @@ class Game {
 
   static const int WINDOW_WIDTH = 1280;
   static const int WINDOW_HEIGHT = 720;
-  static const int VIRTUAL_WIDTH = 640;
-  static const int VIRTUAL_HEIGHT = 360;
+  static const int VIRTUAL_WIDTH = 900;
+  static const int VIRTUAL_HEIGHT = 506;
   static const int LEVEL_WIDTH = 60;
   static const int LEVEL_HEIGHT = 60;
   static const int TILE_SIZE = 32;
@@ -83,8 +83,14 @@ class Game {
   void SetLevelData(int** data) { mLevelData = data; }
 
   void UpdateCamera();
-	void StartClock();
-	float GetClockTime();
+  void UpdateRunTime();
+  void StartClock();
+  void StopClock();
+  void ResetClock();
+  float GetClockTime();
+
+  uint8_t GetRunSeconds() const { return mRunSeconds; }
+  uint8_t GetRunMinutes() const { return mRunMinutes; }
 
  private:
   void ProcessInput();
@@ -132,6 +138,10 @@ class Game {
 
   Vector2 mMouseWorldPos;
 
-	Uint32 mClockStartTime;
-	bool mIsClockRunning;
+  uint16_t mRunTotalSeconds{0};
+  uint8_t mRunSeconds{0};
+  uint8_t mRunMinutes{0};
+
+  Uint32 mClockStartTime;
+  bool mIsClockRunning;
 };
