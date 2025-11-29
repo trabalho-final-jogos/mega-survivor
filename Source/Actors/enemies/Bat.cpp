@@ -4,11 +4,11 @@
 #include "../../Components/Physics/RigidBodyComponent.h"
 #include "../../Game.h"
 
-Bat::Bat(Game* game) : Actor(game) {
+Bat::Bat(Game* game) : Enemy(game, 1, 10) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 
   // 1. Física (SEM gravidade)
-  mRigidBody = new RigidBodyComponent(this);
+  auto mRigidBody = new RigidBodyComponent(this);
   mRigidBody->SetApplyGravity(false);
 
   // 2. Colisão

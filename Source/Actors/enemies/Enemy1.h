@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../Actor.h"
+#include "../Enemy.h"
 
-class Enemy1 : public Actor {
+class Enemy1 : public Enemy {
  public:
   explicit Enemy1(Game* game,
                   float forwardSpeed = 80.0f,
@@ -28,12 +28,6 @@ class Enemy1 : public Actor {
  private:
   bool mIsDying;
   float mForwardSpeed;
-  float mDyingTimer;
 
-  float mHealth;
   float mMoveSpeed;
-
-  class RigidBodyComponent* mRigidBodyComponent;
-  class AABBColliderComponent* mColliderComponent;
-  class AnimatorComponent* mDrawComponent;
 };

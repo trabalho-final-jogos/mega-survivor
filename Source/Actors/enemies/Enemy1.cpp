@@ -11,11 +11,9 @@
 #include "../Player.h"
 
 Enemy1::Enemy1(Game* game, float forwardSpeed, float deathTime)
-    : Actor(game),
-      mDyingTimer(deathTime),
+    : Enemy(game, 10, 15),
       mIsDying(false),
-      mForwardSpeed(forwardSpeed),
-      mHealth(10.0f)  // Valor padrão
+      mForwardSpeed(forwardSpeed)
 
 {
   mDrawComponent = new AnimatorComponent(
@@ -28,8 +26,8 @@ Enemy1::Enemy1(Game* game, float forwardSpeed, float deathTime)
   mDrawComponent->SetAnimation("walk");
   mDrawComponent->SetAnimFPS(3.0f);
 
-  mRigidBodyComponent = new RigidBodyComponent(this);
-  mRigidBodyComponent->SetVelocity(Vector2(-forwardSpeed, 0.0f));
+  mRigidBody = new RigidBodyComponent(this);
+  mRigidBody->SetVelocity(Vector2(-forwardSpeed, 0.0f));
   mColliderComponent = new class AABBColliderComponent(
       this, 0, 0, Game::TILE_SIZE, Game::TILE_SIZE, ColliderLayer::Enemy,
       false);
@@ -38,37 +36,31 @@ Enemy1::Enemy1(Game* game, float forwardSpeed, float deathTime)
 void Enemy1::Kill() {
   mIsDying = true;
   //  mDrawComponent->SetAnimation("dead");
-  mRigidBodyComponent->SetEnabled(false);
+  mRigidBody->SetEnabled(false);
   mColliderComponent->SetEnabled(false);
 }
 
 void Enemy1::OnUpdate(float deltaTime) {
   if (mIsDying) {
-    mDyingTimer -= deltaTime;
-    if (mDyingTimer <= 0) {
-      mState = ActorState::Destroy;
-    }
+    mState = ActorState::Destroy;
   }
+
   const Player* player = GetGame()->GetPlayer();
 
   if (player) {
     Vector2 playerPos = player->GetPosition();
     Vector2 myPos = GetPosition();
 
-    // 2. Calcula o vetor direção
     Vector2 direction = playerPos - myPos;
 
-    // 3. Normaliza para ter apenas a direção (comprimento 1)
     if (direction.LengthSq() > 0.0f) {
       direction.Normalize();
     }
 
-    // 4. Aplica o movimento (usando a velocidade e o fator de slow)
-    // (Lembrando de não usar gravidade no eixo Y em top-down)
-    if (mRigidBodyComponent) {
-      float speed = mForwardSpeed;  // Simples por enquanto
+    if (mRigidBody) {
+      float speed = mForwardSpeed;
 
-      mRigidBodyComponent->SetVelocity(direction * speed);
+      mRigidBody->SetVelocity(direction * speed);
     }
   }
 }
@@ -89,14 +81,12 @@ void Enemy1::OnHorizontalCollision(const float minOverlap,
 
   if (other->GetLayer() == ColliderLayer::Blocks ||
       other->GetLayer() == ColliderLayer::Enemy) {
-    Vector2 currentVelocity = mRigidBodyComponent->GetVelocity();
+    Vector2 currentVelocity = mRigidBody->GetVelocity();
 
     if (minOverlap < 0) {
-      mRigidBodyComponent->SetVelocity(
-          Vector2(-mForwardSpeed, currentVelocity.y));
+      mRigidBody->SetVelocity(Vector2(-mForwardSpeed, currentVelocity.y));
     } else {
-      mRigidBodyComponent->SetVelocity(
-          Vector2(mForwardSpeed, currentVelocity.y));
+      mRigidBody->SetVelocity(Vector2(mForwardSpeed, currentVelocity.y));
     }
   }
 }
@@ -120,6 +110,7 @@ void Enemy1::OnVerticalCollision(const float minOverlap,
     SDL_Log("Goomba::OnVerticalCollision %f", minOverlap);
   }
 }
+
 void Enemy1::SetStats(float health, float speed) {
   mHealth = health;
   mForwardSpeed = speed;

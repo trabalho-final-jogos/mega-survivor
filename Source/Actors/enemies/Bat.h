@@ -1,7 +1,7 @@
 #pragma once
-#include "../Actor.h"
+#include "../Enemy.h"
 
-class Bat : public Actor {
+class Bat : public Enemy {
  public:
   Bat(class Game* game);
   void OnUpdate(float deltaTime) override;
@@ -14,9 +14,4 @@ class Bat : public Actor {
   void SetFixedVelocity(const Vector2& velocity);
 
   void SetStats(float health);
-
- private:
-  int mHealth;
-  class RigidBodyComponent* mRigidBody;
-  class AnimatorComponent* mDrawComponent;  // Ou SpriteComponent
 };
