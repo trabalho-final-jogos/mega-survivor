@@ -8,7 +8,7 @@
 XPGem::XPGem(Game* game, const Vector2& position, int xpValue)
     : Actor(game),
       mXPValue(xpValue),
-      mMagnetRadius(20.0f),
+      mMagnetRadius(100.0f),
       mMoveSpeed(200.0f)  // Speed when attracted
 {
   SetPosition(position);
@@ -21,7 +21,7 @@ XPGem::XPGem(Game* game, const Vector2& position, int xpValue)
                             64,  // width
                             64   // height
       );
-  mAnimator->SetFlipHorizontal(true);
+  mAnimator->SetFlipHorizontal(false);
 
   mRigidBody = new RigidBodyComponent(this);
   mRigidBody->SetApplyGravity(false);  // Floating gem

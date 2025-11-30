@@ -407,4 +407,14 @@ void Player::AddXP(uint32_t amount) {
   mCurrentXp += amount;
   SDL_Log("Added %d XP. Total XP: %d", amount, mCurrentXp);
   // Logic for leveling up could go here
+
+  while (mCurrentXp >= GetMaxXP()) {
+    mCurrentXp -= GetMaxXP();
+    mCurrentLvl++;
+    SDL_Log("Level Up! New Level: %d", mCurrentLvl);
+  }
+}
+
+uint32_t Player::GetMaxXP() const {
+  return 100 * (mCurrentLvl + 1);
 }

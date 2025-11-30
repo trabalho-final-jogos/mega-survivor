@@ -16,7 +16,8 @@ HUD::HUD(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName),
       mXpBar(nullptr),
       mScore(nullptr),
-      mFontName(fontName) {
+      mFontName(fontName),
+      mDisplayedProgress(0.0f) {
   const Vector2 basePos(0.0f, 220.0f);
 
   float initialProgress = 0.0f;
@@ -43,15 +44,16 @@ void HUD::Update(float deltaTime) {
   mRunTime->SetText(runTimeText);
 
   const Player* player = GetGame()->GetPlayer();
-  auto xp = player->GetCurrentXP();
-  float pct = 0.0f;
+  float currentXP = (float)player->GetCurrentXP();
+  float maxXP = (float)player->GetMaxXP();
+  float targetPct = maxXP > 0 ? currentXP / maxXP : 0.0f;
 
-  if (xp != 0) {
-    pct = 20 / xp;
-    SDL_Log("Current xp progress {}", pct);
-  }
+  // Smoothly interpolate displayed progress
+  float lerpSpeed = 2.0f;
+  mDisplayedProgress =
+      Math::Lerp(mDisplayedProgress, targetPct, deltaTime * lerpSpeed);
 
-  SetXPBar(pct);
+  SetXPBar(mDisplayedProgress);
 }
 
 // Atualiza texto do score

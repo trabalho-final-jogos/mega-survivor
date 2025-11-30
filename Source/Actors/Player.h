@@ -35,6 +35,7 @@ class Player : public Actor {
   uint8_t GetCurrentLvl() const { return mCurrentLvl; }
   uint32_t GetCurrentXP() const { return mCurrentXp; }
   void AddXP(uint32_t amount);
+  uint32_t GetMaxXP() const;
 
  private:
   void ManageAnimations();
