@@ -22,7 +22,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       "New game",
       [this]() {
         Close();                             // Fecha a tela de menu
-        mGame->SetScene(GameScene::Level1);  // Inicia o jogo
+        mGame->SetScene(GameScene::CharSelect);  // Inicia o jogo
       },
       Vector2(0.0f, -50.0f),  // Posição centralizada
       0.5f, 0.0f, 40, 1024, 101);
@@ -44,18 +44,6 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
   upgradeStoreButton->SetBackgroundColor(
       Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
   upgradeStoreButton->SetTextColor(textColors);
-
-  UIButton* charSelectButton = AddButton(
-      "Character Selection",
-      [this]() {
-        Close();
-        mGame->SetScene(GameScene::CharSelect);
-      },
-      Vector2(0.0f, -150.0f), 0.5f, 0.0f, 40, 1024, 101);
-
-  charSelectButton->SetBackgroundColor(
-      Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
-  charSelectButton->SetTextColor(textColors);
 
   // Cria e configura o botão "Fechar Jogo"
   UIButton* quitButton = AddButton(
