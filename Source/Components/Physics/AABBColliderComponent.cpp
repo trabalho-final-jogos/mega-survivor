@@ -151,15 +151,12 @@ float AABBColliderComponent::DetectVertialCollision(
         shouldResolvePhysics = false;
       }
 
-      if ((myLayer == ColliderLayer::Enemy &&
-           otherLayer == ColliderLayer::Enemy) ||
-          (myLayer == ColliderLayer::Enemy &&
-           otherLayer == ColliderLayer::Enemy)) {
+      if (myLayer == ColliderLayer::Enemy ||
+          otherLayer == ColliderLayer::Enemy) {
         shouldResolvePhysics = false;
       }
 
-      if ((myLayer == ColliderLayer::XP && otherLayer == ColliderLayer::XP) ||
-          (myLayer == ColliderLayer::XP && otherLayer == ColliderLayer::XP)) {
+      if (myLayer == ColliderLayer::XP || otherLayer == ColliderLayer::XP) {
         shouldResolvePhysics = false;
       }
 
