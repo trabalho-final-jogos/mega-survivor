@@ -9,6 +9,7 @@
 #pragma once
 #include <SDL.h>
 #include <vector>
+#include "Actors/Player.h"
 #include "Audio/AudioSystem.h"
 #include "Renderer/Renderer.h"
 
@@ -36,6 +37,9 @@ class Game {
 
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }
+
+  // Character
+  PlayerChar mChar = MEGAMAN;
 
   static const int WINDOW_WIDTH = 1280;
   static const int WINDOW_HEIGHT = 720;
@@ -72,7 +76,7 @@ class Game {
 
   // Game specific
   const class Player* GetPlayer() { return mPlayer; }
-  void SetPlayer(class Player* player) { mPlayer = player; }
+  void SetPlayer(Player* player) { mPlayer = player; }
 
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter
 

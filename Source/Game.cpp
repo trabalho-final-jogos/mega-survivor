@@ -164,7 +164,7 @@ void Game::BuildLevel(int** levelData, int width, int height) {
         // --- PERSONAGEM ---
         case 16:
           SDL_Log("Player created at position (%.1f, %.1f)", pos.x, pos.y);
-          mPlayer = new Player(this);
+          mPlayer = new Player(this, mChar);
           mPlayer->SetPosition(pos);
           break;
 

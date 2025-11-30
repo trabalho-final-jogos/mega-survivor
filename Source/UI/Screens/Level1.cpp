@@ -15,7 +15,7 @@ Level1::Level1(Game* game, const std::string& fontName)
     SDL_Log("Level 1-1 built successfully");
 
     if (!mGame->GetPlayer()) {
-        Player* player = new Player(mGame);
+        Player* player = new Player(mGame, mGame->mChar);
         player->SetPosition(Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
         mGame->SetPlayer(player);
     }

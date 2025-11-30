@@ -9,11 +9,19 @@
 
 constexpr float PLAYER_BASE_SPEED{200.0f};
 
+enum PlayerChar {
+    MEGAMAN,
+    PROTOMAN
+};
+
+
 class Player : public Actor {
  public:
   explicit Player(Game* game,
+                  PlayerChar pchar = MEGAMAN,
                   float forwardSpeed = PLAYER_BASE_SPEED,
-                  float jumpSpeed = -750.0f);
+                  float jumpSpeed = -750.0f
+                  );
 
   void OnProcessInput(const Uint8* keyState) override;
   void OnUpdate(float deltaTime) override;

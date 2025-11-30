@@ -4,15 +4,26 @@
 
 #include "CharSelection.h"
 
+#include "MainMenu.h"
 #include "../../Game.h"
+#include "../../Actors/Player.h"
 
 
 CharSelection::CharSelection(class Game* game, const std::string& fontName) : UIScreen(game, fontName) {
 
+
     AddText("Character Selection", Vector2(0.0f, 150.0f), .5);
-    AddButton("Megaman", [](){}, Vector2(-150.0f, 100.0f), .5);
-    AddButton("Protoman", [](){}, Vector2(-150.0f, 50.0f),.5);
-    AddButton("Back", [this](){mGame->SetScene(GameScene::MainMenu);}, Vector2(0.0f, -150.0f), .5);
+    AddButton("Megaman", [this]() {
+        mGame->mChar = PlayerChar::MEGAMAN; mGame->SetScene(GameScene::MainMenu);
+    }, Vector2(-150.0f, 100.0f), .5);
+
+    AddButton("Protoman", [this]() {
+        mGame->mChar = PlayerChar::PROTOMAN; mGame->SetScene(GameScene::MainMenu);
+    }, Vector2(-150.0f, 50.0f),.5);
+
+    AddButton("Back", [this]() {
+        mGame->SetScene(GameScene::MainMenu);
+    }, Vector2(0.0f, -150.0f), .5);
 
     if (!mButtons.empty()) {
         mButtons[0]->SetHighlighted(true);
