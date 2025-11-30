@@ -42,8 +42,7 @@ Game::Game()
       mLevelData(nullptr),
       mMouseWorldPos(Vector2::Zero),
       mClockStartTime(0),
-      mIsClockRunning(false)
-{}
+      mIsClockRunning(false) {}
 
 bool Game::Initialize() {
   Random::Init();
@@ -246,32 +245,20 @@ void Game::ProcessInput() {
 
       case SDL_KEYDOWN:
         if (event.key.repeat == 0) {
-          if (event.key.keysym.sym == SDLK_ESCAPE) {
-            if (mCurrentScene == GameScene::Level1) {
-              if (!mIsPaused) {
-                SetPaused(true);
-                new PausedMenu(this, std::string(GAME_FONT));
-              }
-            } else {
-              if (!mUIStack.empty()) {
-                mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
-              }
-            }
-          } else {
-            if (!mUIStack.empty()) {
-              mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
-            }
+          if (!mUIStack.empty()) {
+            mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
           }
-        }
-        break;
-    }
-  }
 
-  if (!mIsPaused) {
-    // Handle actors (continuous keys)
-    const Uint8* state = SDL_GetKeyboardState(nullptr);
-    for (auto actor : mActors) {
-      actor->ProcessInput(state);
+          break;
+        }
+    }
+
+    if (!mIsPaused) {
+      // Handle actors (continuous keys)
+      const Uint8* state = SDL_GetKeyboardState(nullptr);
+      for (auto actor : mActors) {
+        actor->ProcessInput(state);
+      }
     }
   }
 }
@@ -286,6 +273,9 @@ void Game::UpdateGame(float deltaTime) {
   // Update all actors and pending actors
   if (!mIsPaused) {
     UpdateActors(deltaTime);
+
+    // Update run time
+    UpdateRunTime();
 
     // Update camera position
     UpdateCamera();
@@ -308,33 +298,26 @@ void Game::UpdateGame(float deltaTime) {
   }
 
   UpdateMouseWorldPos();
+}
 
-  // --- IMPRIMIR RELÓGIO (TESTE) ---
+void Game::UpdateRunTime() {
+  if (mIsClockRunning) {
+    float totalTime = GetClockTime();
 
-  // 1. Pega o tempo total em segundos (float)
-  float totalTime = GetClockTime();
+    int totalSeconds = static_cast<int>(totalTime);
 
-  // 2. Converte para Inteiro (para ignorar milissegundos)
-  int totalSeconds = static_cast<int>(totalTime);
+    static int lastSecond = -1;
 
-  // 3. Calcula Minutos (Divisão inteira por 60)
-  int minutes = totalSeconds / 60;
+    if (totalSeconds != lastSecond) {
+      SDL_Log("Tempo: %02d:%02d", mRunMinutes, mRunSeconds);
+      lastSecond = totalSeconds;
 
-  // 4. Calcula Segundos Restantes (Resto da divisão por 60)
-  int seconds = totalSeconds % 60;
+      mRunSeconds = mRunTotalSeconds % 60;
 
-  // 5. Imprime formatado
-  // %02d significa: "Imprima um inteiro com pelo menos 2 dígitos,
-  // preenchendo com zero à esquerda se necessário" (ex: 05 em vez de 5).
+      mRunMinutes = mRunTotalSeconds / 60;
 
-  // DICA: Para não floodar o console (imprimir 60x por segundo),
-  // vamos imprimir apenas quando o segundo mudar.
-  static int lastPrintedSecond = -1;
-
-  if (totalSeconds > lastPrintedSecond)
-  {
-    SDL_Log("Tempo: %02d:%02d", minutes, seconds);
-    lastPrintedSecond = totalSeconds;
+      mRunTotalSeconds++;
+    }
   }
 }
 
@@ -364,6 +347,8 @@ void Game::UpdateActors(float deltaTime) {
 
 void Game::ResetGame() {
   UnloadScene();
+  StopClock();
+  ResetClock();
   SetScene(GameScene::MainMenu);
 }
 
@@ -555,18 +540,25 @@ void Game::Shutdown() {
   SDL_Quit();
 }
 
-void Game::StartClock()
-{
+void Game::StartClock() {
   mIsClockRunning = true;
   mClockStartTime = SDL_GetTicks();
 
   SDL_Log("Relógio iniciado!");
 }
 
-float Game::GetClockTime()
-{
-  if (!mIsClockRunning)
-  {
+void Game::StopClock() {
+  mIsClockRunning = false;
+}
+
+void Game::ResetClock() {
+  mRunTotalSeconds = 0;
+  mRunSeconds = 0;
+  mRunMinutes = 0;
+}
+
+float Game::GetClockTime() {
+  if (!mIsClockRunning) {
     return 0.0f;
   }
   Uint32 currentTime = SDL_GetTicks();

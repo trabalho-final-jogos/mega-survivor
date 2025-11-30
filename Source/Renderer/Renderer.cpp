@@ -164,11 +164,14 @@ void Renderer::DrawTexture(const Vector2& position,
                            const Vector4& textureRect,
                            const Vector2& cameraPos,
                            bool flip,
-                           float textureFactor) {
+                           float textureFactor,
+                           bool flipV) {
   float flipFactor = flip ? -1.0f : 1.0f;
+  float flipFactorY = flipV ? -1.0f : 1.0f;
 
   Matrix4 model =
-      Matrix4::CreateScale(Vector3(size.x * flipFactor, size.y, 1.0f)) *
+      Matrix4::CreateScale(
+          Vector3(size.x * flipFactor, size.y * flipFactorY, 1.0f)) *
       Matrix4::CreateRotationZ(rotation) *
       Matrix4::CreateTranslation(Vector3(position.x, position.y, 0.0f));
 

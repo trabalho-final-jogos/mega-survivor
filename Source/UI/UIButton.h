@@ -32,6 +32,8 @@ class UIButton : public UIText {
   void SetText(const std::string& text);
   void SetScale(float scale) { mScale = scale; }
   void SetSelected(bool sel) { mSelected = sel; }
+  void SetOpacity(float opacity);
+  float GetOpacity() const { return mBackgroundColor.w; }
   bool GetHighlighted() const { return mHighlighted; }
 
   // Returns true if the point is within the button's bounds

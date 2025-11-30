@@ -48,6 +48,10 @@ void UIButton::SetText(const std::string& text) {
   UIText::SetText(text);
 }
 
+void UIButton::SetOpacity(float opacity) {
+  mBackgroundColor.w = opacity;
+}
+
 void UIButton::Draw(class Shader* shader) {
   // Simulate alpha with brightness for Vector3
 

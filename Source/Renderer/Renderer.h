@@ -33,7 +33,8 @@ class Renderer {
                    const Vector4& textureRect = Vector4::UnitRect,
                    const Vector2& cameraPos = Vector2::Zero,
                    bool flip = false,
-                   float textureFactor = 1.0f);
+                   float textureFactor = 1.0f,
+                   bool flipV = false);
 
   void DrawGeometry(const Vector2& position,
                     const Vector2& size,

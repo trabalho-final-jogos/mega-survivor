@@ -19,6 +19,7 @@ class UIRect : public UIElement {
 
   void Draw(class Shader* shader) override;
   void SetColor(const Vector4& color) { mColor = color; }
+  void SetSize(const Vector2& size) { mSize = size; }
 
  protected:
   Vector2 mSize;

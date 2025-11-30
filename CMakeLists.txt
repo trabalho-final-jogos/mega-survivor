@@ -44,8 +44,6 @@ add_executable(${PROJECT_NAME}
         Source/Renderer/Texture.h
         Source/Actors/Block.cpp
         Source/Actors/Block.h
-        Source/Actors/Goomba.cpp
-        Source/Actors/Goomba.h
         Source/Actors/Spawner.cpp
         Source/Actors/Spawner.h
         Source/Actors/Player.cpp
@@ -54,10 +52,6 @@ add_executable(${PROJECT_NAME}
         Source/Components/Drawing/AnimatorComponent.h
         Source/Components/Drawing/RectComponent.cpp
         Source/Components/Drawing/RectComponent.h
-        Source/Actors/QuestionBlock.cpp
-        Source/Actors/QuestionBlock.h
-        Source/Actors/Mushroom.h
-        Source/Actors/Mushroom.cpp
         Source/Actors/Aim.cpp
         Source/Actors/Aim.h
         Source/Actors/weapons/Projectile.h
@@ -130,6 +124,10 @@ add_executable(${PROJECT_NAME}
         Source/Color.h
         Source/Managers/ColorPalette.cpp
         Source/Managers/ColorPalette.h
+        Source/Actors/Enemy.cpp
+        Source/Actors/Enemy.h
+        Source/Actors/XPGem.cpp
+        Source/Actors/XPGem.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)

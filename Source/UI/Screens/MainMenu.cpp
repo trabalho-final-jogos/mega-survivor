@@ -8,9 +8,13 @@
 #include "../UIButton.h"
 #include "SDL.h"
 
+constexpr float SELECTED_OPACITY = 0.9;
+constexpr float UNSELECTED_OPACITY = 0.5;
+
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
-  AddText("MEGA SURVIVORS", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddImage("../Assets/Levels/MainMenu/main_menu.png", Vector2(0.0f, 0.0f),
+           0.35f, 0.0f, 50);
 
   Vector4 textColors =
       ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
@@ -21,11 +25,12 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
         Close();                             // Fecha a tela de menu
         mGame->SetScene(GameScene::Level1);  // Inicia o jogo
       },
-      Vector2(0.0f, 0.0f),  // Posição centralizada
+      Vector2(0.0f, -50.0f),  // Posição centralizada
       0.5f, 0.0f, 40, 1024, 101);
 
   // Configura cores: fundo azul, texto branco
-  startButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  startButton->SetBackgroundColor(
+      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
   startButton->SetTextColor(textColors);
 
   UIButton* upgradeStoreButton = AddButton(
@@ -34,10 +39,11 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
         Close();                                   // Fecha a tela de menu
         mGame->SetScene(GameScene::UpgradeStore);  // Inicia o jogo
       },
-      Vector2(0.0f, -50.0f),  // Posição centralizada
+      Vector2(0.0f, -100.0f),  // Posição centralizada
       0.5f, 0.0f, 40, 1024, 101);
 
-  upgradeStoreButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  upgradeStoreButton->SetBackgroundColor(
+      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
   upgradeStoreButton->SetTextColor(textColors);
 
   // Cria e configura o botão "Fechar Jogo"
@@ -46,16 +52,18 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       [this]() {
         mGame->Quit();  // Fecha o jogo
       },
-      Vector2(0.0f, -100.0f),  // Posição abaixo do primeiro botão
+      Vector2(0.0f, -150.0f),  // Posição abaixo do primeiro botão
       0.5f, 0.0f, 40, 1024, 101);
 
-  quitButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  quitButton->SetBackgroundColor(
+      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
   quitButton->SetTextColor(textColors);
 
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
     mButtons[0]->SetSelected(true);
+    mButtons[0]->SetOpacity(SELECTED_OPACITY);
   }
 }
 
@@ -64,6 +72,7 @@ void MainMenu::HandleKeyPress(int key) {
     return;
 
   int oldIndex = mSelectedButtonIndex;
+  float oldOpacity = mButtons[mSelectedButtonIndex]->GetOpacity();
 
   switch (key) {
     case SDLK_UP:
@@ -99,11 +108,13 @@ void MainMenu::HandleKeyPress(int key) {
     if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
       mButtons[oldIndex]->SetSelected(false);
+      mButtons[oldIndex]->SetOpacity(UNSELECTED_OPACITY);
     }
     if (mSelectedButtonIndex >= 0 &&
         mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
       mButtons[mSelectedButtonIndex]->SetSelected(true);
+      mButtons[mSelectedButtonIndex]->SetOpacity(SELECTED_OPACITY);
     }
   }
 }

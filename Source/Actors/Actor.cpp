@@ -1,104 +1,84 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
 #include "Actor.h"
-#include "../Game.h"
-#include "../Components/Component.h"
 #include <algorithm>
 #include <typeinfo>
+#include "../Components/Component.h"
+#include "../Game.h"
 
 Actor::Actor(Game* game)
-        : mState(ActorState::Active)
-        , mPosition(Vector2::Zero)
-        , mScale(Vector2(1.0f, 1.0f))
-        , mRotation(0.0f)
-        , mGame(game)
-{
-    mGame->AddActor(this);
-    SetScale(Vector2(Game::TILE_SIZE,Game::TILE_SIZE));
+    : mState(ActorState::Active),
+      mPosition(Vector2::Zero),
+      mScale(Vector2(1.0f, 1.0f)),
+      mRotation(0.0f),
+      mGame(game) {
+  mGame->AddActor(this);
+  SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 }
 
-Actor::~Actor()
-{
-    mGame->RemoveActor(this);
+Actor::~Actor() {
+  mGame->RemoveActor(this);
 
-    SDL_Log("Actor::~Actor deleting components: this=%p, type=%s, numComponents=%zu",
-            (void*)this, typeid(*this).name(), mComponents.size());
+  SDL_Log(
+      "Actor::~Actor deleting components: this=%p, type=%s, numComponents=%zu",
+      (void*)this, typeid(*this).name(), mComponents.size());
 
-    for (auto component : mComponents)
-    {
-        SDL_Log("Deleting component: %p, type=%s", (void*)component, typeid(*component).name());
-        delete component;
+  for (auto component : mComponents) {
+    SDL_Log("Deleting component: %p, type=%s", (void*)component,
+            typeid(*component).name());
+    delete component;
+  }
+  mComponents.clear();
+
+  SDL_Log("Actor::~Actor finished: this=%p", (void*)this);
+}
+
+void Actor::Update(float deltaTime) {
+  if (mState == ActorState::Active) {
+    for (auto comp : mComponents) {
+      if (comp->IsEnabled()) {
+        comp->Update(deltaTime);
+      }
     }
-    mComponents.clear();
 
-    SDL_Log("Actor::~Actor finished: this=%p", (void*)this);
+    OnUpdate(deltaTime);
+  }
 }
 
-void Actor::Update(float deltaTime)
-{
-    if (mState == ActorState::Active)
-    {
-        for (auto comp : mComponents)
-        {
-            if (comp->IsEnabled()) {
-                comp->Update(deltaTime);
-            }
-        }
+void Actor::OnUpdate(float deltaTime) {}
 
-        OnUpdate(deltaTime);
+void Actor::ProcessInput(const Uint8* keyState) {
+  if (mState == ActorState::Active) {
+    for (auto comp : mComponents) {
+      if (comp->IsEnabled()) {
+        comp->ProcessInput(keyState);
+      }
     }
+
+    OnProcessInput(keyState);
+  }
 }
 
-void Actor::OnUpdate(float deltaTime)
-{
+void Actor::OnProcessInput(const Uint8* keyState) {}
 
-}
+void Actor::OnHorizontalCollision(const float minOverlap,
+                                  AABBColliderComponent* other) {}
 
-void Actor::ProcessInput(const Uint8* keyState)
-{
+void Actor::OnVerticalCollision(const float minOverlap,
+                                AABBColliderComponent* other) {}
 
-    if (mState == ActorState::Active)
-    {
-        for (auto comp : mComponents)
-        {
-            if (comp->IsEnabled()) {
-                comp->ProcessInput(keyState);
-            }
-        }
+void Actor::Kill() {}
 
-        OnProcessInput(keyState);
-    }
-}
-
-void Actor::OnProcessInput(const Uint8* keyState)
-{
-
-}
-
-
-void Actor::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) {
-
-}
-
-void Actor::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) {
-
-}
-
-void Actor::Kill()
-{
-
-}
-
-void Actor::AddComponent(Component* c)
-{
-    mComponents.emplace_back(c);
-    std::sort(mComponents.begin(), mComponents.end(), [](Component* a, Component* b) {
-        return a->GetUpdateOrder() < b->GetUpdateOrder();
-    });
+void Actor::AddComponent(Component* c) {
+  mComponents.emplace_back(c);
+  std::sort(mComponents.begin(), mComponents.end(),
+            [](Component* a, Component* b) {
+              return a->GetUpdateOrder() < b->GetUpdateOrder();
+            });
 }

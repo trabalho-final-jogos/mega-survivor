@@ -1,21 +1,13 @@
 #pragma once
-#include "../Actor.h"
+#include "../Enemy.h"
 
-class Bat : public Actor
-{
-public:
-	Bat(class Game* game);
-	void OnUpdate(float deltaTime) override;
-	void OnHorizontalCollision(const float minOverlap, class AABBColliderComponent* other) override;
-	void OnVerticalCollision(const float minOverlap, class AABBColliderComponent* other) override;
+class Bat : public Enemy {
+ public:
+  Bat(class Game* game);
+  void OnUpdate(float deltaTime) override;
 
-	// Define a velocidade fixa (chamado pelo Spawner)
-	void SetFixedVelocity(const Vector2& velocity);
+  // Define a velocidade fixa (chamado pelo Spawner)
+  void SetFixedVelocity(const Vector2& velocity);
 
-	void SetStats(float health);
-
-private:
-	int mHealth;
-	class RigidBodyComponent* mRigidBody;
-	class AnimatorComponent* mDrawComponent; // Ou SpriteComponent
+  void SetStats(float health);
 };

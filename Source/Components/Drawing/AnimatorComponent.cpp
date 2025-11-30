@@ -135,7 +135,8 @@ void AnimatorComponent::Draw(Renderer* renderer) {
 
   renderer->DrawTexture(worldPos, mOwner->GetScale(), mOwner->GetRotation(),
                         Vector4(1.0f, 1.0f, 1.0f, 1.0f), mSpriteTexture,
-                        texRect, cameraPos, mFlipHorizontal, 1.0f);
+                        texRect, cameraPos, mFlipHorizontal, 1.0f,
+                        mFlipVertical);
 }
 void AnimatorComponent::Update(float deltaTime) {
   if (mIsPaused) {

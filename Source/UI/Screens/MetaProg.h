@@ -7,8 +7,8 @@ const int cols = 3;
 const int rows = 4;
 const float startX = -150.0f;
 const float startY = 50.0f;
-const float spacingX = 125.0f;
-const float spacingY = 70.0f;
+const float spacingX = 175.0f;
+const float spacingY = 100.0f;
 
 class MetaProg : public UIScreen {
  public:
