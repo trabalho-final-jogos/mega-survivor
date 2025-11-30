@@ -18,14 +18,14 @@ Level1::Level1(Game* game, const std::string& fontName)
 
   mHUD->SetXPBar(0.0f);
 
-  if (!mGame->GetPlayer()) {
-    Player* player = new Player(mGame);
-    player->SetPosition(
-        Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
-    mGame->SetPlayer(player);
-  }
-  mGame->StartClock();
-  new Spawner(mGame);
+    if (!mGame->GetPlayer()) {
+        Player* player = new Player(mGame, mGame->mChar);
+        player->SetPosition(Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
+        mGame->SetPlayer(player);
+    }
+    mGame->StartClock();
+    new Spawner(mGame);
+
 
   mGame->UpdateCamera();
 }

@@ -9,12 +9,13 @@
 #pragma once
 #include <SDL.h>
 #include <vector>
+#include "Actors/Player.h"
 #include "Audio/AudioSystem.h"
 #include "Renderer/Renderer.h"
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
-enum class GameScene { MainMenu, UpgradeStore, Level1 };
+enum class GameScene { MainMenu, UpgradeStore, Level1, CharSelect };
 
 class Game {
  public:
@@ -38,6 +39,9 @@ class Game {
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }
 
+  // Character
+  PlayerChar mChar = MEGAMAN;
+
   static const int WINDOW_WIDTH = 1280;
   static const int WINDOW_HEIGHT = 720;
   static const int VIRTUAL_WIDTH = 900;
@@ -47,6 +51,8 @@ class Game {
   static const int TILE_SIZE = 32;
   static const int SPAWN_DISTANCE = 700;
   static const int FPS = 60;
+  static constexpr float SELECTED_OPACITY = 0.9;
+  static constexpr float UNSELECTED_OPACITY = 0.5;
 
   // Draw functions
   void AddDrawable(class DrawComponent* drawable);
@@ -73,7 +79,7 @@ class Game {
 
   // Game specific
   const class Player* GetPlayer() { return mPlayer; }
-  void SetPlayer(class Player* player) { mPlayer = player; }
+  void SetPlayer(Player* player) { mPlayer = player; }
 
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter
 

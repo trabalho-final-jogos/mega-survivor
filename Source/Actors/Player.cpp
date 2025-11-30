@@ -22,7 +22,33 @@
 #include "weapons/main_gun/MainGun.h"
 #include "weapons/saw_blade/SawGun.h"
 
-Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
+std::string getPlayerTexturePath(PlayerChar character) {
+    switch (character) {
+        case PlayerChar::MEGAMAN:
+            return "../Assets/Sprites/Megaman/player.png";
+          case PlayerChar::PROTOMAN:
+            return "../Assets/Sprites/Protoman/player.png";
+          case PlayerChar::BASS:
+            return "../Assets/Sprites/Bass/player.png";
+          default:
+            return "../Assets/Sprites/Megaman/player.png";
+    }
+}
+
+std::string getPlayerDataPath(PlayerChar character) {
+    switch (character) {
+        case PlayerChar::MEGAMAN:
+            return "../Assets/Sprites/Megaman/player.json";
+        case PlayerChar::PROTOMAN:
+            return "../Assets/Sprites/Protoman/player.json";
+        case PlayerChar::BASS:
+            return "../Assets/Sprites/Bass/player.json";
+        default:
+            return "../Assets/Sprites/Megaman/player.json";
+    }
+}
+
+Player::Player(Game* game, PlayerChar pchar, const float forwardSpeed, const float jumpSpeed)
     : Actor(game),
       mIsRunning(false),
       mIsDead(false),
@@ -34,8 +60,9 @@ Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
       mAimer(nullptr) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
   mDrawComponent = new AnimatorComponent(
-      this, "../Assets/Sprites/player/player.png",
-      "../Assets/Sprites/player/player.json", Game::TILE_SIZE, Game::TILE_SIZE);
+      this, getPlayerTexturePath(pchar),
+      getPlayerDataPath(pchar)
+      , Game::TILE_SIZE, Game::TILE_SIZE);
   mDrawComponent->SetFlipHorizontal(true);
 
   mDrawComponent->AddAnimation("idle", std::vector<int>{0});

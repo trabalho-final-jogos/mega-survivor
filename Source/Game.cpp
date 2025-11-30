@@ -23,6 +23,7 @@
 #include "Components/Physics/RigidBodyComponent.h"
 #include "Managers/ColorPalette.h"
 #include "Random.h"
+#include "UI/Screens/CharSelection.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
@@ -168,7 +169,7 @@ void Game::BuildLevel(int** levelData, int width, int height) {
         // --- PERSONAGEM ---
         case 16:
           SDL_Log("Player created at position (%.1f, %.1f)", pos.x, pos.y);
-          mPlayer = new Player(this);
+          mPlayer = new Player(this, mChar);
           mPlayer->SetPosition(pos);
           break;
 
@@ -493,6 +494,12 @@ void Game::SetScene(GameScene nextScene) {
       new MetaProg(this, std::string(GAME_FONT));
       break;
     }
+
+    case GameScene::CharSelect: {
+      new CharSelection(this, std::string(GAME_FONT));
+      break;
+    }
+
     default:
       break;
   }

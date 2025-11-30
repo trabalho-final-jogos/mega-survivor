@@ -115,6 +115,8 @@ add_executable(${PROJECT_NAME}
         Source/Actors/weapons/aura/AuraWeapon.h
         Source/Actors/weapons/aura/AuraActor.cpp
         Source/Actors/weapons/aura/AuraActor.h
+        Source/UI/Screens/CharSelection.cpp
+        Source/UI/Screens/CharSelection.h
         Source/Actors/enemies/Enemy1.cpp
         Source/Actors/enemies/Enemy1.h
         Source/Actors/enemies/EnemyType.h

@@ -8,9 +8,6 @@
 #include "../UIButton.h"
 #include "SDL.h"
 
-constexpr float SELECTED_OPACITY = 0.9;
-constexpr float UNSELECTED_OPACITY = 0.5;
-
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   AddImage("../Assets/Levels/MainMenu/main_menu.png", Vector2(0.0f, 0.0f),
@@ -18,6 +15,8 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
 
   Vector4 textColors =
       ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
+
+  // Seleção de personagem
 
   UIButton* startButton = AddButton(
       "New game",
@@ -30,7 +29,7 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
 
   // Configura cores: fundo azul, texto branco
   startButton->SetBackgroundColor(
-      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
+      Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
   startButton->SetTextColor(textColors);
 
   UIButton* upgradeStoreButton = AddButton(
@@ -43,8 +42,20 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       0.5f, 0.0f, 40, 1024, 101);
 
   upgradeStoreButton->SetBackgroundColor(
-      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
+      Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
   upgradeStoreButton->SetTextColor(textColors);
+
+  UIButton* charSelectButton = AddButton(
+      "Character Selection",
+      [this]() {
+        Close();
+        mGame->SetScene(GameScene::CharSelect);
+      },
+      Vector2(0.0f, -150.0f), 0.5f, 0.0f, 40, 1024, 101);
+
+  charSelectButton->SetBackgroundColor(
+      Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
+  charSelectButton->SetTextColor(textColors);
 
   // Cria e configura o botão "Fechar Jogo"
   UIButton* quitButton = AddButton(
@@ -52,18 +63,18 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
       [this]() {
         mGame->Quit();  // Fecha o jogo
       },
-      Vector2(0.0f, -150.0f),  // Posição abaixo do primeiro botão
+      Vector2(0.0f, -200.0f),  // Posição abaixo do primeiro botão
       0.5f, 0.0f, 40, 1024, 101);
 
   quitButton->SetBackgroundColor(
-      Vector4(0.01f, 0.01f, 1.0f, UNSELECTED_OPACITY));
+      Vector4(0.01f, 0.01f, 1.0f, Game::UNSELECTED_OPACITY));
   quitButton->SetTextColor(textColors);
 
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
     mButtons[0]->SetSelected(true);
-    mButtons[0]->SetOpacity(SELECTED_OPACITY);
+    mButtons[0]->SetOpacity(Game::SELECTED_OPACITY);
   }
 }
 
@@ -108,13 +119,13 @@ void MainMenu::HandleKeyPress(int key) {
     if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
       mButtons[oldIndex]->SetSelected(false);
-      mButtons[oldIndex]->SetOpacity(UNSELECTED_OPACITY);
+      mButtons[oldIndex]->SetOpacity(Game::UNSELECTED_OPACITY);
     }
     if (mSelectedButtonIndex >= 0 &&
         mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
       mButtons[mSelectedButtonIndex]->SetSelected(true);
-      mButtons[mSelectedButtonIndex]->SetOpacity(SELECTED_OPACITY);
+      mButtons[mSelectedButtonIndex]->SetOpacity(Game::SELECTED_OPACITY);
     }
   }
 }
