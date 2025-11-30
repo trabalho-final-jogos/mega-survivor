@@ -51,6 +51,8 @@ class Game {
   static const int TILE_SIZE = 32;
   static const int SPAWN_DISTANCE = 700;
   static const int FPS = 60;
+  static constexpr float SELECTED_OPACITY = 0.9;
+  static constexpr float UNSELECTED_OPACITY = 0.5;
 
   // Draw functions
   void AddDrawable(class DrawComponent* drawable);
