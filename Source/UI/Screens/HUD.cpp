@@ -2,6 +2,7 @@
 #include "HUD.h"
 #include <algorithm>
 #include <sstream>
+#include "../../Actors/Player.h"
 #include "../../Game.h"
 #include "../../Managers/ColorPalette.h"
 #include "PausedMenu.h"
@@ -40,6 +41,17 @@ void HUD::Update(float deltaTime) {
   std::string runTimeText = ss.str();
 
   mRunTime->SetText(runTimeText);
+
+  const Player* player = GetGame()->GetPlayer();
+  auto xp = player->GetCurrentXP();
+  float pct = 0.0f;
+
+  if (xp != 0) {
+    pct = 20 / xp;
+    SDL_Log("Current xp progress {}", pct);
+  }
+
+  SetXPBar(pct);
 }
 
 // Atualiza texto do score

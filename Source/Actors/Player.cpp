@@ -13,6 +13,7 @@
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "../Game.h"
 #include "Block.h"
+#include "XPGem.h"
 #include "weapons/WeaponType.h"
 #include "weapons/aura/AuraWeapon.h"
 #include "weapons/boomerang/BoomerangGun.h"
@@ -50,10 +51,6 @@ Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
   SetOnGround();
 
   mAimer = new Aim(this->GetGame(), this);
-  /*new MainGun(this);
-new BoomerangGun(this);
-new IceGun(this);
-*/
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -286,22 +283,7 @@ void Player::Kill() {
 
 void Player::OnHorizontalCollision(const float minOverlap,
                                    AABBColliderComponent* other) {
-  ColliderLayer otherLayer = other->GetLayer();
-  if (otherLayer == ColliderLayer::Enemy) {
-    if (!mIsInvulnerable) {
-      if (!mIsBig) {
-        Kill();
-      } else {
-        Shrink();
-      }
-    }
-  }
-  if (otherLayer == ColliderLayer::PowerUp) {
-    SDL_Log("Mario colidiu horizontalmente com PowerUp!");
-    Actor* powerUp = other->GetOwner();
-    powerUp->SetState(ActorState::Destroy);
-    Grow();
-  }
+  OnVerticalCollision(minOverlap, other);
 }
 
 void Player::OnVerticalCollision(const float minOverlap,
@@ -321,98 +303,16 @@ void Player::OnVerticalCollision(const float minOverlap,
         mRigidBodyComponent->SetVelocity(vel);
         SetOffGround();
       }
-    } else {
-      SDL_Log(
-          "Mario atingido verticalmente por inimigo! Chamando Kill(). Overlap: "
-          "%f",
-          minOverlap);
-      if (!mIsInvulnerable) {
-        if (!mIsBig) {
-          Kill();
-
-        } else {
-          Shrink();
-        }
-      }
     }
-  } else if (otherLayer == ColliderLayer::Blocks) {
-    if (minOverlap > 0.0f) {
-      Actor* blockActor = other->GetOwner();
+  } else if (otherLayer == ColliderLayer::XP) {
+    Actor* xpOwner = other->GetOwner();
+    XPGem* xpGem = dynamic_cast<XPGem*>(xpOwner);
 
-      Block* block = dynamic_cast<Block*>(blockActor);
-      if (block) {
-        block->StartBounce();
-      }
-
-      if (mRigidBodyComponent) {
-        Vector2 vel = mRigidBodyComponent->GetVelocity();
-        if (vel.y < 0.0f) {
-          vel.y = 0.0f;
-          mRigidBodyComponent->SetVelocity(vel);
-        }
-      }
+    if (xpGem) {
+      AddXP(xpGem->GetXPValue());
+      xpGem->SetState(ActorState::Destroy);
     }
-  } else if (otherLayer == ColliderLayer::PowerUp) {
-    SDL_Log("Mario colidiu vertical com PowerUp!");
-    Actor* powerUp = other->GetOwner();
-    powerUp->SetState(ActorState::Destroy);
-    Grow();
   }
-}
-void Player::Grow() {
-  if (mIsBig) {
-    return;
-  }
-
-  mIsBig = true;
-
-  const std::string bigTexturePath =
-      "../Assets/Sprites/SuperMario/SuperMario.png";
-  const std::string bigJsonPath =
-      "../Assets/Sprites/SuperMario/SuperMario.json";
-
-  if (mDrawComponent->LoadSheet(bigTexturePath, bigJsonPath)) {
-    mDrawComponent->AddAnimation("idle", {0});
-    mDrawComponent->AddAnimation("run", {6, 7, 8});
-    mDrawComponent->AddAnimation("jump", {2});
-    mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
-  }
-  SDL_Log("Mario cresceu! Agora ele é grande.");
-
-  Vector2 currentScale = GetScale();
-  SetScale(Vector2(currentScale.x, currentScale.y * 2.0f));
-  Vector2 currentPos = GetPosition();
-  SetPosition(currentPos + Vector2(0.0f, -Game::TILE_SIZE / 2.0f));
-  mColliderComponent->SetSize(Vector2(Game::TILE_SIZE, Game::TILE_SIZE * 2));
-}
-
-void Player::Shrink() {
-  if (!mIsBig) {
-    return;
-  }
-
-  mIsBig = false;
-  mIsInvulnerable = true;
-  mInvulnerabilityTimer = INVULNERABILITY_DURATION;
-  const std::string bigTexturePath = "../Assets/Sprites/Mario/Mario.png";
-  const std::string bigJsonPath = "../Assets/Sprites/Mario/Mario.json";
-
-  if (mDrawComponent->LoadSheet(bigTexturePath, bigJsonPath)) {
-    mDrawComponent->AddAnimation("idle", std::vector<int>{1});
-    mDrawComponent->AddAnimation("run", std::vector<int>{3, 4, 5});
-    mDrawComponent->AddAnimation("jump", std::vector<int>{2});
-    mDrawComponent->AddAnimation("dead", std::vector<int>{0});
-    mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
-  }
-  SDL_Log("Mario agora é pequeno");
-
-  Vector2 currentScale = GetScale();
-  SetScale(Vector2(currentScale.x, currentScale.y / 2));
-  Vector2 currentPos = GetPosition();
-  SetPosition(currentPos + Vector2(0.0f, Game::TILE_SIZE / 2.0f));
-  mColliderComponent->SetSize(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 }
 
 void Player::EquipWeapon(WeaponType type) {
@@ -501,4 +401,10 @@ void Player::UnequipWeapon(WeaponType type) {
     // Apenas a desativa. Ela continua a existir.
     compToUnequip->SetEnabled(false);
   }
+}
+
+void Player::AddXP(uint32_t amount) {
+  mCurrentXp += amount;
+  SDL_Log("Added %d XP. Total XP: %d", amount, mCurrentXp);
+  // Logic for leveling up could go here
 }

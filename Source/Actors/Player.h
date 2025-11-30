@@ -22,9 +22,6 @@ class Player : public Actor {
                              AABBColliderComponent* other) override;
   void OnVerticalCollision(const float minOverlap,
                            AABBColliderComponent* other) override;
-  void Grow();
-
-  void Shrink();
 
   void EquipWeapon(WeaponType type);
 
@@ -37,6 +34,7 @@ class Player : public Actor {
 
   uint8_t GetCurrentLvl() const { return mCurrentLvl; }
   uint32_t GetCurrentXP() const { return mCurrentXp; }
+  void AddXP(uint32_t amount);
 
  private:
   void ManageAnimations();
