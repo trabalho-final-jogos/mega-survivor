@@ -15,7 +15,7 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
       "Megaman",
       [this]() {
         mGame->mChar = PlayerChar::MEGAMAN;
-        mGame->SetScene(GameScene::MainMenu);
+        mGame->SetScene(GameScene::Level1);
       },
       Vector2(-150.0f, 100.0f), Game::UNSELECTED_OPACITY);
 
@@ -23,7 +23,7 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
       "Protoman",
       [this]() {
         mGame->mChar = PlayerChar::PROTOMAN;
-        mGame->SetScene(GameScene::MainMenu);
+        mGame->SetScene(GameScene::Level1);
       },
       Vector2(-150.0f, 50.0f), Game::UNSELECTED_OPACITY);
 
@@ -31,7 +31,7 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
       "Bass",
       [this]() {
         mGame->mChar = PlayerChar::BASS;
-        mGame->SetScene(GameScene::MainMenu);
+        mGame->SetScene(GameScene::Level1);
       },
       Vector2(-150.0f, 0.0f), Game::UNSELECTED_OPACITY);
 
