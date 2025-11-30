@@ -30,10 +30,39 @@ HUD::HUD(class Game* game, const std::string& fontName)
 
   mRunTime = AddText("0:0", basePos, 0.4f, 0.0f, 40, 1024, 50);
   mRunTime->SetBackgroundColor(Vector4::Zero);
+
+  mOverlay =
+      AddRect(Vector2::Zero, Vector2(Game::WINDOW_WIDTH, Game::WINDOW_HEIGHT),
+              1.0f, 0.0f, 200);  // Draw order high
+  mOverlay->SetColor(Vector4(1.0f, 0.0f, 0.0f, 0.0f));
+}
+
+void HUD::ShowFlash() {
+  mFlashTimer = 0.5f;
 }
 
 void HUD::Update(float deltaTime) {
   UIScreen::Update(deltaTime);
+  const Player* player = GetGame()->GetPlayer();
+
+  auto hp = player->GetCurrentHP();
+
+  if (hp != mLastPlayerHP) {
+    mFlashColor =
+        (hp > mLastPlayerHP)
+            ? ColorPalette::GetInstance().GetColorAsVec3("Lime_green")
+            : ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
+    ShowFlash();
+    mLastPlayerHP = hp;
+  }
+
+  if (mFlashTimer > 0.0f) {
+    mFlashTimer -= deltaTime;
+    float alpha = Math::Clamp(mFlashTimer / 0.5f, 0.0f, 0.5f);
+    mOverlay->SetColor(Vector4(mFlashColor, alpha));
+  } else {
+    mOverlay->SetColor(Vector4(mFlashColor, 0.0f));
+  }
 
   std::stringstream ss;
   ss << static_cast<unsigned>(mGame->GetRunMinutes()) << ":"
@@ -43,7 +72,6 @@ void HUD::Update(float deltaTime) {
 
   mRunTime->SetText(runTimeText);
 
-  const Player* player = GetGame()->GetPlayer();
   float currentXP = (float)player->GetCurrentXP();
   float maxXP = (float)player->GetMaxXP();
   float targetPct = maxXP > 0 ? currentXP / maxXP : 0.0f;

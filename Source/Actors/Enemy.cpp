@@ -21,6 +21,16 @@ void Enemy::OnHorizontalCollision(const float minOverlap,
     if (projectile) {
       TakeDamage(projectile->GetDamage());
     }
+  } else if (other->GetLayer() == ColliderLayer::Player) {
+    if (mGame->GetClockTime() >= mLastHitTime + ATTACK_DELAY) {
+      Player* player = GetGame()->GetPlayer();
+
+      if (player) {
+        player->TakeDamage(mDamage);
+      }
+
+      mLastHitTime = mGame->GetClockTime();
+    }
   }
 }
 

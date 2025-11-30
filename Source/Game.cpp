@@ -14,9 +14,7 @@
 #include <vector>
 #include "Actors/Actor.h"
 #include "Actors/Block.h"
-#include "Actors/Goomba.h"
 #include "Actors/Player.h"
-#include "Actors/QuestionBlock.h"
 #include "Actors/Spawner.h"
 #include "CSV.h"
 #include "Components/Drawing/DrawComponent.h"
@@ -24,6 +22,7 @@
 #include "Managers/ColorPalette.h"
 #include "Random.h"
 #include "UI/Screens/CharSelection.h"
+#include "UI/Screens/GameOver.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
@@ -497,6 +496,11 @@ void Game::SetScene(GameScene nextScene) {
 
     case GameScene::CharSelect: {
       new CharSelection(this, std::string(GAME_FONT));
+      break;
+    }
+
+    case GameScene::GameOver: {
+      new GameOver(this, std::string(GAME_FONT));
       break;
     }
 

@@ -15,7 +15,7 @@
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
-enum class GameScene { MainMenu, UpgradeStore, Level1, CharSelect };
+enum class GameScene { MainMenu, UpgradeStore, Level1, CharSelect, GameOver };
 
 class Game {
  public:
@@ -78,7 +78,7 @@ class Game {
   void SetCameraPos(const Vector2& position) { mCameraPos = position; };
 
   // Game specific
-  const class Player* GetPlayer() { return mPlayer; }
+  class Player* GetPlayer() { return mPlayer; }
   void SetPlayer(Player* player) { mPlayer = player; }
 
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter

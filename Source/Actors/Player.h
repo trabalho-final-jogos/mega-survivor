@@ -8,21 +8,16 @@
 #include "weapons/WeaponType.h"
 
 constexpr float PLAYER_BASE_SPEED{200.0f};
+const float INVULNERABILITY_DURATION = 1.5f;
 
-enum PlayerChar {
-  MEGAMAN,
-  PROTOMAN,
-  BASS
-};
-
+enum PlayerChar { MEGAMAN, PROTOMAN, BASS };
 
 class Player : public Actor {
  public:
   explicit Player(Game* game,
                   PlayerChar pchar = MEGAMAN,
                   float forwardSpeed = PLAYER_BASE_SPEED,
-                  float jumpSpeed = -750.0f
-                  );
+                  float jumpSpeed = -750.0f);
 
   void OnProcessInput(const Uint8* keyState) override;
   void OnUpdate(float deltaTime) override;
@@ -43,8 +38,11 @@ class Player : public Actor {
 
   uint8_t GetCurrentLvl() const { return mCurrentLvl; }
   uint32_t GetCurrentXP() const { return mCurrentXp; }
+  uint32_t GetCurrentHP() const { return mCurrentHP; }
   void AddXP(uint32_t amount);
   uint32_t GetMaxXP() const;
+  void TakeDamage(uint32_t damage);
+  void HealDamage(uint32_t heal);
 
  private:
   void ManageAnimations();
@@ -56,7 +54,7 @@ class Player : public Actor {
   bool mIsBig = false;
   bool mIsInvulnerable;
   float mInvulnerabilityTimer;
-  const float INVULNERABILITY_DURATION = 1.5f;
+
   float mGrowTimer = 0.0f;
   class RigidBodyComponent* mRigidBodyComponent;
   class AnimatorComponent* mDrawComponent;
@@ -67,6 +65,7 @@ class Player : public Actor {
 
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
+  uint32_t mCurrentHP{100};
 
   class Aim* mAimer;
 };
