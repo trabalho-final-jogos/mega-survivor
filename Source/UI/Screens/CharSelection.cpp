@@ -4,12 +4,15 @@
 
 #include "CharSelection.h"
 
+#include "../../Game.h"
+
+
 CharSelection::CharSelection(class Game* game, const std::string& fontName) : UIScreen(game, fontName) {
 
     AddText("Character Selection", Vector2(0.0f, 150.0f), .5);
     AddButton("Megaman", [](){}, Vector2(-150.0f, 100.0f), .5);
     AddButton("Protoman", [](){}, Vector2(-150.0f, 50.0f),.5);
-    AddButton("Back", [](){}, Vector2(0.0f, -150.0f), .5);
+    AddButton("Back", [this](){mGame->SetScene(GameScene::MainMenu);}, Vector2(0.0f, -150.0f), .5);
 
     if (!mButtons.empty()) {
         mButtons[0]->SetHighlighted(true);
@@ -48,6 +51,9 @@ void CharSelection::HandleKeyPress(int key) {
                 }
             break;
 
+        case SDLK_ESCAPE:
+            mGame->SetScene(GameScene::MainMenu);
+            break;
         default:
             break;
     }
