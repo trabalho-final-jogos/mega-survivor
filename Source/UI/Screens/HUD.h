@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include "../../Color.h"
+#include "../../Managers/ColorPalette.h"
 #include "UIScreen.h"
 
 class HUD : public UIScreen {
@@ -18,12 +20,18 @@ class HUD : public UIScreen {
   void Update(float deltaTime) override;
   Vector2 GetXPBarSize(float bar_progress);
   Vector2 GetXPBarOffset(float bar_progress);
+  void ShowFlash();
 
  private:
   // HUD elements
   std::string mFontName;
   float mDisplayedProgress{0.0f};
+  float mFlashTimer{0.0f};
+  Vector3 mFlashColor;
+
   UIText* mScore;
   UIText* mRunTime;
   UIRect* mXpBar;
+  UIRect* mOverlay;
+  uint32_t mLastPlayerHP{100};
 };

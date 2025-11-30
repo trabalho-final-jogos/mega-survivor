@@ -14,9 +14,7 @@
 #include <vector>
 #include "Actors/Actor.h"
 #include "Actors/Block.h"
-#include "Actors/Goomba.h"
 #include "Actors/Player.h"
-#include "Actors/QuestionBlock.h"
 #include "Actors/Spawner.h"
 #include "CSV.h"
 #include "Components/Drawing/DrawComponent.h"
@@ -24,6 +22,7 @@
 #include "Managers/ColorPalette.h"
 #include "Random.h"
 #include "UI/Screens/CharSelection.h"
+#include "UI/Screens/GameOver.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
@@ -43,7 +42,8 @@ Game::Game()
       mLevelData(nullptr),
       mMouseWorldPos(Vector2::Zero),
       mClockStartTime(0),
-      mIsClockRunning(false) {}
+      mIsClockRunning(false),
+      mPendingSceneChange(false) {}
 
 bool Game::Initialize() {
   Random::Init();
@@ -265,6 +265,11 @@ void Game::ProcessInput() {
 }
 
 void Game::UpdateGame(float deltaTime) {
+  if (mPendingSceneChange) {
+    PerformSceneChange();
+    mPendingSceneChange = false;
+  }
+
   for (auto* ui : mUIStack) {
     if (ui->GetState() == UIScreen::UIState::Active) {
       ui->Update(deltaTime);
@@ -466,15 +471,20 @@ void Game::UpdateMouseWorldPos() {
 }
 
 void Game::SetScene(GameScene nextScene) {
+  mNextScene = nextScene;
+  mPendingSceneChange = true;
+}
+
+void Game::PerformSceneChange() {
   if (mAudio) {
     mAudio->StopAllSounds();
   }
 
   UnloadScene();
 
-  mCurrentScene = nextScene;
+  mCurrentScene = mNextScene;
 
-  switch (nextScene) {
+  switch (mNextScene) {
     case GameScene::MainMenu: {
       new MainMenu(this, std::string(GAME_FONT));
       break;
@@ -500,6 +510,11 @@ void Game::SetScene(GameScene nextScene) {
       break;
     }
 
+    case GameScene::GameOver: {
+      new GameOver(this, std::string(GAME_FONT));
+      break;
+    }
+
     default:
       break;
   }
@@ -508,8 +523,13 @@ void Game::SetScene(GameScene nextScene) {
 void Game::UnloadScene() {
   // Use state so we can call this from withing an a actor update
   while (!mActors.empty()) {
-    delete mActors.back();
+    Actor* actor = mActors.back();
+    mActors.pop_back();
+    delete actor;
   }
+
+  StopClock();
+  ResetClock();
 
   mIsPaused = false;
 

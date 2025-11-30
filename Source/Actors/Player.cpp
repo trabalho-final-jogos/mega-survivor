@@ -13,6 +13,7 @@
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "../Game.h"
 #include "Block.h"
+#include "Enemy.h"
 #include "XPGem.h"
 #include "weapons/WeaponType.h"
 #include "weapons/aura/AuraWeapon.h"
@@ -23,32 +24,35 @@
 #include "weapons/saw_blade/SawGun.h"
 
 std::string getPlayerTexturePath(PlayerChar character) {
-    switch (character) {
-        case PlayerChar::MEGAMAN:
-            return "../Assets/Sprites/Megaman/player.png";
-          case PlayerChar::PROTOMAN:
-            return "../Assets/Sprites/Protoman/player.png";
-          case PlayerChar::BASS:
-            return "../Assets/Sprites/Bass/player.png";
-          default:
-            return "../Assets/Sprites/Megaman/player.png";
-    }
+  switch (character) {
+    case PlayerChar::MEGAMAN:
+      return "../Assets/Sprites/Megaman/player.png";
+    case PlayerChar::PROTOMAN:
+      return "../Assets/Sprites/Protoman/player.png";
+    case PlayerChar::BASS:
+      return "../Assets/Sprites/Bass/player.png";
+    default:
+      return "../Assets/Sprites/Megaman/player.png";
+  }
 }
 
 std::string getPlayerDataPath(PlayerChar character) {
-    switch (character) {
-        case PlayerChar::MEGAMAN:
-            return "../Assets/Sprites/Megaman/player.json";
-        case PlayerChar::PROTOMAN:
-            return "../Assets/Sprites/Protoman/player.json";
-        case PlayerChar::BASS:
-            return "../Assets/Sprites/Bass/player.json";
-        default:
-            return "../Assets/Sprites/Megaman/player.json";
-    }
+  switch (character) {
+    case PlayerChar::MEGAMAN:
+      return "../Assets/Sprites/Megaman/player.json";
+    case PlayerChar::PROTOMAN:
+      return "../Assets/Sprites/Protoman/player.json";
+    case PlayerChar::BASS:
+      return "../Assets/Sprites/Bass/player.json";
+    default:
+      return "../Assets/Sprites/Megaman/player.json";
+  }
 }
 
-Player::Player(Game* game, PlayerChar pchar, const float forwardSpeed, const float jumpSpeed)
+Player::Player(Game* game,
+               PlayerChar pchar,
+               const float forwardSpeed,
+               const float jumpSpeed)
     : Actor(game),
       mIsRunning(false),
       mIsDead(false),
@@ -59,10 +63,9 @@ Player::Player(Game* game, PlayerChar pchar, const float forwardSpeed, const flo
       mInvulnerabilityTimer(0.0f),
       mAimer(nullptr) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
-  mDrawComponent = new AnimatorComponent(
-      this, getPlayerTexturePath(pchar),
-      getPlayerDataPath(pchar)
-      , Game::TILE_SIZE, Game::TILE_SIZE);
+  mDrawComponent = new AnimatorComponent(this, getPlayerTexturePath(pchar),
+                                         getPlayerDataPath(pchar),
+                                         Game::TILE_SIZE, Game::TILE_SIZE);
   mDrawComponent->SetFlipHorizontal(true);
 
   mDrawComponent->AddAnimation("idle", std::vector<int>{0});
@@ -317,21 +320,7 @@ void Player::OnVerticalCollision(const float minOverlap,
                                  AABBColliderComponent* other) {
   ColliderLayer otherLayer = other->GetLayer();
 
-  if (otherLayer == ColliderLayer::Enemy) {
-    if (minOverlap < 0.0f) {
-      Actor* enemy = other->GetOwner();
-      if (enemy) {
-        enemy->Kill();
-      }
-
-      if (mRigidBodyComponent) {
-        Vector2 vel = mRigidBodyComponent->GetVelocity();
-        vel.y = mJumpSpeed;
-        mRigidBodyComponent->SetVelocity(vel);
-        SetOffGround();
-      }
-    }
-  } else if (otherLayer == ColliderLayer::XP) {
+  if (otherLayer == ColliderLayer::XP) {
     Actor* xpOwner = other->GetOwner();
     XPGem* xpGem = dynamic_cast<XPGem*>(xpOwner);
 
@@ -444,4 +433,12 @@ void Player::AddXP(uint32_t amount) {
 
 uint32_t Player::GetMaxXP() const {
   return 100 * (mCurrentLvl + 1);
+}
+
+void Player::TakeDamage(uint32_t damage) {
+  mCurrentHP -= damage;
+}
+
+void Player::HealDamage(uint32_t heal) {
+  mCurrentHP += heal;
 }

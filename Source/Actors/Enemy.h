@@ -3,7 +3,10 @@
 #include "../Components/Physics/AABBColliderComponent.h"
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "Actor.h"
+#include "Player.h"
 #include "weapons/Projectile.h"
+
+constexpr float ATTACK_DELAY = 1.5f;
 
 class Enemy : public Actor {
  public:
@@ -11,6 +14,7 @@ class Enemy : public Actor {
 
   int GetHealth() const { return mHealth; }
   uint16_t GetXPDrop() const { return mXPDrop; }
+  uint32_t GetDamage() const { return mDamage; }
   void SetXPDrop(uint16_t xpDrop) { mXPDrop = xpDrop; }
 
   void OnHorizontalCollision(const float minOverlap,
@@ -24,6 +28,7 @@ class Enemy : public Actor {
   int mHealth{1};
   uint16_t mXPDrop;
   uint32_t mDamage{1};
+  float mLastHitTime{0.0f};
   class RigidBodyComponent* mRigidBody;
   class AnimatorComponent* mDrawComponent;
   class AABBColliderComponent* mColliderComponent;
