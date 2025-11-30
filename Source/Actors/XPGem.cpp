@@ -8,19 +8,20 @@
 XPGem::XPGem(Game* game, const Vector2& position, int xpValue)
     : Actor(game),
       mXPValue(xpValue),
-      mMagnetRadius(150.0f),
-      mMoveSpeed(400.0f)  // Speed when attracted
+      mMagnetRadius(20.0f),
+      mMoveSpeed(200.0f)  // Speed when attracted
 {
   SetPosition(position);
-  SetScale(Vector2(16.0f, 16.0f));  // Small size
+  SetScale(Vector2(40.0f, 40.0f));  // Small size
 
   // Using Coin sprite for now
   mAnimator =
-      new AnimatorComponent(this, "../Assets/Sprites/Collectables/Coin.png",
+      new AnimatorComponent(this, "../Assets/Sprites/Collectables/XpOrb.png",
                             "",  // No JSON data for now
-                            16,  // width
-                            16   // height
+                            64,  // width
+                            64   // height
       );
+  mAnimator->SetFlipHorizontal(true);
 
   mRigidBody = new RigidBodyComponent(this);
   mRigidBody->SetApplyGravity(false);  // Floating gem
