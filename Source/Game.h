@@ -15,7 +15,7 @@
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
-enum class GameScene { MainMenu, PausedMenu, UpgradeStore, Level1, CharSelect };
+enum class GameScene { MainMenu, UpgradeStore, Level1, CharSelect };
 
 class Game {
  public:
@@ -34,6 +34,7 @@ class Game {
 
   void SetScene(GameScene scene);
   void UnloadScene();
+  void ResetGame();
 
   // Renderer
   class Renderer* GetRenderer() { return mRenderer; }
@@ -43,8 +44,8 @@ class Game {
 
   static const int WINDOW_WIDTH = 1280;
   static const int WINDOW_HEIGHT = 720;
-  static const int VIRTUAL_WIDTH = 640;
-  static const int VIRTUAL_HEIGHT = 360;
+  static const int VIRTUAL_WIDTH = 900;
+  static const int VIRTUAL_HEIGHT = 506;
   static const int LEVEL_WIDTH = 60;
   static const int LEVEL_HEIGHT = 60;
   static const int TILE_SIZE = 32;
@@ -86,6 +87,14 @@ class Game {
   void SetLevelData(int** data) { mLevelData = data; }
 
   void UpdateCamera();
+  void UpdateRunTime();
+  void StartClock();
+  void StopClock();
+  void ResetClock();
+  float GetClockTime();
+
+  uint8_t GetRunSeconds() const { return mRunSeconds; }
+  uint8_t GetRunMinutes() const { return mRunMinutes; }
 
  private:
   void ProcessInput();
@@ -119,6 +128,8 @@ class Game {
   // Track elapsed time since game start
   Uint32 mTicksCount;
 
+  GameScene mCurrentScene;
+
   // Track if we're updating actors right now
   bool mIsRunning;
   bool mIsDebugging;
@@ -130,4 +141,11 @@ class Game {
   int** mLevelData;
 
   Vector2 mMouseWorldPos;
+
+  uint16_t mRunTotalSeconds{0};
+  uint8_t mRunSeconds{0};
+  uint8_t mRunMinutes{0};
+
+  Uint32 mClockStartTime;
+  bool mIsClockRunning;
 };

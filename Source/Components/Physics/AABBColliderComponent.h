@@ -3,54 +3,60 @@
 //
 
 #pragma once
-#include "../Component.h"
-#include "../../Math.h"
-#include "RigidBodyComponent.h"
-#include <vector>
 #include <set>
+#include <vector>
+#include "../../Math.h"
+#include "../Component.h"
+#include "RigidBodyComponent.h"
 
-enum class ColliderLayer
-{
-    Player,
-    Enemy,
-    Blocks,
-    PowerUp,
-    PlayerProjectile
+enum class ColliderLayer {
+  Player,
+  XP,
+  Enemy,
+  Blocks,
+  PowerUp,
+  PlayerProjectile
 };
 
-class AABBColliderComponent : public Component
-{
-public:
+class AABBColliderComponent : public Component {
+ public:
+  AABBColliderComponent(class Actor* owner,
+                        int dx,
+                        int dy,
+                        int w,
+                        int h,
+                        ColliderLayer layer,
+                        bool isStatic = false,
+                        int updateOrder = 10);
+  ~AABBColliderComponent() override;
 
-    AABBColliderComponent(class Actor* owner, int dx, int dy, int w, int h,
-                                ColliderLayer layer, bool isStatic = false, int updateOrder = 10);
-    ~AABBColliderComponent() override;
+  bool Intersect(const AABBColliderComponent& b) const;
+  bool ShouldCollide(ColliderLayer a, ColliderLayer b);
 
-    bool Intersect(const AABBColliderComponent& b) const;
-    bool ShouldCollide(ColliderLayer a, ColliderLayer b);
+  float DetectHorizontalCollision(RigidBodyComponent* rigidBody);
+  float DetectVertialCollision(RigidBodyComponent* rigidBody);
 
-    float DetectHorizontalCollision(RigidBodyComponent *rigidBody);
-    float DetectVertialCollision(RigidBodyComponent *rigidBody);
+  Vector2 GetMin() const;
+  Vector2 GetMax() const;
+  ColliderLayer GetLayer() const { return mLayer; }
+  void SetSize(Vector2 size);
 
-    Vector2 GetMin() const;
-    Vector2 GetMax() const;
-    ColliderLayer GetLayer() const { return mLayer; }
-    void SetSize(Vector2 size);
+  // Drawing for debug purposes
+  void DebugDraw(class Renderer* renderer) override;
 
-    // Drawing for debug purposes
-    void DebugDraw(class Renderer* renderer) override;
+ private:
+  float GetMinVerticalOverlap(AABBColliderComponent* b) const;
+  float GetMinHorizontalOverlap(AABBColliderComponent* b) const;
 
-private:
-    float GetMinVerticalOverlap(AABBColliderComponent* b) const;
-    float GetMinHorizontalOverlap(AABBColliderComponent* b) const;
+  void ResolveHorizontalCollisions(RigidBodyComponent* rigidBody,
+                                   const float minOverlap);
+  void ResolveVerticalCollisions(RigidBodyComponent* rigidBody,
+                                 const float minOverlap);
 
-    void ResolveHorizontalCollisions(RigidBodyComponent *rigidBody, const float minOverlap);
-    void ResolveVerticalCollisions(RigidBodyComponent *rigidBody, const float minOverlap);
+  Vector2 mOffset;
+  int mWidth;
+  int mHeight;
+  bool mIsStatic;
 
-    Vector2 mOffset;
-    int mWidth;
-    int mHeight;
-    bool mIsStatic;
-
-    ColliderLayer mLayer;
+  ColliderLayer mLayer;
 };

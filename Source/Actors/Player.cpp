@@ -13,13 +13,14 @@
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "../Game.h"
 #include "Block.h"
+#include "XPGem.h"
 #include "weapons/WeaponType.h"
+#include "weapons/aura/AuraWeapon.h"
 #include "weapons/boomerang/BoomerangGun.h"
 #include "weapons/ice_gun/IceGun.h"
+#include "weapons/laser_beam/LaserGun.h"
 #include "weapons/main_gun/MainGun.h"
 #include "weapons/saw_blade/SawGun.h"
-#include "weapons/aura/AuraWeapon.h"
-#include "weapons/laser_beam/LaserGun.h"
 
 std::string getPlayerTexturePath(PlayerChar character) {
     switch (character) {
@@ -77,10 +78,6 @@ Player::Player(Game* game, PlayerChar pchar, const float forwardSpeed, const flo
   SetOnGround();
 
   mAimer = new Aim(this->GetGame(), this);
-    /*new MainGun(this);
-  new BoomerangGun(this);
-  new IceGun(this);
-*/
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -118,119 +115,101 @@ void Player::OnProcessInput(const uint8_t* state) {
 
   mRigidBodyComponent->SetVelocity(velocity);
 
+  // Input de teste para habilitar e desabilitar as armas
+  //  ---- Detecção de um toque por tecla (flags estáticas) ----
+  static bool keyDown[7] = {false};
+  // Usaremos índices 1–6, ignorando o 0.
 
-  //Input de teste para habilitar e desabilitar as armas
-  // ---- Detecção de um toque por tecla (flags estáticas) ----
-static bool keyDown[7] = { false };
-// Usaremos índices 1–6, ignorando o 0.
+  // ---- Tecla 1: Alterna MainGun ----
+  if (state[SDL_SCANCODE_1]) {
+    if (!keyDown[1]) {
+      keyDown[1] = true;
 
-
-// ---- Tecla 1: Alterna MainGun ----
-if (state[SDL_SCANCODE_1])
-{
-    if (!keyDown[1])
-    {
-        keyDown[1] = true;
-
-        MainGun* gun = GetComponent<MainGun>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::MainGun);
-        } else {
-            EquipWeapon(WeaponType::MainGun);
-        }
+      MainGun* gun = GetComponent<MainGun>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::MainGun);
+      } else {
+        EquipWeapon(WeaponType::MainGun);
+      }
     }
-}
-else keyDown[1] = false;
+  } else
+    keyDown[1] = false;
 
+  // ---- Tecla 2: Alterna IceGun ----
+  if (state[SDL_SCANCODE_2]) {
+    if (!keyDown[2]) {
+      keyDown[2] = true;
 
-// ---- Tecla 2: Alterna IceGun ----
-if (state[SDL_SCANCODE_2])
-{
-    if (!keyDown[2])
-    {
-        keyDown[2] = true;
-
-        IceGun* gun = GetComponent<IceGun>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::IceGun);
-        } else {
-            EquipWeapon(WeaponType::IceGun);
-        }
+      IceGun* gun = GetComponent<IceGun>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::IceGun);
+      } else {
+        EquipWeapon(WeaponType::IceGun);
+      }
     }
-}
-else keyDown[2] = false;
+  } else
+    keyDown[2] = false;
 
+  // ---- Tecla 3: Alterna BoomerangGun ----
+  if (state[SDL_SCANCODE_3]) {
+    if (!keyDown[3]) {
+      keyDown[3] = true;
 
-// ---- Tecla 3: Alterna BoomerangGun ----
-if (state[SDL_SCANCODE_3])
-{
-    if (!keyDown[3])
-    {
-        keyDown[3] = true;
-
-        BoomerangGun* gun = GetComponent<BoomerangGun>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::BoomerangGun);
-        } else {
-            EquipWeapon(WeaponType::BoomerangGun);
-        }
+      BoomerangGun* gun = GetComponent<BoomerangGun>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::BoomerangGun);
+      } else {
+        EquipWeapon(WeaponType::BoomerangGun);
+      }
     }
-}
-else keyDown[3] = false;
+  } else
+    keyDown[3] = false;
 
+  // ---- Tecla 4: Alterna SawGun ----
+  if (state[SDL_SCANCODE_4]) {
+    if (!keyDown[4]) {
+      keyDown[4] = true;
 
-// ---- Tecla 4: Alterna SawGun ----
-if (state[SDL_SCANCODE_4])
-{
-    if (!keyDown[4])
-    {
-        keyDown[4] = true;
-
-        SawGun* gun = GetComponent<SawGun>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::SawGun);
-        } else {
-            EquipWeapon(WeaponType::SawGun);
-        }
+      SawGun* gun = GetComponent<SawGun>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::SawGun);
+      } else {
+        EquipWeapon(WeaponType::SawGun);
+      }
     }
-}
-else keyDown[4] = false;
+  } else
+    keyDown[4] = false;
 
+  // ---- Tecla 5: Alterna Aura ----
+  if (state[SDL_SCANCODE_5]) {
+    if (!keyDown[5]) {
+      keyDown[5] = true;
 
-// ---- Tecla 5: Alterna Aura ----
-if (state[SDL_SCANCODE_5])
-{
-    if (!keyDown[5])
-    {
-        keyDown[5] = true;
-
-        AuraWeapon* gun = GetComponent<AuraWeapon>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::Aura);
-        } else {
-            EquipWeapon(WeaponType::Aura);
-        }
+      AuraWeapon* gun = GetComponent<AuraWeapon>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::Aura);
+      } else {
+        EquipWeapon(WeaponType::Aura);
+      }
     }
-}
-else keyDown[5] = false;
+  } else
+    keyDown[5] = false;
 
+  // ---- Tecla 6: Alterna LaserGun ----
+  if (state[SDL_SCANCODE_6]) {
+    if (!keyDown[6]) {
+      keyDown[6] = true;
 
-// ---- Tecla 6: Alterna LaserGun ----
-if (state[SDL_SCANCODE_6])
-{
-    if (!keyDown[6])
-    {
-        keyDown[6] = true;
-
-        AuraWeapon* gun = GetComponent<AuraWeapon>();
-        if (gun && gun->IsEnabled()) {
-            UnequipWeapon(WeaponType::LaserGun);
-        } else {
-            EquipWeapon(WeaponType::LaserGun);
-        }
+      AuraWeapon* gun = GetComponent<AuraWeapon>();
+      if (gun && gun->IsEnabled()) {
+        UnequipWeapon(WeaponType::LaserGun);
+      } else {
+        EquipWeapon(WeaponType::LaserGun);
+      }
     }
-}
-else keyDown[6] = false;
+  } else {
+    keyDown[6] = false;
+  }
 }
 
 void Player::OnUpdate(float deltaTime) {
@@ -331,22 +310,7 @@ void Player::Kill() {
 
 void Player::OnHorizontalCollision(const float minOverlap,
                                    AABBColliderComponent* other) {
-  ColliderLayer otherLayer = other->GetLayer();
-  if (otherLayer == ColliderLayer::Enemy) {
-    if (!mIsInvulnerable) {
-      if (!mIsBig) {
-        Kill();
-      } else {
-        Shrink();
-      }
-    }
-  }
-  if (otherLayer == ColliderLayer::PowerUp) {
-    SDL_Log("Mario colidiu horizontalmente com PowerUp!");
-    Actor* powerUp = other->GetOwner();
-    powerUp->SetState(ActorState::Destroy);
-    Grow();
-  }
+  OnVerticalCollision(minOverlap, other);
 }
 
 void Player::OnVerticalCollision(const float minOverlap,
@@ -366,162 +330,118 @@ void Player::OnVerticalCollision(const float minOverlap,
         mRigidBodyComponent->SetVelocity(vel);
         SetOffGround();
       }
-    } else {
-      SDL_Log(
-          "Mario atingido verticalmente por inimigo! Chamando Kill(). Overlap: "
-          "%f",
-          minOverlap);
-      if (!mIsInvulnerable) {
-        if (!mIsBig) {
-          Kill();
-
-        } else {
-          Shrink();
-        }
-      }
     }
-  } else if (otherLayer == ColliderLayer::Blocks) {
-    if (minOverlap > 0.0f) {
-      Actor* blockActor = other->GetOwner();
+  } else if (otherLayer == ColliderLayer::XP) {
+    Actor* xpOwner = other->GetOwner();
+    XPGem* xpGem = dynamic_cast<XPGem*>(xpOwner);
 
-      Block* block = dynamic_cast<Block*>(blockActor);
-      if (block) {
-        block->StartBounce();
-      }
-
-      if (mRigidBodyComponent) {
-        Vector2 vel = mRigidBodyComponent->GetVelocity();
-        if (vel.y < 0.0f) {
-          vel.y = 0.0f;
-          mRigidBodyComponent->SetVelocity(vel);
-        }
-      }
+    if (xpGem) {
+      AddXP(xpGem->GetXPValue());
+      xpGem->SetState(ActorState::Destroy);
     }
-  } else if (otherLayer == ColliderLayer::PowerUp) {
-    SDL_Log("Mario colidiu vertical com PowerUp!");
-    Actor* powerUp = other->GetOwner();
-    powerUp->SetState(ActorState::Destroy);
-    Grow();
   }
 }
-void Player::Grow() {
-  if (mIsBig) {
-    return;
+
+void Player::EquipWeapon(WeaponType type) {
+  Component* compToEquip = nullptr;
+  switch (type) {
+    case WeaponType::MainGun:
+      compToEquip = GetComponent<MainGun>();
+      break;
+    case WeaponType::IceGun:
+      compToEquip = GetComponent<IceGun>();
+      break;
+    case WeaponType::BoomerangGun:
+      compToEquip = GetComponent<BoomerangGun>();
+      break;
+    case WeaponType::SawGun:
+      compToEquip = GetComponent<SawGun>();
+      break;
+    case WeaponType::Aura:
+      compToEquip = GetComponent<AuraWeapon>();
+      break;
+    case WeaponType::LaserGun:
+      compToEquip = GetComponent<LaserGun>();
+      break;
   }
 
-  mIsBig = true;
-
-  const std::string bigTexturePath =
-      "../Assets/Sprites/SuperMario/SuperMario.png";
-  const std::string bigJsonPath =
-      "../Assets/Sprites/SuperMario/SuperMario.json";
-
-  if (mDrawComponent->LoadSheet(bigTexturePath, bigJsonPath)) {
-    mDrawComponent->AddAnimation("idle", {0});
-    mDrawComponent->AddAnimation("run", {6, 7, 8});
-    mDrawComponent->AddAnimation("jump", {2});
-    mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
+  // 2. Se a arma já existe...
+  if (compToEquip != nullptr) {
+    // ...apenas a reativa.
+    compToEquip->SetEnabled(true);
+    SDL_Log("DEBUG: Reativando arma tipo: %d", (int)type);
   }
-  SDL_Log("Mario cresceu! Agora ele é grande.");
-
-  Vector2 currentScale = GetScale();
-  SetScale(Vector2(currentScale.x, currentScale.y * 2.0f));
-  Vector2 currentPos = GetPosition();
-  SetPosition(currentPos + Vector2(0.0f, -Game::TILE_SIZE / 2.0f));
-  mColliderComponent->SetSize(Vector2(Game::TILE_SIZE, Game::TILE_SIZE * 2));
+  // 3. Se a arma não existe, cria-a (Nível 1)
+  else {
+    SDL_Log("DEBUG: Criando nova arma tipo: %d", (int)type);
+    switch (type) {
+      case WeaponType::MainGun:
+        new MainGun(this);
+        break;
+      case WeaponType::IceGun:
+        new IceGun(this);
+        break;
+      case WeaponType::BoomerangGun:
+        new BoomerangGun(this);
+        break;
+      case WeaponType::SawGun:
+        new SawGun(this);
+        break;
+      case WeaponType::Aura:
+        new AuraWeapon(this);
+        break;
+      case WeaponType::LaserGun:
+        new LaserGun(this);
+        break;
+    }
+  }
 }
 
-void Player::Shrink() {
-  if (!mIsBig) {
-    return;
+void Player::UnequipWeapon(WeaponType type) {
+  Component* compToUnequip = nullptr;
+
+  // Encontra o componente da arma pelo tipo
+  switch (type) {
+    case WeaponType::MainGun:
+      compToUnequip = GetComponent<MainGun>();
+      break;
+    case WeaponType::IceGun:
+      compToUnequip = GetComponent<IceGun>();
+      break;
+    case WeaponType::BoomerangGun:
+      compToUnequip = GetComponent<BoomerangGun>();
+      break;
+    case WeaponType::SawGun:
+      compToUnequip = GetComponent<SawGun>();
+      break;
+    case WeaponType::Aura:
+      compToUnequip = GetComponent<AuraWeapon>();
+      break;
+    case WeaponType::LaserGun:
+      compToUnequip = GetComponent<LaserGun>();
+      break;
   }
 
-  mIsBig = false;
-  mIsInvulnerable = true;
-  mInvulnerabilityTimer = INVULNERABILITY_DURATION;
-  const std::string bigTexturePath = "../Assets/Sprites/Mario/Mario.png";
-  const std::string bigJsonPath = "../Assets/Sprites/Mario/Mario.json";
-
-  if (mDrawComponent->LoadSheet(bigTexturePath, bigJsonPath)) {
-    mDrawComponent->AddAnimation("idle", std::vector<int>{1});
-    mDrawComponent->AddAnimation("run", std::vector<int>{3, 4, 5});
-    mDrawComponent->AddAnimation("jump", std::vector<int>{2});
-    mDrawComponent->AddAnimation("dead", std::vector<int>{0});
-    mDrawComponent->SetAnimation("idle");
-    mDrawComponent->SetAnimFPS(10.0f);
+  // Se encontramos a arma...
+  if (compToUnequip != nullptr) {
+    SDL_Log("DEBUG: Desativando arma tipo: %d", (int)type);
+    // Apenas a desativa. Ela continua a existir.
+    compToUnequip->SetEnabled(false);
   }
-  SDL_Log("Mario agora é pequeno");
-
-  Vector2 currentScale = GetScale();
-  SetScale(Vector2(currentScale.x, currentScale.y / 2));
-  Vector2 currentPos = GetPosition();
-  SetPosition(currentPos + Vector2(0.0f, Game::TILE_SIZE / 2.0f));
-  mColliderComponent->SetSize(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 }
 
-void Player::EquipWeapon(WeaponType type)
-{
-    Component* compToEquip = nullptr;
-    switch(type)
-    {
-        case WeaponType::MainGun: compToEquip = GetComponent<MainGun>(); break;
-        case WeaponType::IceGun: compToEquip = GetComponent<IceGun>(); break;
-        case WeaponType::BoomerangGun: compToEquip = GetComponent<BoomerangGun>(); break;
-        case WeaponType::SawGun: compToEquip = GetComponent<SawGun>(); break;
-        case WeaponType::Aura: compToEquip = GetComponent<AuraWeapon>(); break;
-        case WeaponType::LaserGun: compToEquip = GetComponent<LaserGun>(); break;
+void Player::AddXP(uint32_t amount) {
+  mCurrentXp += amount;
+  SDL_Log("Added %d XP. Total XP: %d", amount, mCurrentXp);
+  // Logic for leveling up could go here
 
-    }
-
-    // 2. Se a arma já existe...
-    if (compToEquip != nullptr)
-    {
-        // ...apenas a reativa.
-        compToEquip->SetEnabled(true);
-        SDL_Log("DEBUG: Reativando arma tipo: %d", (int)type);
-    }
-    // 3. Se a arma não existe, cria-a (Nível 1)
-    else
-    {
-        SDL_Log("DEBUG: Criando nova arma tipo: %d", (int)type);
-        switch(type)
-        {
-            case WeaponType::MainGun: new MainGun(this); break;
-            case WeaponType::IceGun: new IceGun(this); break;
-            case WeaponType::BoomerangGun: new BoomerangGun(this); break;
-            case WeaponType::SawGun: new SawGun(this); break;
-            case WeaponType::Aura: new AuraWeapon(this); break;
-            case WeaponType::LaserGun: new LaserGun(this); break;
-
-
-        }
-    }
-
-
+  while (mCurrentXp >= GetMaxXP()) {
+    mCurrentXp -= GetMaxXP();
+    mCurrentLvl++;
+    SDL_Log("Level Up! New Level: %d", mCurrentLvl);
+  }
 }
 
-void Player::UnequipWeapon(WeaponType type)
-{
-    Component* compToUnequip = nullptr;
-
-    // Encontra o componente da arma pelo tipo
-    switch(type)
-    {
-        case WeaponType::MainGun: compToUnequip = GetComponent<MainGun>(); break;
-        case WeaponType::IceGun: compToUnequip = GetComponent<IceGun>(); break;
-        case WeaponType::BoomerangGun: compToUnequip = GetComponent<BoomerangGun>(); break;
-        case WeaponType::SawGun: compToUnequip = GetComponent<SawGun>(); break;
-        case WeaponType::Aura: compToUnequip = GetComponent<AuraWeapon>(); break;
-        case WeaponType::LaserGun: compToUnequip = GetComponent<LaserGun>(); break;
-
-    }
-
-    // Se encontramos a arma...
-    if (compToUnequip != nullptr)
-    {
-        SDL_Log("DEBUG: Desativando arma tipo: %d", (int)type);
-        // Apenas a desativa. Ela continua a existir.
-        compToUnequip->SetEnabled(false);
-    }
+uint32_t Player::GetMaxXP() const {
+  return 100 * (mCurrentLvl + 1);
 }

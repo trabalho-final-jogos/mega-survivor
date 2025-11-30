@@ -31,9 +31,6 @@ class Player : public Actor {
                              AABBColliderComponent* other) override;
   void OnVerticalCollision(const float minOverlap,
                            AABBColliderComponent* other) override;
-  void Grow();
-
-  void Shrink();
 
   void EquipWeapon(WeaponType type);
 
@@ -43,6 +40,11 @@ class Player : public Actor {
   bool isBig() { return mIsBig; };
   bool isInvulnerable() { return mIsInvulnerable; };
   class Aim* GetAim() const { return mAimer; }
+
+  uint8_t GetCurrentLvl() const { return mCurrentLvl; }
+  uint32_t GetCurrentXP() const { return mCurrentXp; }
+  void AddXP(uint32_t amount);
+  uint32_t GetMaxXP() const;
 
  private:
   void ManageAnimations();
@@ -62,6 +64,9 @@ class Player : public Actor {
   class ParticleSystemComponent* mFireBalls;
 
   float mFireBallCooldown = 1.0f;
+
+  uint8_t mCurrentLvl{0};
+  uint32_t mCurrentXp{0};
 
   class Aim* mAimer;
 };

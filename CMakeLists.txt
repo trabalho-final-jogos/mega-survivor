@@ -44,8 +44,6 @@ add_executable(${PROJECT_NAME}
         Source/Renderer/Texture.h
         Source/Actors/Block.cpp
         Source/Actors/Block.h
-        Source/Actors/Goomba.cpp
-        Source/Actors/Goomba.h
         Source/Actors/Spawner.cpp
         Source/Actors/Spawner.h
         Source/Actors/Player.cpp
@@ -54,10 +52,6 @@ add_executable(${PROJECT_NAME}
         Source/Components/Drawing/AnimatorComponent.h
         Source/Components/Drawing/RectComponent.cpp
         Source/Components/Drawing/RectComponent.h
-        Source/Actors/QuestionBlock.cpp
-        Source/Actors/QuestionBlock.h
-        Source/Actors/Mushroom.h
-        Source/Actors/Mushroom.cpp
         Source/Actors/Aim.cpp
         Source/Actors/Aim.h
         Source/Actors/weapons/Projectile.h
@@ -107,8 +101,8 @@ add_executable(${PROJECT_NAME}
         Source/UI/Screens/Level1.h
         Source/UI/Screens/MetaProg.cpp
         Source/UI/Screens/MetaProg.h
-        Source/Components/UpgradeManager.cpp
-        Source/Components/UpgradeManager.h
+        Source/Managers/UpgradeManager.cpp
+        Source/Managers/UpgradeManager.h
         Source/Actors/weapons/laser_beam/LaserGun.cpp
         Source/Actors/weapons/laser_beam/LaserGun.h
         Source/Actors/weapons/saw_blade/SawGun.cpp
@@ -123,8 +117,19 @@ add_executable(${PROJECT_NAME}
         Source/Actors/weapons/aura/AuraActor.h
         Source/UI/Screens/CharSelection.cpp
         Source/UI/Screens/CharSelection.h
-
-
+        Source/Actors/enemies/Enemy1.cpp
+        Source/Actors/enemies/Enemy1.h
+        Source/Actors/enemies/EnemyType.h
+        Source/Actors/enemies/Bat.cpp
+        Source/Actors/enemies/Bat.h
+        Source/Color.cpp
+        Source/Color.h
+        Source/Managers/ColorPalette.cpp
+        Source/Managers/ColorPalette.h
+        Source/Actors/Enemy.cpp
+        Source/Actors/Enemy.h
+        Source/Actors/XPGem.cpp
+        Source/Actors/XPGem.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf OpenGL::GL)

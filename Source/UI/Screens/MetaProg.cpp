@@ -1,17 +1,22 @@
 #include "MetaProg.h"
-#include "../../Components/UpgradeManager.h"
+#include <algorithm>
 #include "../../Game.h"
+#include "../../Managers/ColorPalette.h"
+#include "../../Managers/UpgradeManager.h"
 
 MetaProg::MetaProg(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   auto& mgr = UpgradeManager::GetInstance();
 
-  AddText("Upgrades", Vector2(0.0f, 150.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddImage("../Assets/Levels/MetaProg/background.png", Vector2(0.0f, 0.0f),
+           0.35f, 0.0f, 50);
+
+  AddText("Upgrades", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   mCurrencyText = AddText("Currency: " + std::to_string(mgr.GetCurrency()),
-                          Vector2(200.0f, 100.0f), 0.3f, 0.0f, 32, 512, 100);
+                          Vector2(250.0f, 150.0f), 0.4f, 0.0f, 32, 512, 100);
 
-  UIButton* but[7];
+  UIButton* but[statButtons.size() + 1]{nullptr};
 
   for (size_t i = 0; i < statButtons.size(); ++i) {
     int col = i % cols;
@@ -31,25 +36,36 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
             mgr.Purchase(type);
           }
         },
-        pos, 0.3f, 0.0f, 32, 256, 102);
+        pos, 0.4f, 0.0f, 32, 256, 102);
 
     if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
-      but[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));  // Red tint
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
+      but[i]->SetBackgroundColor(_color);
     } else {
-      but[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));  // Green tint
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Lime_green");
+      but[i]->SetBackgroundColor(_color);
     }
 
     mUpgradeButtons[i] = but[i];
 
     mSelectedButtonIndex = 0;
-    if (!mButtons.empty()) {
-      mButtons[0]->SetHighlighted(true);
-    }
+  }
+
+  UIButton* escape_but = AddButton(
+      "Go back", [this]() { mGame->SetScene(GameScene::MainMenu); },
+      Vector2(200.0f, -150.0f), 0.5f, 0.0f, 32, 128, 102);
+
+  escape_but->SetTextColor(
+      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright"));
+
+  if (!mButtons.empty()) {
+    mButtons[0]->SetHighlighted(true);
+    mButtons[0]->SetSelected(true);
   }
 }
 
 void MetaProg::Update(float deltaTime) {
-  UIScreen::Update(deltaTime);  // Call base
+  UIScreen::Update(deltaTime);
 
   auto& mgr = UpgradeManager::GetInstance();
 
@@ -58,7 +74,6 @@ void MetaProg::Update(float deltaTime) {
     mCurrencyText->SetText("Currency: " + std::to_string(mgr.GetCurrency()));
   }
 
-  // Refresh 7 upgrade buttons
   for (size_t i = 0; i < mUpgradeButtons.size() && mUpgradeButtons[i]; ++i) {
     // Or recreate buttonText as in ctor:
     std::string newText =
@@ -70,16 +85,19 @@ void MetaProg::Update(float deltaTime) {
     mUpgradeButtons[i]->SetText(newText);
 
     if (!mgr.CanAfford(statButtons[i].second)) {
-      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.8f, 0.2f, 0.2f));
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
+      mUpgradeButtons[i]->SetBackgroundColor(_color);
     } else {
-      mUpgradeButtons[i]->SetBackgroundColor(Vector3(0.2f, 0.8f, 0.2f));
+      auto _color = ColorPalette::GetInstance().GetColorAsVec4("Lime_green");
+      mUpgradeButtons[i]->SetBackgroundColor(_color);
     }
   }
 }
 
 void MetaProg::HandleKeyPress(int key) {
-  if (mButtons.empty())
+  if (mButtons.empty()) {
     return;
+  }
 
   int oldIndex = mSelectedButtonIndex;
 
@@ -94,10 +112,10 @@ void MetaProg::HandleKeyPress(int key) {
 
     case SDLK_DOWN:
     case SDLK_s:
-      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
+      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) + cols)
         mSelectedButtonIndex += cols;
       else
-        mSelectedButtonIndex = 0;
+        mSelectedButtonIndex = static_cast<int>(statButtons.size());
       break;
 
     case SDLK_RIGHT:
@@ -130,11 +148,19 @@ void MetaProg::HandleKeyPress(int key) {
   }
 
   // Update highlight
+
+  mSelectedButtonIndex = std::clamp(mSelectedButtonIndex, 0,
+                                    static_cast<int>(mButtons.size()) - 1);
+
   if (oldIndex != mSelectedButtonIndex) {
-    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size()))
+    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
       mButtons[oldIndex]->SetHighlighted(false);
+      mButtons[oldIndex]->SetSelected(false);
+    }
     if (mSelectedButtonIndex >= 0 &&
-        mSelectedButtonIndex < static_cast<int>(mButtons.size()))
+        mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+      mButtons[mSelectedButtonIndex]->SetSelected(true);
+    }
   }
 }
