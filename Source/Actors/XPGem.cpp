@@ -12,7 +12,7 @@ XPGem::XPGem(Game* game, const Vector2& position, int xpValue)
       mMoveSpeed(200.0f)  // Speed when attracted
 {
   SetPosition(position);
-  SetScale(Vector2(40.0f, 40.0f));  // Small size
+  SetScale(Vector2(40.0f, 30.0f));  // Small size
 
   // Using Coin sprite for now
   mAnimator =

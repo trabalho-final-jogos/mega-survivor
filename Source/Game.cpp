@@ -523,8 +523,13 @@ void Game::PerformSceneChange() {
 void Game::UnloadScene() {
   // Use state so we can call this from withing an a actor update
   while (!mActors.empty()) {
-    delete mActors.back();
+    Actor* actor = mActors.back();
+    mActors.pop_back();
+    delete actor;
   }
+
+  StopClock();
+  ResetClock();
 
   mIsPaused = false;
 

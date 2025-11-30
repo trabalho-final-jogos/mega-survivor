@@ -8,7 +8,7 @@ Bat::Bat(Game* game) : Enemy(game, 1, 10) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
 
   // 1. Física (SEM gravidade)
-  auto mRigidBody = new RigidBodyComponent(this);
+  mRigidBody = new RigidBodyComponent(this);
   mRigidBody->SetApplyGravity(false);
 
   // 2. Colisão

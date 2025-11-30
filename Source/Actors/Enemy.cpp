@@ -4,7 +4,12 @@
 #include "XPGem.h"
 
 Enemy::Enemy(Game* game, int health, uint16_t xpDrop)
-    : Actor(game), mHealth(health), mXPDrop(xpDrop) {}
+    : Actor(game),
+      mHealth(health),
+      mXPDrop(xpDrop),
+      mRigidBody(nullptr),
+      mDrawComponent(nullptr),
+      mColliderComponent(nullptr) {}
 
 void Enemy::TakeDamage(int damage) {
   mHealth -= damage;
