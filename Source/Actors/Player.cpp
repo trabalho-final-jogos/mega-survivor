@@ -25,9 +25,11 @@ std::string getPlayerTexturePath(PlayerChar character) {
     switch (character) {
         case PlayerChar::MEGAMAN:
             return "../Assets/Sprites/Megaman/player.png";
-        case PlayerChar::PROTOMAN:
+          case PlayerChar::PROTOMAN:
             return "../Assets/Sprites/Protoman/player.png";
-        default:
+          case PlayerChar::BASS:
+            return "../Assets/Sprites/Bass/player.png";
+          default:
             return "../Assets/Sprites/Megaman/player.png";
     }
 }
@@ -38,6 +40,8 @@ std::string getPlayerDataPath(PlayerChar character) {
             return "../Assets/Sprites/Megaman/player.json";
         case PlayerChar::PROTOMAN:
             return "../Assets/Sprites/Protoman/player.json";
+        case PlayerChar::BASS:
+            return "../Assets/Sprites/Bass/player.json";
         default:
             return "../Assets/Sprites/Megaman/player.json";
     }

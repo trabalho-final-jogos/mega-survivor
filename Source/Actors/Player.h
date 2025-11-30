@@ -10,8 +10,9 @@
 constexpr float PLAYER_BASE_SPEED{200.0f};
 
 enum PlayerChar {
-    MEGAMAN,
-    PROTOMAN
+  MEGAMAN,
+  PROTOMAN,
+  BASS
 };
 
 

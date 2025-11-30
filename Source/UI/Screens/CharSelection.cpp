@@ -21,6 +21,10 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName) : UI
         mGame->mChar = PlayerChar::PROTOMAN; mGame->SetScene(GameScene::MainMenu);
     }, Vector2(-150.0f, 50.0f),.5);
 
+    AddButton("Bass", [this]() {
+        mGame->mChar = PlayerChar::BASS; mGame->SetScene(GameScene::MainMenu);
+    }, Vector2(-150.0f, 0.0f), .5);
+
     AddButton("Back", [this]() {
         mGame->SetScene(GameScene::MainMenu);
     }, Vector2(0.0f, -150.0f), .5);
