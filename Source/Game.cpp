@@ -42,7 +42,8 @@ Game::Game()
       mLevelData(nullptr),
       mMouseWorldPos(Vector2::Zero),
       mClockStartTime(0),
-      mIsClockRunning(false) {}
+      mIsClockRunning(false),
+      mPendingSceneChange(false) {}
 
 bool Game::Initialize() {
   Random::Init();
@@ -264,6 +265,11 @@ void Game::ProcessInput() {
 }
 
 void Game::UpdateGame(float deltaTime) {
+  if (mPendingSceneChange) {
+    PerformSceneChange();
+    mPendingSceneChange = false;
+  }
+
   for (auto* ui : mUIStack) {
     if (ui->GetState() == UIScreen::UIState::Active) {
       ui->Update(deltaTime);
@@ -465,15 +471,20 @@ void Game::UpdateMouseWorldPos() {
 }
 
 void Game::SetScene(GameScene nextScene) {
+  mNextScene = nextScene;
+  mPendingSceneChange = true;
+}
+
+void Game::PerformSceneChange() {
   if (mAudio) {
     mAudio->StopAllSounds();
   }
 
   UnloadScene();
 
-  mCurrentScene = nextScene;
+  mCurrentScene = mNextScene;
 
-  switch (nextScene) {
+  switch (mNextScene) {
     case GameScene::MainMenu: {
       new MainMenu(this, std::string(GAME_FONT));
       break;

@@ -103,6 +103,7 @@ class Game {
   void UpdateGame(float deltaTime);
   void GenerateOutput();
   void UpdateMouseWorldPos();
+  void PerformSceneChange();
 
   // All the actors in the game
   std::vector<class Actor*> mActors;
@@ -137,12 +138,15 @@ class Game {
   bool mIsDebugging;
   bool mUpdatingActors;
   bool mIsPaused{false};
+  bool mPendingSceneChange{false};
 
   // Game-specific
   class Player* mPlayer;
   int** mLevelData;
 
   Vector2 mMouseWorldPos;
+
+  GameScene mNextScene;
 
   uint16_t mRunTotalSeconds{0};
   uint8_t mRunSeconds{0};
