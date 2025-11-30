@@ -33,8 +33,8 @@ Player::Player(Game* game, const float forwardSpeed, const float jumpSpeed)
       mAimer(nullptr) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
   mDrawComponent = new AnimatorComponent(
-      this, "../Assets/Sprites/player/player.png",
-      "../Assets/Sprites/player/player.json", Game::TILE_SIZE, Game::TILE_SIZE);
+      this, "../Assets/Sprites/Megaman/player.png",
+      "../Assets/Sprites/Megaman/player.json", Game::TILE_SIZE, Game::TILE_SIZE);
   mDrawComponent->SetFlipHorizontal(true);
 
   mDrawComponent->AddAnimation("idle", std::vector<int>{0});

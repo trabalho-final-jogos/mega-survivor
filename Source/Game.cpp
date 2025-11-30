@@ -22,6 +22,7 @@
 #include "Components/Drawing/DrawComponent.h"
 #include "Components/Physics/RigidBodyComponent.h"
 #include "Random.h"
+#include "UI/Screens/CharSelection.h"
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
@@ -435,6 +436,7 @@ void Game::SetScene(GameScene nextScene) {
     }
 
     case GameScene::CharSelect: {
+      new CharSelection(this, std::string(GAME_FONT));
       break;
     }
 
