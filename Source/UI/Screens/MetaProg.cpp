@@ -6,6 +6,7 @@
 
 MetaProg::MetaProg(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
+  mGame->GetAudioSystem()->PlaySound("../../Assets/Sounds/Coin.wav");
   auto& mgr = UpgradeManager::GetInstance();
 
   AddImage("../Assets/Levels/MetaProg/background.png", Vector2(0.0f, 0.0f),

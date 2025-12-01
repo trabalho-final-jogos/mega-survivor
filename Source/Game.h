@@ -73,6 +73,9 @@ class Game {
     return mColliders;
   }
 
+  // Sound
+  AudioSystem * GetAudioSystem() const {return mAudio;};
+
   // Camera functions
   Vector2& GetCameraPos() { return mCameraPos; };
   void SetCameraPos(const Vector2& position) { mCameraPos = position; };

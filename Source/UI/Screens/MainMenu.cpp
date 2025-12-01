@@ -10,6 +10,7 @@
 
 MainMenu::MainMenu(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
+  mGame->GetAudioSystem()->PlaySound("../../Assets/Sounds/MenuMusic.ogg", true);
   AddImage("../Assets/Levels/MainMenu/main_menu.png", Vector2(0.0f, 0.0f),
            0.35f, 0.0f, 50);
 
@@ -76,6 +77,7 @@ void MainMenu::HandleKeyPress(int key) {
   switch (key) {
     case SDLK_UP:
     case SDLK_w:
+      mGame->GetAudioSystem()->PlaySound("../../Assets/Sounds/Kick.wav");
       if (mSelectedButtonIndex > 0)
         mSelectedButtonIndex--;
       else
@@ -84,6 +86,7 @@ void MainMenu::HandleKeyPress(int key) {
 
     case SDLK_DOWN:
     case SDLK_s:
+      mGame->GetAudioSystem()->PlaySound("../../Assets/Sounds/Kick.wav");
       if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
         mSelectedButtonIndex++;
       else

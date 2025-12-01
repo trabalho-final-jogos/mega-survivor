@@ -10,6 +10,7 @@
 
 CharSelection::CharSelection(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
+  mGame->GetAudioSystem()->PlaySound("../../Assets/Sounds/Coin.wav");
   AddText("Character Selection", Vector2(0.0f, 150.0f), 0.7f);
   AddButton(
       "Megaman",
