@@ -494,7 +494,7 @@ void Game::PerformSceneChange() {
       new Level1(this, std::string(GAME_FONT));
 
       if (mAudio) {
-        mAudio->PlaySound("Music.ogg", true);
+        mAudio->PlaySound("artblock.ogg", true);
       }
 
       break;
