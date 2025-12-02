@@ -1,14 +1,14 @@
-#include "MetaProg.h"
 #include <algorithm>
 #include "../../Game.h"
 #include "../../Managers/ColorPalette.h"
 #include "../../Managers/UpgradeManager.h"
+#include "UpgradeStore.h"
 
-MetaProg::MetaProg(Game* game, const std::string& fontName)
+UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
   auto& mgr = UpgradeManager::GetInstance();
 
-  AddImage("../Assets/Levels/MetaProg/background.png", Vector2(0.0f, 0.0f),
+  AddImage("../Assets/Levels/UpgradeStore/background.png", Vector2(0.0f, 0.0f),
            0.35f, 0.0f, 50);
 
   AddText("Upgrades", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
@@ -64,7 +64,7 @@ MetaProg::MetaProg(Game* game, const std::string& fontName)
   }
 }
 
-void MetaProg::Update(float deltaTime) {
+void UpgradeStore::Update(float deltaTime) {
   UIScreen::Update(deltaTime);
 
   auto& mgr = UpgradeManager::GetInstance();
@@ -94,7 +94,7 @@ void MetaProg::Update(float deltaTime) {
   }
 }
 
-void MetaProg::HandleKeyPress(int key) {
+void UpgradeStore::HandleKeyPress(int key) {
   if (mButtons.empty()) {
     return;
   }

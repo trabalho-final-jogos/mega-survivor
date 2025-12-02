@@ -10,9 +10,9 @@ const float startY = 50.0f;
 const float spacingX = 175.0f;
 const float spacingY = 100.0f;
 
-class MetaProg : public UIScreen {
+class UpgradeStore : public UIScreen {
  public:
-  MetaProg(class Game* game, const std::string& fontName);
+  UpgradeStore(class Game* game, const std::string& fontName);
   void HandleKeyPress(int key);
   void Update(float deltaTime) override;
 

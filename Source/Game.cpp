@@ -26,8 +26,8 @@
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
-#include "UI/Screens/MetaProg.h"
 #include "UI/Screens/PausedMenu.h"
+#include "UI/Screens/UpgradeStore.h"
 
 Game::Game()
     : mWindow(nullptr),
@@ -501,7 +501,7 @@ void Game::PerformSceneChange() {
     }
 
     case GameScene::UpgradeStore: {
-      new MetaProg(this, std::string(GAME_FONT));
+      new UpgradeStore(this, std::string(GAME_FONT));
       break;
     }
 
