@@ -89,8 +89,8 @@ Player::Player(Game* game,
       mUpgradeComponent->CopyBaseStatsFrom(*GetGame()->GetPersistentUpgrades());
   }
 
-  // Adjust Health based on upgrades? Or just Max HP?
-  // mCurrentHP += mUpgradeComponent->GetFinalStat(Stats::Health);
+  // Adjust Health based on upgrades
+  mCurrentHP += static_cast<uint32_t>(mUpgradeComponent->GetFinalStat(Stats::Health));
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -231,6 +231,17 @@ void Player::OnProcessInput(const uint8_t* state) {
 }
 
 void Player::OnUpdate(float deltaTime) {
+  // Health Regen Logic
+  float regenRate = mUpgradeComponent->GetFinalStat(Stats::Regen);
+  if (regenRate > 0.0f) {
+      mHealthRegenTimer += regenRate * deltaTime;
+      if (mHealthRegenTimer >= 1.0f) {
+          int healAmount = static_cast<int>(mHealthRegenTimer);
+          HealDamage(healAmount);
+          mHealthRegenTimer -= healAmount;
+      }
+  }
+
   if (mIsInvulnerable) {
     mInvulnerabilityTimer -= deltaTime;
 
@@ -465,4 +476,37 @@ void Player::HealDamage(uint32_t heal) {
 
 void Player::ApplyRunUpgrade(Stats type, float amount) {
     mUpgradeComponent->UpgradeRunStat(type, amount);
+}
+
+float Player::GetDamageMultiplier() const {
+    // Base 1.0 + upgrades
+    return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Damage);
+}
+
+float Player::GetAreaMultiplier() const {
+    return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Area);
+}
+
+float Player::GetProjectileSpeedMultiplier() const {
+    // Using Speed stat for projectile speed too? Or maybe just return 1.0 if not mapped.
+    // Let's assume Speed upgrade also affects projectile speed slightly, or return 1.0f.
+    // For now, let's just return 1.0f as base and maybe map it if user wants.
+    // But commonly "Speed" is move speed.
+    // Let's assume no specific stat for projectile speed unless added.
+    return 1.0f;
+}
+
+int Player::GetAdditionalProjectiles() const {
+    return static_cast<int>(mUpgradeComponent->GetFinalStat(Stats::Projectiles));
+}
+
+float Player::GetCooldownReduction() const {
+    // Maybe map "Speed" to cooldown? Or "Regen"?
+    // Usually "Cooldown" is a separate stat.
+    // Let's return 0.0f for now.
+    return 0.0f;
+}
+
+float Player::GetLuck() const {
+    return mUpgradeComponent->GetFinalStat(Stats::Lucky);
 }

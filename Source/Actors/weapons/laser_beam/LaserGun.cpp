@@ -107,11 +107,20 @@ void LaserGun::FireShot()
     LaserProjectile* laser = dynamic_cast<LaserProjectile*>(p);
     if (laser)
     {
+        // Apply Global Upgrades from Player
+        float finalDamage = mDamage * player->GetDamageMultiplier();
+        float finalArea = mAreaScale * player->GetAreaMultiplier();
+
         // 1. Define as estatísticas de ricochete
-        laser->SetBounceCount(mNumBounces);
+        laser->SetBounceCount(mNumBounces + player->GetAdditionalProjectiles()); // Using "Projectiles" as extra bounces for Laser? Or just ignore.
+        // Or if Laser was multi-projectile, we would loop here.
+        // LaserGun seems to be single shot. Let's use it for bounces or just ignore.
+        // Logic says "SetBounceCount". Extra projectiles usually means more lasers.
+        // But "LaserGun" logic above handles single shot.
+        // Let's stick to Damage and Area for now to be safe.
 
         // 2. "Acorda" o projétil
         laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
-                     finalVelocity, mDamage, mAreaScale); // (Valores padrão de slow)
+                     finalVelocity, finalDamage, finalArea);
     }
 }

@@ -50,6 +50,14 @@ class Player : public Actor {
 
   class UpgradeComponent* GetUpgradeComponent() const { return mUpgradeComponent; }
 
+  // Stat Getters for Weapons/Gameplay
+  float GetDamageMultiplier() const;
+  float GetAreaMultiplier() const;
+  float GetProjectileSpeedMultiplier() const; // Example mapping
+  int GetAdditionalProjectiles() const;
+  float GetCooldownReduction() const; // Could map to Speed or separate stat
+  float GetLuck() const;
+
  private:
   void ManageAnimations();
 
@@ -72,6 +80,7 @@ class Player : public Actor {
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
   uint32_t mCurrentHP{100};
+  float mHealthRegenTimer{0.0f};
 
   class Aim* mAimer;
   class UpgradeComponent* mUpgradeComponent;
