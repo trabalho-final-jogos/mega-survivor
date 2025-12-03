@@ -54,6 +54,7 @@ void HUD::Update(float deltaTime) {
             : ColorPalette::GetInstance().GetColorAsVec3("Red_bright");
     ShowFlash();
     mLastPlayerHP = hp;
+    SDL_Log("Healed: new Hp %d, old HP %d", hp, mLastPlayerHP);
   }
 
   if (mFlashTimer > 0.0f) {

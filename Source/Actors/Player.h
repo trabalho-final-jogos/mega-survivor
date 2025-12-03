@@ -3,10 +3,10 @@
 //
 
 #pragma once
+#include "../Components/Upgrades/UpgradeComponent.h"
 #include "Actor.h"
 #include "Aim.h"
 #include "weapons/WeaponType.h"
-#include "../Components/Upgrades/UpgradeComponent.h"
 
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
@@ -46,16 +46,20 @@ class Player : public Actor {
   void HealDamage(uint32_t heal);
 
   // In-game upgrades support
-  void ApplyRunUpgrade(Stats type, float amount = 1.0f); // Amount is generic, logic can be inside or passed
+  void ApplyRunUpgrade(
+      Stats type,
+      float amount = 1.0f);  // Amount is generic, logic can be inside or passed
 
-  class UpgradeComponent* GetUpgradeComponent() const { return mUpgradeComponent; }
+  class UpgradeComponent* GetUpgradeComponent() const {
+    return mUpgradeComponent;
+  }
 
   // Stat Getters for Weapons/Gameplay
   float GetDamageMultiplier() const;
   float GetAreaMultiplier() const;
-  float GetProjectileSpeedMultiplier() const; // Example mapping
+  float GetProjectileSpeedMultiplier() const;  // Example mapping
   int GetAdditionalProjectiles() const;
-  float GetCooldownReduction() const; // Could map to Speed or separate stat
+  float GetCooldownReduction() const;  // Could map to Speed or separate stat
   float GetLuck() const;
 
  private:
@@ -79,7 +83,8 @@ class Player : public Actor {
 
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
-  uint32_t mCurrentHP{100};
+  uint32_t mMaxHP{100};
+  uint32_t mCurrentHP{mMaxHP};
   float mHealthRegenTimer{0.0f};
 
   class Aim* mAimer;
