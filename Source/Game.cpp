@@ -86,6 +86,12 @@ bool Game::Initialize() {
 
   mAudio = new AudioSystem(16);
 
+  // Initialize Persistent Upgrades
+  // We need a dummy actor to hold the component because Component requires an Actor.
+  // This actor will not be added to mActors to avoid update/draw loops.
+  mPersistentActor = new Actor(this);
+  mPersistentUpgrades = new UpgradeComponent(mPersistentActor);
+
   SetScene(GameScene::MainMenu);
 
   return true;

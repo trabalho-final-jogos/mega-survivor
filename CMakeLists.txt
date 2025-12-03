@@ -101,8 +101,6 @@ add_executable(${PROJECT_NAME}
         Source/UI/Screens/Level1.h
         Source/UI/Screens/UpgradeStore.cpp
         Source/UI/Screens/UpgradeStore.h
-        Source/Managers/UpgradeManager.cpp
-        Source/Managers/UpgradeManager.h
         Source/Actors/weapons/laser_beam/LaserGun.cpp
         Source/Actors/weapons/laser_beam/LaserGun.h
         Source/Actors/weapons/saw_blade/SawGun.cpp
@@ -130,8 +128,8 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Enemy.h
         Source/Actors/XPGem.cpp
         Source/Actors/XPGem.h
-        ##Source/UI/Screens/LevelUp.cpp
-        ##Source/UI/Screens/LevelUp.h
+        Source/UI/Screens/LevelUp.cpp
+        Source/UI/Screens/LevelUp.h
         Source/Components/Upgrades/UpgradeComponent.cpp
         Source/Components/Upgrades/UpgradeComponent.h
 )

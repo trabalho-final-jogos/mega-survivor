@@ -6,6 +6,7 @@
 #include "Actor.h"
 #include "Aim.h"
 #include "weapons/WeaponType.h"
+#include "../Components/Upgrades/UpgradeComponent.h"
 
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
@@ -44,6 +45,11 @@ class Player : public Actor {
   void TakeDamage(uint32_t damage);
   void HealDamage(uint32_t heal);
 
+  // In-game upgrades support
+  void ApplyRunUpgrade(Stats type, float amount = 1.0f); // Amount is generic, logic can be inside or passed
+
+  class UpgradeComponent* GetUpgradeComponent() const { return mUpgradeComponent; }
+
  private:
   void ManageAnimations();
 
@@ -68,4 +74,5 @@ class Player : public Actor {
   uint32_t mCurrentHP{100};
 
   class Aim* mAimer;
+  class UpgradeComponent* mUpgradeComponent;
 };

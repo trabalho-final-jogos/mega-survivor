@@ -1,8 +1,13 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../../Managers/UpgradeManager.h"
+#include "../../Components/Upgrades/UpgradeComponent.h"
 #include "UIScreen.h"
+
+struct RunUpgrade {
+    Stats type;
+    std::string description;
+};
 
 class LevelUp : public UIScreen {
  public:
@@ -12,6 +17,6 @@ class LevelUp : public UIScreen {
   void HandleKeyPress(int key) override;
 
  private:
-  std::vector<StatType> mOptions;
-  void OnUpgradeSelected(StatType type);
+  std::vector<RunUpgrade> mOptions;
+  void SelectUpgrade(Stats type);
 };
