@@ -1,19 +1,22 @@
 #include <algorithm>
 #include "../../Game.h"
 #include "../../Managers/ColorPalette.h"
-#include "../../Managers/UpgradeManager.h"
+#include "../../Components/Upgrades/UpgradeComponent.h"
 #include "UpgradeStore.h"
 
 UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
-  auto& mgr = UpgradeManager::GetInstance();
+  // Access persistent data from Game
+  auto upgrades = mGame->GetPersistentUpgrades();
+  // We can't use CanAfford/Purchase from UpgradeManager anymore.
+  // We implement them here or in Game/UpgradeComponent.
 
   AddImage("../Assets/Levels/UpgradeStore/background.png", Vector2(0.0f, 0.0f),
            0.35f, 0.0f, 50);
 
   AddText("Upgrades", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  mCurrencyText = AddText("Currency: " + std::to_string(mgr.GetCurrency()),
+  mCurrencyText = AddText("Currency: " + std::to_string(mGame->GetCurrency()),
                           Vector2(250.0f, 150.0f), 0.4f, 0.0f, 32, 512, 100);
 
   UIButton* but[statButtons.size() + 1]{nullptr};
@@ -23,22 +26,48 @@ UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     int row = i / cols;
     Vector2 pos(startX + col * spacingX, startY - row * spacingY);
 
+    Stats type = statButtons[i].second;
+    int level = upgrades->GetBaseLevel(type);
+    int cost = upgrades->GetUpgradeCost(type);
+
     std::string buttonText =
         statButtons[i].first + " (Lvl " +
-        std::to_string(mgr.GetUpgradeLevel(statButtons[i].second)) +
+        std::to_string(level) +
         ") - Cost: " +
-        std::to_string(mgr.GetUpgradeCost(statButtons[i].second));
+        std::to_string(cost);
 
     but[i] = AddButton(
         buttonText,
-        [&mgr, type = statButtons[i].second]() {
-          if (mgr.CanAfford(type)) {
-            mgr.Purchase(type);
+        [this, type, upgrades]() {
+          int currentCost = upgrades->GetUpgradeCost(type);
+          if (mGame->GetCurrency() >= currentCost) {
+             mGame->AddCurrency(-currentCost);
+
+             // Determine amount. For now, use 1.0f or constants.
+             // If we want to replicate 0.2f multiplier or +5 amount.
+             float amount = 0.0f;
+             switch(type) {
+                 case Stats::Speed:
+                 case Stats::Damage:
+                 case Stats::Area:
+                     amount = ADDITIONAL_MULTIPLIER_PER_UPGRADE; // 0.2f
+                     break;
+                 case Stats::Projectiles:
+                 case Stats::Regen:
+                 case Stats::Lucky:
+                 case Stats::Health:
+                     amount = static_cast<float>(ADDITIONAL_AMOUNT_PER_UPGRADE); // 5.0f
+                     break;
+                 default:
+                     amount = 1.0f;
+             }
+
+             upgrades->UpgradeBaseStat(type, amount);
           }
         },
         pos, 0.4f, 0.0f, 32, 256, 102);
 
-    if (mgr.GetCurrency() < mgr.GetUpgradeCost(statButtons[i].second)) {
+    if (mGame->GetCurrency() < cost) {
       auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
       but[i]->SetBackgroundColor(_color);
     } else {
@@ -67,24 +96,26 @@ UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
 void UpgradeStore::Update(float deltaTime) {
   UIScreen::Update(deltaTime);
 
-  auto& mgr = UpgradeManager::GetInstance();
+  auto upgrades = mGame->GetPersistentUpgrades();
 
   // Refresh currency
   if (mCurrencyText) {
-    mCurrencyText->SetText("Currency: " + std::to_string(mgr.GetCurrency()));
+    mCurrencyText->SetText("Currency: " + std::to_string(mGame->GetCurrency()));
   }
 
   for (size_t i = 0; i < mUpgradeButtons.size() && mUpgradeButtons[i]; ++i) {
-    // Or recreate buttonText as in ctor:
+    Stats type = statButtons[i].second;
+    int level = upgrades->GetBaseLevel(type);
+    int cost = upgrades->GetUpgradeCost(type);
+
     std::string newText =
-        statButtons[i].first + " (Lvl " +  // Assume statButtons local or member
-        std::to_string(
-            static_cast<int>(mgr.GetUpgradeLevel(statButtons[i].second))) +
+        statButtons[i].first + " (Lvl " +
+        std::to_string(level) +
         ") - Cost: " +
-        std::to_string(mgr.GetUpgradeCost(statButtons[i].second));
+        std::to_string(cost);
     mUpgradeButtons[i]->SetText(newText);
 
-    if (!mgr.CanAfford(statButtons[i].second)) {
+    if (mGame->GetCurrency() < cost) {
       auto _color = ColorPalette::GetInstance().GetColorAsVec4("Red_bright");
       mUpgradeButtons[i]->SetBackgroundColor(_color);
     } else {

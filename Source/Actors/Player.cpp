@@ -11,6 +11,7 @@
 #include "../Components/ParticleSystemComponent.h"
 #include "../Components/Physics/AABBColliderComponent.h"
 #include "../Components/Physics/RigidBodyComponent.h"
+#include "../Components/Upgrades/UpgradeComponent.h"
 #include "../Game.h"
 #include "Block.h"
 #include "Enemy.h"
@@ -81,6 +82,16 @@ Player::Player(Game* game,
   SetOnGround();
 
   mAimer = new Aim(this->GetGame(), this);
+
+  // Initialize Upgrades
+  mUpgradeComponent = new UpgradeComponent(this);
+  if (GetGame()->GetPersistentUpgrades()) {
+    mUpgradeComponent->CopyBaseStatsFrom(*GetGame()->GetPersistentUpgrades());
+  }
+
+  // Adjust Health based on upgrades
+  mMaxHP +=
+      static_cast<uint32_t>(mUpgradeComponent->GetFinalStat(Stats::Health));
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -88,32 +99,37 @@ void Player::OnProcessInput(const uint8_t* state) {
     return;
   }
 
+  // Apply speed upgrade
+  // Default forwardSpeed is passed in Ctor, but we can modulate it.
+  float speedMultiplier = 1.0f + mUpgradeComponent->GetFinalStat(Stats::Speed);
+  float currentSpeed = mForwardSpeed * speedMultiplier;
+
   mIsRunning = false;
   Vector2 velocity = Vector2::Zero;  // Começa com velocidade zero
 
   // Eixo Y (Norte/Sul)
   if (state[SDL_SCANCODE_W]) {
-    velocity.y = -mForwardSpeed;  // Y negativo é para CIMA
+    velocity.y = -currentSpeed;  // Y negativo é para CIMA
     mIsRunning = true;
   }
   if (state[SDL_SCANCODE_S]) {
-    velocity.y = mForwardSpeed;  // Y positivo é para BAIXO
+    velocity.y = currentSpeed;  // Y positivo é para BAIXO
     mIsRunning = true;
   }
 
   // Eixo X (Leste/Oeste)
   if (state[SDL_SCANCODE_D]) {
-    velocity.x = mForwardSpeed;
+    velocity.x = currentSpeed;
     mIsRunning = true;
   }
   if (state[SDL_SCANCODE_A]) {
-    velocity.x = -mForwardSpeed;
+    velocity.x = -currentSpeed;
     mIsRunning = true;
   }
 
-  if (velocity.LengthSq() > mForwardSpeed * mForwardSpeed) {
+  if (velocity.LengthSq() > currentSpeed * currentSpeed) {
     velocity.Normalize();
-    velocity *= mForwardSpeed;
+    velocity *= currentSpeed;
   }
 
   mRigidBodyComponent->SetVelocity(velocity);
@@ -216,6 +232,19 @@ void Player::OnProcessInput(const uint8_t* state) {
 }
 
 void Player::OnUpdate(float deltaTime) {
+  // Health Regen Logic
+  float regenRate = mUpgradeComponent->GetFinalStat(Stats::Regen);
+  if (mCurrentHP < mMaxHP) {
+    if (regenRate > 0.0f) {
+      mHealthRegenTimer += regenRate * deltaTime;
+      if (mHealthRegenTimer >= 40.0f) {
+        int healAmount = static_cast<int>(mHealthRegenTimer);
+        HealDamage(healAmount);
+        mHealthRegenTimer -= healAmount;
+      }
+    }
+  }
+
   if (mIsInvulnerable) {
     mInvulnerabilityTimer -= deltaTime;
 
@@ -436,9 +465,47 @@ uint32_t Player::GetMaxXP() const {
 }
 
 void Player::TakeDamage(uint32_t damage) {
+  // Check for invulnerability
+  if (mIsInvulnerable)
+    return;
+
   mCurrentHP -= damage;
+  mIsInvulnerable = true;
+  mInvulnerabilityTimer = INVULNERABILITY_DURATION;
 }
 
 void Player::HealDamage(uint32_t heal) {
-  mCurrentHP += heal;
+  mCurrentHP = std::min(mMaxHP, mCurrentHP + heal);
+}
+
+void Player::ApplyRunUpgrade(Stats type, float amount) {
+  mUpgradeComponent->UpgradeRunStat(type, amount);
+}
+
+float Player::GetDamageMultiplier() const {
+  // Base 1.0 + upgrades
+  return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Damage);
+}
+
+float Player::GetAreaMultiplier() const {
+  return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Area);
+}
+
+float Player::GetProjectileSpeedMultiplier() const {
+  return 1.0f;
+}
+
+int Player::GetAdditionalProjectiles() const {
+  return static_cast<int>(mUpgradeComponent->GetFinalStat(Stats::Projectiles));
+}
+
+float Player::GetCooldownReduction() const {
+  // Maybe map "Speed" to cooldown? Or "Regen"?
+  // Usually "Cooldown" is a separate stat.
+  // Let's return 0.0f for now.
+  return 0.0f;
+}
+
+float Player::GetLuck() const {
+  return mUpgradeComponent->GetFinalStat(Stats::Lucky);
 }

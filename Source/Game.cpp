@@ -86,6 +86,13 @@ bool Game::Initialize() {
 
   mAudio = new AudioSystem(16);
 
+  // Initialize Persistent Upgrades
+  // We need a dummy actor to hold the component because Component requires an Actor.
+  // This actor will not be added to mActors to avoid update/draw loops.
+  mPersistentActor = new Actor(this);
+  RemoveActor(mPersistentActor); // Prevents UnloadScene from deleting it
+  mPersistentUpgrades = new UpgradeComponent(mPersistentActor);
+
   SetScene(GameScene::MainMenu);
 
   return true;
@@ -562,6 +569,13 @@ void Game::Shutdown() {
   mRenderer->Shutdown();
   delete mRenderer;
   mRenderer = nullptr;
+
+  // Cleanup Persistent Upgrades
+  if (mPersistentActor) {
+      delete mPersistentActor;
+      mPersistentActor = nullptr;
+  }
+  mPersistentUpgrades = nullptr; // managed by actor
 
   SDL_DestroyWindow(mWindow);
   SDL_Quit();

@@ -1,6 +1,6 @@
 #pragma once
 #include <array>
-#include "../../Managers/UpgradeManager.h"
+#include "../../Components/Upgrades/UpgradeComponent.h"
 #include "UIScreen.h"
 
 const int cols = 3;
@@ -20,12 +20,12 @@ class UpgradeStore : public UIScreen {
   UIText* mCurrencyText = nullptr;
   std::array<class UIButton*, 7> mUpgradeButtons{nullptr};
 
-  std::array<std::pair<std::string, StatType>, 7> statButtons = {
-      {{"Speed", StatType::Speed},
-       {"Damage", StatType::Damage},
-       {"Area", StatType::Area},
-       {"Projec", StatType::Projectiles},
-       {"Regen", StatType::Regen},
-       {"Lucky", StatType::Lucky},
-       {"Health", StatType::Health}}};
+  std::array<std::pair<std::string, Stats>, 7> statButtons = {
+      {{"Speed", Stats::Speed},
+       {"Damage", Stats::Damage},
+       {"Area", Stats::Area},
+       {"Projec", Stats::Projectiles},
+       {"Regen", Stats::Regen},
+       {"Lucky", Stats::Lucky},
+       {"Health", Stats::Health}}};
 };
