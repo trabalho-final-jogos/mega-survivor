@@ -48,19 +48,16 @@ void BoomerangProjectile::Awake(Actor* owner,
   mStartPosition = position;  // p0 = Posição de disparo
   mLifeTime = 1.f;
 
-  // 3. Pega a direção da mira (como no seu snippet)
-  Player* player = static_cast<Player*>(mShooter);
-  Aim* aim = player->GetAim();  // Usa "Aim" como você corrigiu
-  if (!aim) {
-    Kill();
-    return;
-  }  // Segurança
+  float randomAngle = (static_cast<float>(rand()) / RAND_MAX) * Math::TwoPi;
 
-  Vector2 direction = aim->GetPosition() - player->GetPosition();
-  direction.Normalize();
+  // Cria o vetor de direção a partir do ângulo
+  // (Assumindo que Math::Cos e Math::Sin existem, ou std::cos/sin)
+  Vector2 randomDirection(std::cos(randomAngle), std::sin(randomAngle));
 
-  // 4. Calcula o Ponto de Controle (p1)
-  mControlPoint = mStartPosition + (direction * mMaxRange);
+  // ----------------------------------
+
+  // 4. Calcula o Ponto de Controle (p1) usando a direção aleatória
+  mControlPoint = mStartPosition + (randomDirection * mMaxRange);
 }
 
 void BoomerangProjectile::OnUpdate(float deltaTime) {
