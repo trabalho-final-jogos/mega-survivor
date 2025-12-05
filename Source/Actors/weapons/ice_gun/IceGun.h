@@ -36,4 +36,8 @@ class IceGun : public WeaponComponent {
   const int POOL_SIZE = 60;  // (5 projéteis * 6 rajadas)
 
   float mCooldownTimer;
+  float mDamage;
+  float mAreaScale;
+  float mCooldownTime;
+
 };

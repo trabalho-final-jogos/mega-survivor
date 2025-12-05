@@ -73,10 +73,15 @@ void Projectile::OnUpdate(float deltaTime) {
 
 // Comportamento de colisão BASE: Destruir ao bater em blocos
 void Projectile::OnHorizontalCollision(const float minOverlap,
-                                       AABBColliderComponent* other) {
+AABBColliderComponent* other) {
+
+
+
+
   if (other->GetLayer() == ColliderLayer::Blocks) {
     Kill();
   }
+
 }
 
 void Projectile::OnVerticalCollision(const float minOverlap,

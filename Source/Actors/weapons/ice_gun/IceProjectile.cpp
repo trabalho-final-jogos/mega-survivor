@@ -7,6 +7,7 @@
 #include "../../../Math.h"  // Para ToRadians e Vector2::Perpendicular
 #include "../../Aim.h"      // Necessário para pegar a posição da Mira
 #include "../../Player.h"   // Necessário para pegar o Ator do Player e a Mira
+#include "../../Enemy.h"
 
 IceProjectile::IceProjectile(Game* game, int width, int height)
     : Projectile(
@@ -28,11 +29,9 @@ void IceProjectile::Awake(Actor* owner,
                           const Vector2& velocity,
                           float damage,
                           float areaScale) {
-  // 1. Chama a lógica base (ativa o ator, define pos/vel, etc.)
   Projectile::Awake(owner, position, rotation, lifetime, velocity, damage,
                     areaScale);
 
-  // 2. Define a animação "fly_ice" para tocar
   if (mDrawComponent) {
     mDrawComponent->SetAnimation("fly_ice");
   }
@@ -42,25 +41,19 @@ void IceProjectile::OnHorizontalCollision(const float minOverlap,
                                           AABBColliderComponent* other) {
   ColliderLayer otherLayer = other->GetLayer();
 
-  // Se atingir um Bloco, se destrói
   if (otherLayer == ColliderLayer::Blocks) {
     Kill();  // Desativa (retorna ao pool)
   }
-  // Se atingir um Inimigo
   else if (otherLayer == ColliderLayer::Enemy) {
-    // --- APLICA O SLOW ---
-    // Tenta fazer o cast para Goomba (ou uma classe base Inimigo)
-    // Goomba* enemy = dynamic_cast<Goomba*>(other->GetOwner());
-    // if (enemy)
-    // {
-    // Aplica o efeito
-    //    enemy->ApplySlow(SLOW_FACTOR, SLOW_DURATION);
-    //  }
-    // ---------------------
+    Actor* enemyActor = other->GetOwner();
+    Enemy* enemy = dynamic_cast<Enemy*>(enemyActor);
 
-    //  Kill(); // Desativa ao acertar
+    if (enemy)
+    {
+      enemy->TakeDamage(this->GetDamage());
+    }
+    Kill();
   }
-  // (Ignora Player, outros Projéteis, etc.)
 }
 
 void IceProjectile::OnVerticalCollision(const float minOverlap,

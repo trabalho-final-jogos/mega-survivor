@@ -25,14 +25,14 @@ void Enemy::TakeDamage(float damage) {
 void Enemy::OnHorizontalCollision(const float minOverlap,
                                   AABBColliderComponent* other) {
   if (other->GetLayer() == ColliderLayer::PlayerProjectile) {
+    /*
+     Removi a logica da colisao do inimigo com a bala pra prorpia bala
     Projectile* projectile = dynamic_cast<Projectile*>(other->GetOwner());
-
-
     if (projectile) {
       SDL_Log("Horizontal Collision %f", projectile->GetDamage());
       TakeDamage(projectile->GetDamage());
 
-    }
+    }*/
   } else if (other->GetLayer() == ColliderLayer::Player) {
     if (mGame->GetClockTime() >= mLastHitTime + ATTACK_DELAY) {
       Player* player = GetGame()->GetPlayer();
