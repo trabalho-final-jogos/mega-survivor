@@ -31,8 +31,8 @@ class IceGun : public WeaponComponent {
   const float SPREAD_ANGLE = 30.0f;  // 30 graus de leque total
   const float PROJECTILE_SPEED = 500.0f;
   const float PROJECTILE_LIFETIME = 0.5f;  // Curto alcance
-  const int PARTICLE_WIDTH = 12;           // Tamanho do sprite de gelo
-  const int PARTICLE_HEIGHT = 12;
+  const int PARTICLE_WIDTH = 24;           // Tamanho do sprite de gelo
+  const int PARTICLE_HEIGHT = 24;
   const int POOL_SIZE = 60;  // (5 projéteis * 6 rajadas)
 
   float mCooldownTimer;

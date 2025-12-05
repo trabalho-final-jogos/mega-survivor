@@ -44,4 +44,6 @@ class Projectile : public Actor {
   bool mIsDead;
   float mLifeTime;
   float mDamage;
+	float mWidth;
+	float mHeight;
 };

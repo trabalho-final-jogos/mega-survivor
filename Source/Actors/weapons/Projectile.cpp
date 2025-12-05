@@ -13,8 +13,9 @@ Projectile::Projectile(class Game* game, int width, int height)
       mIsDead(true),
       mLifeTime(1.0f),
       mShooter(nullptr),
-      mDamage(1)
-
+      mDamage(1),
+      mWidth(width),
+      mHeight(height)
 {
   // A classe base pode criar um RectComponent simples como placeholder
   mDrawComponent =
@@ -57,6 +58,8 @@ void Projectile::Awake(Actor* owner,
   SetPosition(position);
   SetRotation(rotation);
   mRigidBodyComponent->SetVelocity(velocity);
+  SDL_Log("Projectile awake %f, %f, %f", mWidth, mWidth, areaScale);
+  SetScale(Vector2(areaScale*mWidth, areaScale*mHeight));
 }
 
 void Projectile::OnUpdate(float deltaTime) {

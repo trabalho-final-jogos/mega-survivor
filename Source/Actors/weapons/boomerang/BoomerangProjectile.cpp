@@ -7,6 +7,7 @@
 #include "../../../Math.h"  // Para ToRadians e Vector2::Perpendicular
 #include "../../Aim.h"      // Necessário para pegar a posição da Mira
 #include "../../Player.h"   // Necessário para pegar o Ator do Player e a Mira
+#include "../../Enemy.h"
 
 BoomerangProjectile::BoomerangProjectile(Game* game, int width, int height)
     : Projectile(game, width, height)  // Chama a base
@@ -16,8 +17,6 @@ BoomerangProjectile::BoomerangProjectile(Game* game, int width, int height)
       mTimeElapsed(0.0f),
       mSpinSpeed(Math::ToRadians(720.0f))  // 720 graus/segundo
 {
-  // --- O Bumerangue cria seu próprio SpriteComponent ---
-  // (mDrawComponent é 'protected' na classe base Projectile)
   if (mDrawComponent) {
     mDrawComponent->AddAnimation("boomerang", std::vector<int>{1});
     mDrawComponent->SetAnimation("boomerang");
@@ -109,8 +108,27 @@ void BoomerangProjectile::OnHorizontalCollision(const float minOverlap,
              mState == BoomerangState::Returning) {
     // Se está voltando e toca no jogador, é "pego" (desativado)
     Kill();
+     }else if (layer == ColliderLayer::Enemy)
+     {
+       // 1. Identifica o Inimigo
+       Actor* enemyActor = other->GetOwner();
+
+       // Tenta fazer o cast para a classe Enemy (ou Goomba) para chamar TakeDamage
+       // (Se Enemy herda de Actor e Actor tem TakeDamage virtual, não precisa de cast)
+       Enemy* enemy = dynamic_cast<Enemy*>(enemyActor);
+
+       if (enemy)
+       {
+         // 2. APLICA O DANO DIRETAMENTE
+         // A bala é a "agressora", ela sabe quanto dano tem.
+         enemy->TakeDamage(this->GetDamage());
+       }
+
+       // 3. Destrói a bala
+       // Como a bala processou tudo, ela pode morrer em paz.
+       //Kill();
+     }
   }
-}
 
 void BoomerangProjectile::OnVerticalCollision(const float minOverlap,
                                               AABBColliderComponent* other) {

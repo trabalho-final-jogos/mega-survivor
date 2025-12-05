@@ -36,4 +36,6 @@ class BoomerangProjectile : public Projectile {
   float mTimeElapsed;
   const float mMaxRange = 250.0f;  // Distância do ponto de controle
   const float mSpinSpeed;
+
+
 };
