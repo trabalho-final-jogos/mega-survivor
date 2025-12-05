@@ -20,21 +20,15 @@ Spawner::Spawner(Game* game)
 void Spawner::SetupWaves() {
   // --- CONFIGURAÇÃO DO GAME DESIGN ---
   // { Inicio, Fim, Intervalo, Tipo, Vida, Velocidade }
+  mWaves.push_back({0.0f, 30.0f, 2.0f, EnemyType::Metall, 10.0f, 40.0f});
 
-  // Onda 1 (0-15s): Goombas lentos (Aquecimento)
-  mWaves.push_back({0.0f, 15.0f, 2.0f, EnemyType::Metall, 10.0f, 40.0f});
-
-  // Onda 2 (15-30s): Goombas normais mais frequentes
-  mWaves.push_back({15.0f, 30.0f, 1.0f, EnemyType::Metall, 20.0f, 60.0f});
+  //mWaves.push_back({15.0f, 30.0f, 1.0f, EnemyType::Metall, 20.0f, 60.0f});
 
   // Onda 3 (30-45s): ENXAME DE MORCEGOS! (Rápidos, morrem com 1 hit, muitos)
-  // Intervalo 0.1s cria uma parede de inimigos.
   mWaves.push_back({30.0f, 31.0f, 0.1f, EnemyType::Bat, 1.0f, 250.0f});
 
-  // Onda 4 (45-60s): Goombas "Tank" (Lentos, muita vida)
-  mWaves.push_back({45.0f, 60.0f, 1.5f, EnemyType::Metall, 100.0f, 30.0f});
+  mWaves.push_back({31.0f, 60.0f, 2.0f, EnemyType::Metall, 15.0f, 40.0f});
 
-  // Onda 5 (60s+): O Caos (Goombas rápidos e frequentes)
   mWaves.push_back({60.0f, 9999.0f, 0.3f, EnemyType::Metall, 40.0f, 80.0f});
 }
 

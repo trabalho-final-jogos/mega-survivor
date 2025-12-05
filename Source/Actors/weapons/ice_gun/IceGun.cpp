@@ -14,20 +14,22 @@ IceGun::IceGun(Actor* owner, int updateOrder)
     : WeaponComponent(owner, WeaponType::IceGun, updateOrder),
       mProjectilePool(nullptr),
       mAim(nullptr),
-      mCooldownTimer(0.0f) {
+      mCooldownTimer(0.0f),
+      mCooldownTime(2.0),
+      mDamage(0.0){
   // 1. Cria o seu próprio pool
   mProjectilePool = new ProjectilePoolComponent();
 
-  // 2. Preenche o pool com o PROJÉTIL DE GELO
   for (int i = 0; i < POOL_SIZE; i++) {
     auto bullet =
         new IceProjectile(mOwner->GetGame(), PARTICLE_WIDTH, PARTICLE_HEIGHT);
     mProjectilePool->AddObjectToPool(bullet);
   }
 
-  // 3. Cache da Mira (Aim)
   Player* player = static_cast<Player*>(mOwner);
   mAim = player->GetAim();
+
+  LevelUp();
 }
 
 IceGun::~IceGun() {
@@ -36,20 +38,39 @@ IceGun::~IceGun() {
 }
 
 void IceGun::OnUpdate(float deltaTime) {
-  // Atualiza o cooldown
   if (mCooldownTimer > 0.0f) {
     mCooldownTimer -= deltaTime;
   }
 
-  // Dispara automaticamente (estilo Vampire Survivors)
   if (mCooldownTimer <= 0.0f) {
     FireShot();
-    mCooldownTimer = COOLDOWN_TIME;
+    mCooldownTimer = mCooldownTime;
   }
 }
 
-void IceGun::LevelUp() {}
+void IceGun::LevelUp() {
+  mLevel++; // Sobe o nível
+  SDL_Log("IceGun subiu para o Nível %d!", mLevel);
+  switch(mLevel)
+  {
+    case 1:
+      mCooldownTime = 1.8f;
+      mDamage = 8.0f;
+      mAreaScale = 1.0f; // 100% do tamanho
 
+      break;
+    case 2:
+      mCooldownTime = 1.5f;
+      mDamage = 10.0f;
+      mAreaScale = 1.0f;
+      break;
+    case 3:
+      mCooldownTime = 1.2f;
+      mDamage = 12.0f;
+      mAreaScale = 1.2f;
+      break;
+  }
+}
 void IceGun::FireShot() {
   if (!mAim) {
     return;
@@ -93,7 +114,7 @@ void IceGun::FireShot() {
 
     // 4c. "Acorda" o projétil
     p->Awake(mOwner, playerPos, mOwner->GetRotation(), PROJECTILE_LIFETIME,
-             finalVelocity);
+             finalVelocity, mDamage, mAreaScale);
     // /p->GetComponent<RigidBodyComponent>()->SetVelocity(finalVelocity);
 
     // 4d. Incrementa o ângulo para o próximo tiro

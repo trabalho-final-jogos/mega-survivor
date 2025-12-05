@@ -15,7 +15,8 @@ BoomerangGun::BoomerangGun(Actor* owner, int updateOrder)
     : WeaponComponent(owner, WeaponType::BoomerangGun, updateOrder),
       mProjectilePool(nullptr),
       mAimer(nullptr),
-      mCooldownTimer(0.0f) {
+      mCooldownTimer(0.0f),
+      mCooldownTime(1.8f){
   // Cria o pool
   mProjectilePool = new ProjectilePoolComponent();
 
@@ -28,6 +29,7 @@ BoomerangGun::BoomerangGun(Actor* owner, int updateOrder)
 
   Player* player = static_cast<Player*>(mOwner);
   mAimer = player->GetAim();
+  LevelUp();
 }
 
 void BoomerangGun::OnUpdate(float deltaTime) {
@@ -39,11 +41,33 @@ void BoomerangGun::OnUpdate(float deltaTime) {
   // Dispara automaticamente (estilo Vampire Survivors)
   if (mCooldownTimer <= 0.0f) {
     FireShot();
-    mCooldownTimer = COOLDOWN_TIME;  // Reseta o cooldown
+    mCooldownTimer = mCooldownTime;  // Reseta o cooldown
   }
 }
 
-void BoomerangGun::LevelUp() {}
+void BoomerangGun::LevelUp() {
+  mLevel++; // Sobe o nível
+  SDL_Log("BoomerangGun subiu para o Nível %d!", mLevel);
+  switch(mLevel)
+  {
+    case 1:
+      mCooldownTime = 1.4f;
+      mDamage = 20.0f;
+      mAreaScale = 1.3f; // 100% do tamanho
+
+      break;
+    case 2:
+      mCooldownTime = 1.2f;
+      mDamage = 20.0f;
+      mAreaScale = 1.0f;
+      break;
+    case 3:
+      mCooldownTime = 1.0f;
+      mDamage = 22.0f;
+      mAreaScale = 1.2f;
+      break;
+  }
+}
 
 void BoomerangGun::FireShot() {
   if (!mAimer) {
@@ -56,6 +80,6 @@ void BoomerangGun::FireShot() {
     // Passa 'mOwner' (o Player) para o bumerangue saber para quem voltar
     // Passa velocidade Zero, pois o bumerangue calcula a própria velocidade
     p->Awake(mOwner, mOwner->GetPosition(), mOwner->GetRotation(),
-             PROJECTILE_LIFETIME, Vector2::Zero);
+             PROJECTILE_LIFETIME, Vector2::Zero, mDamage, mAreaScale);
   }
 }

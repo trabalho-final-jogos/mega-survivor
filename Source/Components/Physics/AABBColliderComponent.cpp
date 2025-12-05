@@ -161,12 +161,18 @@ float AABBColliderComponent::DetectVertialCollision(
       }
 
       if (shouldResolvePhysics) {
-        // Aplica a física (empurra e para o movimento)
         ResolveVerticalCollisions(rigidBody, overlap);
       }
 
       mOwner->OnVerticalCollision(overlap, other);
-      return overlap;
+      if (shouldResolvePhysics)
+      {
+        return overlap;
+      }
+      else
+      {
+        continue;
+      }
     }
   }
   return 0.0f;

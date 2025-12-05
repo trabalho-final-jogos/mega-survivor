@@ -43,5 +43,7 @@ class Projectile : public Actor {
   class AABBColliderComponent* mColliderComponent;
   bool mIsDead;
   float mLifeTime;
-  uint32_t mDamage;
+  float mDamage;
+	float mWidth;
+	float mHeight;
 };
