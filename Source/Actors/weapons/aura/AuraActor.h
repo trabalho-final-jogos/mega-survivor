@@ -38,5 +38,6 @@ class AuraActor : public Actor {
 
   // --- Estado ---
   std::vector<Actor*> mEnemiesHitThisTick;  // Inimigos já atingidos neste tick
-  float mHitTimer;                          // Timer para o próximo "tick"
+  float mHitTimer;
+	bool mIsDamageTick;
 };
