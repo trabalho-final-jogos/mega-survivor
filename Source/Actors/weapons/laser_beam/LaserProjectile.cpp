@@ -1,6 +1,7 @@
 // LaserProjectile.cpp
 #include "LaserProjectile.h"
 #include <vector>
+#include <algorithm>
 #include "../../../Game.h"
 #include "../../../Components/Physics/AABBColliderComponent.h"
 #include "../../../Components/Drawing/AnimatorComponent.h" // <-- Usa um Sprite, não um Animator
@@ -8,10 +9,13 @@
 #include "../../Player.h" // Necessário para pegar o Ator do Player e a Mira
 #include "../../Aim.h"  // Necessário para pegar a posição da Mira
 #include "../../../Math.h" // Para ToRadians e Vector2::Perpendicular
+#include "../../Enemy.h"
 
 LaserProjectile::LaserProjectile(Game* game, int width, int height)
     : Projectile(game, width, height) // Chama a base (que carrega o spritesheet)
     , mBouncesLeft(0)
+    , mHitCooldown(0.5f) // Dá dano a cada meio segundo
+    , mHitTimer(0.0f)
 {
     if (mDrawComponent)
     {
@@ -33,6 +37,9 @@ void LaserProjectile::Awake(Actor* owner, const Vector2 &position, float rotatio
     {
         mDrawComponent->SetAnimation("fly_laser");
     }
+
+    mEnemiesHit.clear();
+    mHitTimer = 0.0f;
 }
 
 void LaserProjectile::OnUpdate(float deltaTime)
@@ -102,6 +109,7 @@ void LaserProjectile::OnUpdate(float deltaTime)
     // 4. Se ricocheteou, gasta um "bounce" e atualiza a física
     if (bounced)
     {
+        mEnemiesHit.clear();
         mBouncesLeft--; // Gasta um ricochete
 
         SetPosition(pos); // Define a posição corrigida
@@ -112,6 +120,13 @@ void LaserProjectile::OnUpdate(float deltaTime)
             Kill(); // Se acabaram os ricochetes, "morre" (volta ao pool)
         }
     }
+    mHitTimer -= deltaTime;
+    if (mHitTimer <= 0.0f)
+    {
+        // O tempo passou! Limpa a lista para poder dar dano de novo.
+        mEnemiesHit.clear();
+        mHitTimer = mHitCooldown; // Reinicia o timer
+    }
 }
 
 // Lógica de colisão da Laser (PIERCE - Atravessa inimigos)
@@ -121,10 +136,20 @@ void LaserProjectile::OnHorizontalCollision(const float minOverlap, AABBCollider
 
     if (otherLayer == ColliderLayer::Enemy)
     {
-        // Aplica dano, mas NÃO chama Kill()
-        //other->GetOwner()->ApplyDamage(mDamage);
+        Actor* enemyActor = other->GetOwner();
+        bool alreadyHit = std::find(mEnemiesHit.begin(), mEnemiesHit.end(), enemyActor) != mEnemiesHit.end();
+
+        if (!alreadyHit) {
+            Enemy* enemy = dynamic_cast<Enemy*>(enemyActor);
+
+            if (enemy)
+            {
+                enemy->TakeDamage(this->GetDamage());
+                mEnemiesHit.push_back(enemyActor);
+            }
+        }
     }
-    // Ignora Blocos (passa através)
+
 }
 
 void LaserProjectile::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other)

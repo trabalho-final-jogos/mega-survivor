@@ -22,5 +22,9 @@ public:
     void SetBounceCount(int bounces) { mBouncesLeft = bounces; }
 
 private:
-    int mBouncesLeft; // Quantos ricochetes ainda tem
+    int mBouncesLeft;
+		std::vector<class Actor*> mEnemiesHit;
+
+		float mHitCooldown;
+		float mHitTimer;
 };

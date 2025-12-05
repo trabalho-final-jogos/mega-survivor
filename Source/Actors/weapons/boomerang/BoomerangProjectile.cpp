@@ -49,14 +49,7 @@ void BoomerangProjectile::Awake(Actor* owner,
   mLifeTime = 1.f;
 
   float randomAngle = (static_cast<float>(rand()) / RAND_MAX) * Math::TwoPi;
-
-  // Cria o vetor de direção a partir do ângulo
-  // (Assumindo que Math::Cos e Math::Sin existem, ou std::cos/sin)
   Vector2 randomDirection(std::cos(randomAngle), std::sin(randomAngle));
-
-  // ----------------------------------
-
-  // 4. Calcula o Ponto de Controle (p1) usando a direção aleatória
   mControlPoint = mStartPosition + (randomDirection * mMaxRange);
 }
 

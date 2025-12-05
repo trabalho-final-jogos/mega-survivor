@@ -26,7 +26,7 @@ LaserGun::LaserGun(Actor* owner, int updateOrder)
     // Preenche o pool com o PROJÉTIL DE LASER
     for (int i = 0; i < 20; i++) // Pool de 20 (Lasers duram mais)
     {
-        auto laser = new LaserProjectile(mOwner->GetGame(), 16, 16); // Tamanho
+        auto laser = new LaserProjectile(mOwner->GetGame(), 48, 32); // Tamanho
         mProjectilePool->AddObjectToPool(laser);
     }
 
@@ -95,23 +95,20 @@ void LaserGun::FireShot()
     direction.Normalize();
     Vector2 playerVelocity = player->GetComponent<RigidBodyComponent>()->GetVelocity();
 
-    // (O Laser pode ignorar a velocidade do jogador para ser mais previsível)
-    // Vector2 finalVelocity = (direction * mProjectileSpeed) + playerVelocity;
     Vector2 finalVelocity = (direction * mProjectileSpeed);
 
 
     Projectile* p = mProjectilePool->GetDeadObject();
     if (!p) { return; } // Pool vazio
 
-    // Tenta fazer o cast para o tipo específico
     LaserProjectile* laser = dynamic_cast<LaserProjectile*>(p);
     if (laser)
     {
-        // 1. Define as estatísticas de ricochete
         laser->SetBounceCount(mNumBounces);
 
+        SDL_Log("danoooo %f", mDamage);
         // 2. "Acorda" o projétil
         laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
-                     finalVelocity, mDamage, mAreaScale); // (Valores padrão de slow)
+                     finalVelocity, mDamage, mAreaScale);
     }
 }

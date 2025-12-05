@@ -14,4 +14,10 @@ public:
     // A serra tem colisão especial: atravessa inimigos
     void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;
     void OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) override;
+
+	private:
+		std::vector<class Actor*> mEnemiesHit;
+
+		float mHitCooldown;
+		float mHitTimer;
 };
