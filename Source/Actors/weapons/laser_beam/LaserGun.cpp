@@ -86,17 +86,11 @@ void LaserGun::OnUpdate(float deltaTime)
 
 void LaserGun::FireShot()
 {
-    if (!mAim) { return; }
-
     Player* player = static_cast<Player*>(mOwner);
     Vector2 playerPos = player->GetPosition();
-    Vector2 aimerPos = mAim->GetPosition();
-    Vector2 direction = (aimerPos - playerPos);
-    direction.Normalize();
-    Vector2 playerVelocity = player->GetComponent<RigidBodyComponent>()->GetVelocity();
-
-    Vector2 finalVelocity = (direction * mProjectileSpeed);
-
+    float randomAngle = (static_cast<float>(rand()) / RAND_MAX) * Math::TwoPi;
+    Vector2 direction(std::cos(randomAngle), std::sin(randomAngle));
+    Vector2 finalVelocity = direction * mProjectileSpeed;
 
     Projectile* p = mProjectilePool->GetDeadObject();
     if (!p) { return; } // Pool vazio

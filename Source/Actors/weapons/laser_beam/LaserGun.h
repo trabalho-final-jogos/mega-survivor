@@ -22,14 +22,12 @@ private:
     ProjectilePoolComponent* mProjectilePool;
     Aim* mAim;
 
-    // --- Estatísticas (Variáveis) ---
     float mCooldownTime;
     float mProjectileSpeed;
     float mProjectileLifetime;
     float mDamage;
     float mAreaScale;
-    int mNumBounces; // <-- Estatística de Ricochetes
+    int mNumBounces;
 
-    // --- Timer ---
     float mCooldownTimer;
 };
