@@ -15,6 +15,9 @@ public:
     void OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other) override;
     void OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) override;
 
+    void OnUpdate(float deltaTime) override;
+
+
 	private:
 		std::vector<class Actor*> mEnemiesHit;
 

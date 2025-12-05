@@ -3,6 +3,7 @@
 //
 
 #include "SawProjectile.h"
+#include <algorithm>
 #include "../../../Game.h"
 #include "../../../Components/Physics/AABBColliderComponent.h"
 #include "../../../Components/Drawing/AnimatorComponent.h" // <-- Usa um Sprite, não um Animator
@@ -10,6 +11,7 @@
 #include "../../Player.h" // Necessário para pegar o Ator do Player e a Mira
 #include "../../Aim.h"  // Necessário para pegar a posição da Mira
 #include "../../../Math.h" // Para ToRadians e Vector2::Perpendicular
+#include "../../Enemy.h"
 
 SawProjectile::SawProjectile(Game* game, int width, int height)
     : Projectile(game, width, height) // Chama a base (que carrega o spritesheet)
@@ -29,6 +31,21 @@ void SawProjectile::Awake(Actor* owner, const Vector2 &position, float rotation,
     {
         mDrawComponent->SetAnimation("spin_saw");
     }
+
+    mEnemiesHit.clear();
+    mHitTimer = 0.0f;
+}
+void SawProjectile::OnUpdate(float deltaTime) {
+    // 1. Chama o Update da base (que verifica o LifeTime e chama Kill() se expirar)
+    Projectile::OnUpdate(deltaTime);
+    if (IsDead()) { return; }
+
+    mHitTimer -= deltaTime;
+    if (mHitTimer <= 0.0f)
+    {
+        mEnemiesHit.clear();
+        mHitTimer = mHitCooldown; // Reinicia o timer
+    }
 }
 
 // Lógica de colisão da Serra (PIERCE)
@@ -42,14 +59,19 @@ void SawProjectile::OnHorizontalCollision(const float minOverlap, AABBColliderCo
     }
     else if (otherLayer == ColliderLayer::Enemy)
     {
-        // --- LÓGICA DE PIERCE ---
-        // Aplica dano, mas NÃO chama Kill().
-        //other->GetOwner()->ApplyDamage(mDamage);
+        Actor* enemyActor = other->GetOwner();
+        bool alreadyHit = std::find(mEnemiesHit.begin(), mEnemiesHit.end(), enemyActor) != mEnemiesHit.end();
 
-        // (Para evitar dano infinito no mesmo inimigo, precisaríamos de um
-        // sistema de "hit cooldown", mas por enquanto, isto fará ela atravessar)
+        if (!alreadyHit) {
+            Enemy* enemy = dynamic_cast<Enemy*>(enemyActor);
+
+            if (enemy)
+            {
+                enemy->TakeDamage(this->GetDamage());
+                mEnemiesHit.push_back(enemyActor);
+            }
+        }
     }
-    // (Ignora Player, outros Projéteis, etc.)
 }
 
 void SawProjectile::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other)
