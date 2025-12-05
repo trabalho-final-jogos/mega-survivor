@@ -63,6 +63,7 @@ void Projectile::OnUpdate(float deltaTime) {
   Actor::OnUpdate(
       deltaTime);  // Necessário para atualizar componentes (RigidBody)
 
+
   mLifeTime -= deltaTime;
   if (mLifeTime <= 0) {
     Kill();

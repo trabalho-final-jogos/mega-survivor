@@ -14,7 +14,7 @@ class Enemy : public Actor {
 
   int GetHealth() const { return mHealth; }
   uint16_t GetXPDrop() const { return mXPDrop; }
-  uint32_t GetDamage() const { return mDamage; }
+  float GetDamage() const { return mDamage; }
   void SetXPDrop(uint16_t xpDrop) { mXPDrop = xpDrop; }
 
   void OnHorizontalCollision(const float minOverlap,
@@ -22,12 +22,12 @@ class Enemy : public Actor {
   void OnVerticalCollision(const float minOverlap,
                            class AABBColliderComponent* other) override;
 
-  virtual void TakeDamage(int damage);
+  virtual void TakeDamage(float damage);
 
  protected:
   int mHealth{1};
   uint16_t mXPDrop;
-  uint32_t mDamage{1};
+  float mDamage{1};
   float mLastHitTime{0.0f};
   class RigidBodyComponent* mRigidBody;
   class AnimatorComponent* mDrawComponent;
