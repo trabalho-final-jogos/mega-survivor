@@ -26,8 +26,8 @@
 #include "UI/Screens/HUD.h"
 #include "UI/Screens/Level1.h"
 #include "UI/Screens/MainMenu.h"
-#include "UI/Screens/MetaProg.h"
 #include "UI/Screens/PausedMenu.h"
+#include "UI/Screens/UpgradeStore.h"
 
 Game::Game()
     : mWindow(nullptr),
@@ -85,6 +85,13 @@ bool Game::Initialize() {
   mIsDebugging = false;
 
   mAudio = new AudioSystem(16);
+
+  // Initialize Persistent Upgrades
+  // We need a dummy actor to hold the component because Component requires an Actor.
+  // This actor will not be added to mActors to avoid update/draw loops.
+  mPersistentActor = new Actor(this);
+  RemoveActor(mPersistentActor); // Prevents UnloadScene from deleting it
+  mPersistentUpgrades = new UpgradeComponent(mPersistentActor);
 
   SetScene(GameScene::MainMenu);
 
@@ -509,7 +516,7 @@ void Game::PerformSceneChange() {
     }
 
     case GameScene::UpgradeStore: {
-      new MetaProg(this, std::string(GAME_FONT));
+      new UpgradeStore(this, std::string(GAME_FONT));
       break;
     }
 
@@ -570,6 +577,13 @@ void Game::Shutdown() {
   mRenderer->Shutdown();
   delete mRenderer;
   mRenderer = nullptr;
+
+  // Cleanup Persistent Upgrades
+  if (mPersistentActor) {
+      delete mPersistentActor;
+      mPersistentActor = nullptr;
+  }
+  mPersistentUpgrades = nullptr; // managed by actor
 
   SDL_DestroyWindow(mWindow);
   SDL_Quit();
