@@ -100,7 +100,6 @@ void LaserGun::FireShot()
     {
         laser->SetBounceCount(mNumBounces);
 
-        SDL_Log("danoooo %f", mDamage);
         // 2. "Acorda" o projétil
         laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
                      finalVelocity, mDamage, mAreaScale);
