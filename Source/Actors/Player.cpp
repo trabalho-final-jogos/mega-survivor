@@ -13,6 +13,7 @@
 #include "../Components/Physics/RigidBodyComponent.h"
 #include "../Components/Upgrades/UpgradeComponent.h"
 #include "../Game.h"
+#include "../UI/Screens/LevelUp.h"
 #include "Block.h"
 #include "Enemy.h"
 #include "XPGem.h"
@@ -457,6 +458,7 @@ void Player::AddXP(uint32_t amount) {
     mCurrentXp -= GetMaxXP();
     mCurrentLvl++;
     SDL_Log("Level Up! New Level: %d", mCurrentLvl);
+    new LevelUp(GetGame(), GAME_FONT.data());
   }
 }
 
