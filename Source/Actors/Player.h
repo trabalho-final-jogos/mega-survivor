@@ -34,7 +34,7 @@ inline const CharInfo& Get(PlayerChar character) {
 class Player : public Actor {
  public:
   explicit Player(Game* game,
-                  PlayerChar pchar = MEGAMAN,
+                  CharInfo pcharInfo,
                   float forwardSpeed = PLAYER_BASE_SPEED,
                   float jumpSpeed = -750.0f);
 
@@ -49,6 +49,8 @@ class Player : public Actor {
   void EquipWeapon(WeaponType type);
 
   void UnequipWeapon(WeaponType type);
+
+  void SetCharInfo(CharInfo* charInfo);
 
   void Kill() override;
   bool isBig() { return mIsBig; };
@@ -104,6 +106,8 @@ class Player : public Actor {
   uint32_t mMaxHP{100};
   uint32_t mCurrentHP{mMaxHP};
   float mHealthRegenTimer{0.0f};
+
+  CharInfo* mCharInfo;
 
   class Aim* mAimer;
   class UpgradeComponent* mUpgradeComponent;

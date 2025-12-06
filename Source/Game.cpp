@@ -87,10 +87,10 @@ bool Game::Initialize() {
   mAudio = new AudioSystem(16);
 
   // Initialize Persistent Upgrades
-  // We need a dummy actor to hold the component because Component requires an Actor.
-  // This actor will not be added to mActors to avoid update/draw loops.
+  // We need a dummy actor to hold the component because Component requires an
+  // Actor. This actor will not be added to mActors to avoid update/draw loops.
   mPersistentActor = new Actor(this);
-  RemoveActor(mPersistentActor); // Prevents UnloadScene from deleting it
+  RemoveActor(mPersistentActor);  // Prevents UnloadScene from deleting it
   mPersistentUpgrades = new UpgradeComponent(mPersistentActor);
 
   SetScene(GameScene::MainMenu);
@@ -176,7 +176,7 @@ void Game::BuildLevel(int** levelData, int width, int height) {
         // --- PERSONAGEM ---
         case 16:
           SDL_Log("Player created at position (%.1f, %.1f)", pos.x, pos.y);
-          mPlayer = new Player(this, mChar);
+          mPlayer = new Player(this, mCharInfo);
           mPlayer->SetPosition(pos);
           break;
 
@@ -451,11 +451,9 @@ void Game::GenerateOutput() {
 
   for (auto drawable : mDrawables) {
     drawable->Draw(mRenderer);
-    if(mIsDebugging)
-    {
+    if (mIsDebugging) {
       // Call draw for actor components
-      for (auto comp : drawable->GetOwner()->GetComponents())
-      {
+      for (auto comp : drawable->GetOwner()->GetComponents()) {
         comp->DebugDraw(mRenderer);
       }
     }
@@ -580,10 +578,10 @@ void Game::Shutdown() {
 
   // Cleanup Persistent Upgrades
   if (mPersistentActor) {
-      delete mPersistentActor;
-      mPersistentActor = nullptr;
+    delete mPersistentActor;
+    mPersistentActor = nullptr;
   }
-  mPersistentUpgrades = nullptr; // managed by actor
+  mPersistentUpgrades = nullptr;  // managed by actor
 
   SDL_DestroyWindow(mWindow);
   SDL_Quit();

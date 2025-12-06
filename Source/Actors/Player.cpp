@@ -52,7 +52,7 @@ std::string getPlayerDataPath(PlayerChar character) {
 }
 
 Player::Player(Game* game,
-               PlayerChar pchar,
+               CharInfo pcharInfo,
                const float forwardSpeed,
                const float jumpSpeed)
     : Actor(game),
@@ -65,9 +65,10 @@ Player::Player(Game* game,
       mInvulnerabilityTimer(0.0f),
       mAimer(nullptr) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
-  mDrawComponent = new AnimatorComponent(this, getPlayerTexturePath(pchar),
-                                         getPlayerDataPath(pchar),
-                                         Game::TILE_SIZE, Game::TILE_SIZE);
+  mDrawComponent =
+      new AnimatorComponent(this, getPlayerTexturePath(pcharInfo.playerChar),
+                            getPlayerDataPath(pcharInfo.playerChar),
+                            Game::TILE_SIZE, Game::TILE_SIZE);
   mDrawComponent->SetFlipHorizontal(true);
 
   mDrawComponent->AddAnimation("idle", std::vector<int>{0});
@@ -93,6 +94,8 @@ Player::Player(Game* game,
   // Adjust Health based on upgrades
   mMaxHP +=
       static_cast<uint32_t>(mUpgradeComponent->GetFinalStat(Stats::Health));
+
+  EquipWeapon(pcharInfo.charWeapon);
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -134,102 +137,10 @@ void Player::OnProcessInput(const uint8_t* state) {
   }
 
   mRigidBodyComponent->SetVelocity(velocity);
+}
 
-  // Input de teste para habilitar e desabilitar as armas
-  //  ---- Detecção de um toque por tecla (flags estáticas) ----
-  static bool keyDown[7] = {false};
-  // Usaremos índices 1–6, ignorando o 0.
-
-  // ---- Tecla 1: Alterna MainGun ----
-  if (state[SDL_SCANCODE_1]) {
-    if (!keyDown[1]) {
-      keyDown[1] = true;
-
-      MainGun* gun = GetComponent<MainGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::MainGun);
-      } else {
-        EquipWeapon(WeaponType::MainGun);
-      }
-    }
-  } else
-    keyDown[1] = false;
-
-  // ---- Tecla 2: Alterna IceGun ----
-  if (state[SDL_SCANCODE_2]) {
-    if (!keyDown[2]) {
-      keyDown[2] = true;
-
-      IceGun* gun = GetComponent<IceGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::IceGun);
-      } else {
-        EquipWeapon(WeaponType::IceGun);
-      }
-    }
-  } else
-    keyDown[2] = false;
-
-  // ---- Tecla 3: Alterna BoomerangGun ----
-  if (state[SDL_SCANCODE_3]) {
-    if (!keyDown[3]) {
-      keyDown[3] = true;
-
-      BoomerangGun* gun = GetComponent<BoomerangGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::BoomerangGun);
-      } else {
-        EquipWeapon(WeaponType::BoomerangGun);
-      }
-    }
-  } else
-    keyDown[3] = false;
-
-  // ---- Tecla 4: Alterna SawGun ----
-  if (state[SDL_SCANCODE_4]) {
-    if (!keyDown[4]) {
-      keyDown[4] = true;
-
-      SawGun* gun = GetComponent<SawGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::SawGun);
-      } else {
-        EquipWeapon(WeaponType::SawGun);
-      }
-    }
-  } else
-    keyDown[4] = false;
-
-  // ---- Tecla 5: Alterna Aura ----
-  if (state[SDL_SCANCODE_5]) {
-    if (!keyDown[5]) {
-      keyDown[5] = true;
-
-      AuraWeapon* gun = GetComponent<AuraWeapon>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::Aura);
-      } else {
-        EquipWeapon(WeaponType::Aura);
-      }
-    }
-  } else
-    keyDown[5] = false;
-
-  // ---- Tecla 6: Alterna LaserGun ----
-  if (state[SDL_SCANCODE_6]) {
-    if (!keyDown[6]) {
-      keyDown[6] = true;
-
-      AuraWeapon* gun = GetComponent<AuraWeapon>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::LaserGun);
-      } else {
-        EquipWeapon(WeaponType::LaserGun);
-      }
-    }
-  } else {
-    keyDown[6] = false;
-  }
+void Player::SetCharInfo(CharInfo* charInfo) {
+  mCharInfo = charInfo;
 }
 
 void Player::OnUpdate(float deltaTime) {

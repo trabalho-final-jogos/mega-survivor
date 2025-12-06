@@ -25,9 +25,10 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
 
     but[i] = AddButton(
         _char.charName.data(),
-        [this, _char]() {
+        [this, _char]() mutable {
           mGame->mChar = _char.playerChar;
           mGame->SetScene(GameScene::Level1);
+          mGame->SetPlayerCharInfo(_char);
         },
         charButtonsPos + Vector2(0.0f, charButOffset * i),
         Game::UNSELECTED_OPACITY);
@@ -47,11 +48,62 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
   mSelectedCharImage = AddImage("../Assets/Sprites/Megaman/player.png",
                                 charImagePos, 3.0f, 0.0f, 100);
 
+  CharInfo _char = CharacterDB::Get(static_cast<PlayerChar>(0));
+
+  mSelectedWeapon =
+      AddText(WeaponToString(_char.charWeapon),
+              charImagePos + Vector2(0.0f, -120.0f), 0.5f, 0.0f, 40, 512, 100);
+
+  mSelectedWeapon->SetBackgroundColor(
+      ColorPalette::GetInstance().GetColorAsVec4("Orange"));
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
     mButtons[0]->SetHighlighted(true);
     mButtons[0]->SetSelected(true);
     mButtons[0]->SetOpacity(Game::SELECTED_OPACITY);
+  }
+}
+
+void CharSelection::UpdateCharImage() {
+  switch (mSelectedChar) {
+    case PlayerChar::MEGAMAN:
+      mSelectedCharImage->SetImage("../Assets/Sprites/Megaman/player.png");
+      break;
+
+    case PlayerChar::BASS:
+      mSelectedCharImage->SetImage("../Assets/Sprites/Bass/player.png");
+      break;
+
+    case PlayerChar::PROTOMAN:
+      mSelectedCharImage->SetImage("../Assets/Sprites/Protoman/player.png");
+      break;
+
+    default:
+      break;
+  }
+}
+
+void CharSelection::UpdateCharWeaponText() {
+  CharInfo _char = CharacterDB::Get(mSelectedChar);
+  mSelectedWeapon->SetText(WeaponToString(_char.charWeapon));
+}
+
+std::string CharSelection::WeaponToString(WeaponType weapon) {
+  switch (weapon) {
+    case WeaponType::MainGun:
+      return "Main Gun";
+    case WeaponType::IceGun:
+      return "Ice Gun";
+    case WeaponType::BoomerangGun:
+      return "Boomerang Gun";
+    case WeaponType::LaserGun:
+      return "Laser Gun";
+    case WeaponType::SawGun:
+      return "Saw Gun";
+    case WeaponType::Aura:
+      return "Aura";
+    default:
+      return "";
   }
 }
 
@@ -106,6 +158,8 @@ void CharSelection::HandleKeyPress(int key) {
       mButtons[mSelectedButtonIndex]->SetSelected(true);
       mButtons[mSelectedButtonIndex]->SetOpacity(Game::SELECTED_OPACITY);
       mSelectedChar = static_cast<PlayerChar>(mSelectedButtonIndex);
+      UpdateCharImage();
+      UpdateCharWeaponText();
     }
   }
 }

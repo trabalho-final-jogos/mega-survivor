@@ -13,9 +13,13 @@ class CharSelection : public UIScreen {
   void HandleKeyPress(int key) override;
   // void Update(float deltaTime) override;
  private:
+  std::string WeaponToString(WeaponType weapon);
+  void UpdateCharImage();
+  void UpdateCharWeaponText();
   std::array<class UIButton*, kCharCount> mCharButtons{nullptr};
   PlayerChar mSelectedChar{MEGAMAN};
   UIImage* mSelectedCharImage{nullptr};
+  UIText* mSelectedWeapon{nullptr};
 };
 
 #endif  // MEGA_SURVIVOR_CHARSELECTION_H
