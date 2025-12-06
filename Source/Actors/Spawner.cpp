@@ -20,16 +20,22 @@ Spawner::Spawner(Game* game)
 void Spawner::SetupWaves() {
   // --- CONFIGURAÇÃO DO GAME DESIGN ---
   // { Inicio, Fim, Intervalo, Tipo, Vida, Velocidade }
-  mWaves.push_back({0.0f, 30.0f, 2.0f, EnemyType::Metall, 10.0f, 40.0f});
+  //mWaves.push_back({0.0f, 0.5f, 0.5f, EnemyType::Metall, 10.0f, 40.0f, 5.0f});
+
+  mWaves.push_back({0.0f, 30.0f, 0.8f, EnemyType::Metall, 10.0f, 40.0f, 1.0f});
 
   //mWaves.push_back({15.0f, 30.0f, 1.0f, EnemyType::Metall, 20.0f, 60.0f});
 
   // Onda 3 (30-45s): ENXAME DE MORCEGOS! (Rápidos, morrem com 1 hit, muitos)
-  mWaves.push_back({30.0f, 31.0f, 0.1f, EnemyType::Bat, 1.0f, 250.0f});
+  mWaves.push_back({30.0f, 31.0f, 0.1f, EnemyType::Bat, 1.0f, 250.0f, 1.0f});
 
-  mWaves.push_back({31.0f, 60.0f, 2.0f, EnemyType::Metall, 15.0f, 40.0f});
+  mWaves.push_back({31.0f, 60.0f, 0.7f, EnemyType::Metall, 15.0f, 40.0f, 1.0f});
+  mWaves.push_back({60.0f, 60.5f, 0.49f, EnemyType::Metall, 100.0f, 55.0f, 5.0f});
 
-  mWaves.push_back({60.0f, 9999.0f, 0.3f, EnemyType::Metall, 40.0f, 80.0f});
+  mWaves.push_back({60.6f, 61.6f, 0.1f, EnemyType::Bat, 1.0f, 250.0f, 1.0f});
+  mWaves.push_back({61.7f, 220.0f, 0.65f, EnemyType::Metall, 30.0f, 65.0f, 1.0f});
+
+
 }
 
 void Spawner::OnUpdate(float deltaTime) {
@@ -124,6 +130,7 @@ void Spawner::SpawnEnemy() {
     mettal->SetPosition(spawnPos);
     // Injeta Stats (Vida, Velocidade)
     mettal->SetStats(wave->enemyHealth, wave->enemySpeed);
+    mettal->SetScale(Vector2(32.0f*wave->enemySize, 32.0f * wave->enemySize));
   } else if (wave->type == EnemyType::Bat) {
     auto bat = new Bat(GetGame());
     bat->SetPosition(spawnPos);

@@ -12,9 +12,6 @@ Enemy::Enemy(Game* game, int health, uint16_t xpDrop)
       mColliderComponent(nullptr) {}
 
 void Enemy::TakeDamage(float damage) {
-  SDL_Log("Damge %f", damage);
-  SDL_Log("mhealt %f", mHealth);
-
   mHealth -= damage;
   if (mHealth <= 0) {
     Kill();
@@ -26,7 +23,7 @@ void Enemy::OnHorizontalCollision(const float minOverlap,
                                   AABBColliderComponent* other) {
   if (other->GetLayer() == ColliderLayer::PlayerProjectile) {
     /*
-     Removi a logica da colisao do inimigo com a bala pra prorpia bala
+     Movi a logica da colisao do inimigo com a bala pra prorpia bala
     Projectile* projectile = dynamic_cast<Projectile*>(other->GetOwner());
     if (projectile) {
       SDL_Log("Horizontal Collision %f", projectile->GetDamage());
