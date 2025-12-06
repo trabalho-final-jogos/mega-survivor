@@ -11,8 +11,8 @@
 #include <vector>
 #include "Actors/Player.h"
 #include "Audio/AudioSystem.h"
-#include "Renderer/Renderer.h"
 #include "Components/Upgrades/UpgradeComponent.h"
+#include "Renderer/Renderer.h"
 
 constexpr static std::string_view GAME_FONT{"../Assets/Fonts/MMRock9.ttf"};
 
@@ -98,23 +98,26 @@ class Game {
 
   uint8_t GetRunSeconds() const { return mRunSeconds; }
   uint8_t GetRunMinutes() const { return mRunMinutes; }
-
+  void SetPlayerCharInfo(CharInfo pCharInfo) { mCharInfo = pCharInfo; }
+  CharInfo GetCharInfo() const { return mCharInfo; }
   // Persistent Upgrades
-  // Using a raw pointer here, but since Game isn't an Actor, we can't use Component's lifecycle fully.
-  // However, we can just use the class as data container.
-  // But UpgradeComponent ctor requires an Actor.
-  // I will make a getter that returns the raw data component.
-  // Wait, if I cannot instantiate UpgradeComponent without an Actor, I have a problem.
-  // I will modify UpgradeComponent to allow nullptr owner, or create a dummy actor.
-  // Or I can add a specialized "UpgradeData" struct.
-  // For now, I'll assume I can hack it or I'll fix UpgradeComponent ctor.
+  // Using a raw pointer here, but since Game isn't an Actor, we can't use
+  // Component's lifecycle fully. However, we can just use the class as data
+  // container. But UpgradeComponent ctor requires an Actor. I will make a
+  // getter that returns the raw data component. Wait, if I cannot instantiate
+  // UpgradeComponent without an Actor, I have a problem. I will modify
+  // UpgradeComponent to allow nullptr owner, or create a dummy actor. Or I can
+  // add a specialized "UpgradeData" struct. For now, I'll assume I can hack it
+  // or I'll fix UpgradeComponent ctor.
 
   // Actually, I should probably manage currency here too.
   int GetCurrency() const { return mCurrency; }
   void AddCurrency(int amount) { mCurrency += amount; }
 
   // This will hold the persistent stats
-  class UpgradeComponent* GetPersistentUpgrades() { return mPersistentUpgrades; }
+  class UpgradeComponent* GetPersistentUpgrades() {
+    return mPersistentUpgrades;
+  }
 
  private:
   void ProcessInput();
@@ -173,7 +176,8 @@ class Game {
   Uint32 mClockStartTime;
   bool mIsClockRunning;
 
-  int mCurrency{100000}; // Start with some money for testing
+  CharInfo mCharInfo;
+  int mCurrency{100000};  // Start with some money for testing
   class UpgradeComponent* mPersistentUpgrades = nullptr;
-  class Actor* mPersistentActor = nullptr; // Dummy actor to hold the component
+  class Actor* mPersistentActor = nullptr;  // Dummy actor to hold the component
 };

@@ -1,6 +1,7 @@
 
 
 #pragma once
+#include "../../Actors/Player.h"
 #include "HUD.h"
 #include "UIScreen.h"
 
@@ -16,4 +17,5 @@ class Level1 : public UIScreen {
   std::string mFontName;
 
   HUD* mHUD;
+  CharInfo mCharInfo;
 };

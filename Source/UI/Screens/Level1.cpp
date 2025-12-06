@@ -20,7 +20,7 @@ Level1::Level1(Game* game, const std::string& fontName)
   mHUD->SetXPBar(0.0f);
 
   if (!mGame->GetPlayer()) {
-    Player* player = new Player(mGame, mGame->mChar);
+    Player* player = new Player(mGame, mGame->GetCharInfo());
     player->SetPosition(
         Vector2(Game::WINDOW_WIDTH / 2, Game::WINDOW_HEIGHT / 2));
     mGame->SetPlayer(player);
