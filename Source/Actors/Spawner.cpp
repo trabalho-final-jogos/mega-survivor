@@ -4,7 +4,8 @@
 #include "Player.h"
 #include "enemies/Bat.h"
 #include "enemies/Enemy1.h"
-
+#include "enemies/EnemyGround.h"
+#include "enemies/EnemyFly.h"
 #include <algorithm>  // Para std::max
 #include <cstdlib>    // Para rand()
 
@@ -18,18 +19,95 @@ Spawner::Spawner(Game* game)
 }
 
 void Spawner::SetupWaves() {
-  // --- CONFIGURAÇÃO DO GAME DESIGN ---
-  // { Inicio, Fim, Intervalo, Tipo, Vida, Velocidade }
-  mWaves.push_back({0.0f, 30.0f, 2.0f, EnemyType::Metall, 10.0f, 40.0f});
+ mWaves.clear();
 
-  //mWaves.push_back({15.0f, 30.0f, 1.0f, EnemyType::Metall, 20.0f, 60.0f});
+    // Configuração dos Morcegos (para facilitar ajustes)
+    float batDuration = 2.3f;       // A horda dura 5 segundos
+    float batInterval = 0.1f;       // Muito rápido (enxame)
+    float batSpeed = 250.0f;        // Muito rápido
+    float batHealth = 1.0f;         // Morre com 1 hit
 
-  // Onda 3 (30-45s): ENXAME DE MORCEGOS! (Rápidos, morrem com 1 hit, muitos)
-  mWaves.push_back({30.0f, 31.0f, 0.1f, EnemyType::Bat, 1.0f, 250.0f});
+    // =================================================================================
+    // FASE 1: METALLS (00:00 até 03:20 / 200s)
+    // Objetivo: Ficam mais rápidos e fortes a cada intervalo
+    // =================================================================================
 
-  mWaves.push_back({31.0f, 60.0f, 2.0f, EnemyType::Metall, 15.0f, 40.0f});
+    mWaves.push_back({ 0.0f, 15.0f, 1.5f, EnemyType::Metall, 10.0f, 40.0f , 1.0f});
 
-  mWaves.push_back({60.0f, 9999.0f, 0.3f, EnemyType::Metall, 40.0f, 80.0f});
+    // --- BAT WAVE 1 (00:15) ---
+    mWaves.push_back({ 15.0f, 15.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    // 00:20 -> 01:15 (Metall Normal) - Retoma após morcegos
+    mWaves.push_back({ 20.0f, 75.0f, 1.0f, EnemyType::Metall, 20.0f, 50.0f, 1.0f });
+
+    // --- BAT WAVE 2 (01:15) --- (60s após a primeira)
+    mWaves.push_back({ 75.0f, 75.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    // 01:20 -> 02:15 (Metall Rápido)
+    mWaves.push_back({ 80.0f, 135.0f, 0.8f, EnemyType::Metall, 40.0f, 70.0f, 1.0f });
+
+    // --- BAT WAVE 3 (02:15) ---
+    mWaves.push_back({ 135.0f, 135.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    // 02:20 -> 03:15 (Metall Tank/Forte)
+    mWaves.push_back({ 140.0f, 195.0f, 0.5f, EnemyType::Metall, 80.0f, 50.0f, 1.0f });
+
+    // --- BAT WAVE 4 (03:15) ---
+    mWaves.push_back({ 195.0f, 200.0f, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+    mWaves.push_back({ 200.0f, 200.5f, 0.4f, EnemyType::Metall, 205.0f, 50.0f, 5.0f });
+
+    // =================================================================================
+    // FASE 2: GROUND (03:20 até 06:40 / 200s a 400s)
+    // Objetivo: Inimigos de chão, provavelmente mais resistentes
+    // =================================================================================
+
+    // 03:20 -> 04:15 (Ground Normal)
+    mWaves.push_back({ 200.6f, 255.0f, 1.5f, EnemyType::Ground, 50.0f, 30.0f, 1.0f });
+
+    // --- BAT WAVE 5 (04:15) ---
+    mWaves.push_back({ 255.0f, 255.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    // 04:20 -> 05:15 (Ground Rápido)
+    mWaves.push_back({ 260.0f, 315.0f, 1.0f, EnemyType::Ground, 80.0f, 50.0f, 1.0f });
+
+    // --- BAT WAVE 6 (05:15) ---
+    mWaves.push_back({ 315.0f, 315.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed  , 1.0f});
+
+    // 05:20 -> 06:15 (Ground Horda)
+    mWaves.push_back({ 320.0f, 375.0f, 0.5f, EnemyType::Ground, 100.0f, 60.0f, 1.0f });
+
+    mWaves.push_back({ 375.0f, 375.5f, 0.4f, EnemyType::Ground, 230.0f, 60.0f, 5.0f });
+
+
+
+    // =================================================================================
+    // FASE 3: FLY (06:20 até 10:00 / 400s a 600s)
+    // Objetivo: Inimigos voadores até o fim do jogo
+    // =================================================================================
+
+    // 06:20 -> 07:15 (Fly Inicial)
+    // (Use EnemyType::Fly se tiver, ou Metall muito rápido como placeholder)
+    mWaves.push_back({ 376.0f, 435.0f, 1.0f, EnemyType::Fly, 30.0f, 100.0f, 1.0f});
+
+    // --- BAT WAVE 8 (07:15) ---
+    mWaves.push_back({ 435.0f, 435.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed,1.0f });
+
+    // 07:20 -> 08:15 (Fly Médio)
+    mWaves.push_back({ 440.0f, 495.0f, 0.8f, EnemyType::Fly, 50.0f, 110.0f, 1.0f });
+
+    // --- BAT WAVE 9 (08:15) ---
+    mWaves.push_back({ 495.0f, 495.0f + batDuration, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    // 08:20 -> 09:15 (Fly Difícil)
+    mWaves.push_back({ 500.0f, 555.0f, 0.5f, EnemyType::Fly, 80.0f, 120.0f, 1.0f });
+
+    // --- BAT WAVE 10 (09:15) ---
+    mWaves.push_back({ 555.0f, 560.0f, batInterval, EnemyType::Bat, batHealth, batSpeed, 1.0f });
+
+    mWaves.push_back({ 560.0f, 560.5f, 0.4f, EnemyType::Fly, 280.0f, 130.0f, 5.0f });
+
+    // 09:20 -> FIM (10:00+) (Fly Insano / Final)
+    mWaves.push_back({ 560.0f, 9999.0f, 0.2f, EnemyType::Random, 100.0f, 130.0f, 1.0f });
 }
 
 void Spawner::OnUpdate(float deltaTime) {
@@ -124,6 +202,7 @@ void Spawner::SpawnEnemy() {
     mettal->SetPosition(spawnPos);
     // Injeta Stats (Vida, Velocidade)
     mettal->SetStats(wave->enemyHealth, wave->enemySpeed);
+    mettal->SetScale(Vector2(32.0f*wave->enemySize, 32.0f * wave->enemySize));
   } else if (wave->type == EnemyType::Bat) {
     auto bat = new Bat(GetGame());
     bat->SetPosition(spawnPos);
@@ -156,5 +235,40 @@ void Spawner::SpawnEnemy() {
 
     // Define velocidade fixa
     bat->SetFixedVelocity(direction * wave->enemySpeed);
+  }else if (wave->type == EnemyType::Ground) {
+
+    auto ground = new EnemyGround(GetGame());
+    ground->SetPosition(spawnPos);
+    // Injeta Stats (Vida, Velocidade)
+    ground->SetStats(wave->enemyHealth, wave->enemySpeed);
+    ground->SetScale(Vector2(32.0f*wave->enemySize, 32.0f * wave->enemySize));
+  }if (wave->type == EnemyType::Ground) {
+
+    auto fly = new EnemyFly(GetGame());
+    fly->SetPosition(spawnPos);
+    // Injeta Stats (Vida, Velocidade)
+    fly->SetStats(wave->enemyHealth, wave->enemySpeed);
+    fly->SetScale(Vector2(32.0f*wave->enemySize, 32.0f * wave->enemySize));
+  }else if (wave->type == EnemyType::Random) {
+    int r = rand() % 3;
+
+    switch (r) {
+      case 0: {
+        auto spawn_mettal = new Enemy1(GetGame());
+        spawn_mettal->SetPosition(spawnPos);
+        spawn_mettal->SetStats(wave->enemyHealth, wave->enemySpeed);
+      }break;
+      case 1: {
+        auto spawn_ground = new EnemyGround(GetGame());
+        spawn_ground->SetPosition(spawnPos);
+        spawn_ground->SetStats(wave->enemyHealth, wave->enemySpeed);
+      }break;
+      case 2: {
+        auto spawn_fly = new EnemyFly(GetGame());
+        spawn_fly->SetPosition(spawnPos);
+        spawn_fly->SetStats(wave->enemyHealth, wave->enemySpeed);
+      }
+    }
+
   }
 }

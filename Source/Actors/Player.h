@@ -65,7 +65,7 @@ class Player : public Actor {
 
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
-  uint32_t mCurrentHP{100};
+  uint32_t mCurrentHP{9999};
 
   class Aim* mAimer;
 };

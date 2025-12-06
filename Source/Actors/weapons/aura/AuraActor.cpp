@@ -82,10 +82,7 @@ void AuraActor::LevelUp() {
 
 void AuraActor::OnUpdate(float deltaTime) {
   Actor::OnUpdate(deltaTime);
-  SDL_Log("HIT %f", mHitTimer);
-  SDL_Log("HIT %f", mHitCooldown);
-
-  // Se o Player (dono) for destruído, destrói a aura também
+ // Se o Player (dono) for destruído, destrói a aura também
   if (!mOwnerPlayer || mOwnerPlayer->GetState() != ActorState::Active) {
     SetState(ActorState::Destroy);
     return;
@@ -131,8 +128,6 @@ void AuraActor::OnUpdate(float deltaTime) {
 
 // Função auxiliar para aplicar dano (com timer de tick)
 void AuraActor::ApplyHit(Actor* enemy) {
-    SDL_Log("AAAAAAAAAAAAAAAAAAA");
-
   if (!mIsDamageTick)
   {
     return;
@@ -144,7 +139,6 @@ void AuraActor::ApplyHit(Actor* enemy) {
 
     Enemy* enemy_cast = dynamic_cast<Enemy*>(enemy);
     // Se não atingimos, aplica o dano e adiciona à lista
-    SDL_Log("BBBBBBBBBBBB %f", mDamage);
     enemy_cast->TakeDamage(mDamage);
     mEnemiesHitThisTick.push_back(enemy);
   }

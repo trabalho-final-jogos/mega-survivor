@@ -82,7 +82,7 @@ bool Game::Initialize() {
   InitializeActors();
 
   mTicksCount = SDL_GetTicks();
-  mIsDebugging = false;
+  mIsDebugging = true;
 
   mAudio = new AudioSystem(16);
 

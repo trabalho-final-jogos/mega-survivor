@@ -58,7 +58,6 @@ void Projectile::Awake(Actor* owner,
   SetPosition(position);
   SetRotation(rotation);
   mRigidBodyComponent->SetVelocity(velocity);
-  SDL_Log("Projectile awake %f, %f, %f", mWidth, mWidth, areaScale);
   SetScale(Vector2(areaScale*mWidth, areaScale*mHeight));
 }
 

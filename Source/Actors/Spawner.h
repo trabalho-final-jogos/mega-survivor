@@ -12,6 +12,7 @@ struct SpawnWave
     EnemyType type;       // Tipo de inimigo
     float enemyHealth;    // Status: Vida
     float enemySpeed;     // Status: Velocidade
+    float enemySize;
 };
 
 class Spawner : public Actor
