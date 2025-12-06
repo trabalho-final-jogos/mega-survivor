@@ -8,10 +8,28 @@
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
+enum PlayerChar { MEGAMAN, PROTOMAN, BASS, LAST_CHAR };
+
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
+constexpr uint kCharCount = static_cast<uint>(PlayerChar::LAST_CHAR);
 
-enum PlayerChar { MEGAMAN, PROTOMAN, BASS };
+struct CharInfo {
+  PlayerChar playerChar;
+  std::string_view charName;
+  WeaponType charWeapon;
+};
+
+namespace CharacterDB {
+inline constexpr CharInfo INFOS[] = {
+    {PlayerChar::MEGAMAN, "Megaman", WeaponType::MainGun},
+    {PlayerChar::PROTOMAN, "Protoman", WeaponType::IceGun},
+    {PlayerChar::BASS, "Bass", WeaponType::LaserGun}};
+
+inline const CharInfo& Get(PlayerChar character) {
+  return INFOS[static_cast<int>(character)];
+}
+}  // namespace CharacterDB
 
 class Player : public Actor {
  public:

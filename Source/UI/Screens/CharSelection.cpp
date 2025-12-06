@@ -10,34 +10,42 @@
 
 CharSelection::CharSelection(class Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
-  AddText("Character Selection", Vector2(0.0f, 150.0f), 0.7f);
-  AddButton(
-      "Megaman",
-      [this]() {
-        mGame->mChar = PlayerChar::MEGAMAN;
-        mGame->SetScene(GameScene::Level1);
-      },
-      Vector2(-150.0f, 100.0f), Game::UNSELECTED_OPACITY);
+  AddImage("../Assets/Levels/CharMenu/char_bg.png", Vector2(0.0f, 0.0f), 0.35f,
+           0.0f, 50);
 
-  AddButton(
-      "Protoman",
-      [this]() {
-        mGame->mChar = PlayerChar::PROTOMAN;
-        mGame->SetScene(GameScene::Level1);
-      },
-      Vector2(-150.0f, 50.0f), Game::UNSELECTED_OPACITY);
+  AddText("Character Selection", Vector2(0.0f, 200.0f), 0.7f);
 
-  AddButton(
-      "Bass",
-      [this]() {
-        mGame->mChar = PlayerChar::BASS;
-        mGame->SetScene(GameScene::Level1);
-      },
-      Vector2(-150.0f, 0.0f), Game::UNSELECTED_OPACITY);
+  Vector2 charButtonsPos(-200.0f, 100.0f);
+  Vector2 charImagePos(200.0f, 0.0f);
+  float charButOffset = -75.0f;
+  UIButton* but[kCharCount + 1]{nullptr};
+
+  for (uint i = 0; i < kCharCount; i++) {
+    CharInfo _char = CharacterDB::Get(static_cast<PlayerChar>(i));
+
+    but[i] = AddButton(
+        _char.charName.data(),
+        [this, _char]() {
+          mGame->mChar = _char.playerChar;
+          mGame->SetScene(GameScene::Level1);
+        },
+        charButtonsPos + Vector2(0.0f, charButOffset * i),
+        Game::UNSELECTED_OPACITY);
+
+    mCharButtons[i] = but[i];
+    but[i]->SetHighlighted(false);
+    but[i]->SetSelected(false);
+    but[i]->SetOpacity(Game::UNSELECTED_OPACITY);
+  }
+
+  mSelectedButtonIndex = 0;
 
   AddButton(
       "Back", [this]() { mGame->SetScene(GameScene::MainMenu); },
       Vector2(0.0f, -150.0f), Game::UNSELECTED_OPACITY);
+
+  mSelectedCharImage = AddImage("../Assets/Sprites/Megaman/player.png",
+                                charImagePos, 3.0f, 0.0f, 100);
 
   mSelectedButtonIndex = 0;
   if (!mButtons.empty()) {
@@ -97,6 +105,7 @@ void CharSelection::HandleKeyPress(int key) {
       mButtons[mSelectedButtonIndex]->SetHighlighted(true);
       mButtons[mSelectedButtonIndex]->SetSelected(true);
       mButtons[mSelectedButtonIndex]->SetOpacity(Game::SELECTED_OPACITY);
+      mSelectedChar = static_cast<PlayerChar>(mSelectedButtonIndex);
     }
   }
 }
