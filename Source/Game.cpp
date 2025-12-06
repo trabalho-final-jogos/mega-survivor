@@ -82,7 +82,7 @@ bool Game::Initialize() {
   InitializeActors();
 
   mTicksCount = SDL_GetTicks();
-  mIsDebugging = true;
+  mIsDebugging = false;
 
   mAudio = new AudioSystem(16);
 
@@ -451,6 +451,14 @@ void Game::GenerateOutput() {
 
   for (auto drawable : mDrawables) {
     drawable->Draw(mRenderer);
+    if(mIsDebugging)
+    {
+      // Call draw for actor components
+      for (auto comp : drawable->GetOwner()->GetComponents())
+      {
+        comp->DebugDraw(mRenderer);
+      }
+    }
   }
 
   // Draw UI screens

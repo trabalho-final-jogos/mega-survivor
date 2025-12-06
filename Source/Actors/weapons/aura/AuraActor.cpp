@@ -8,6 +8,7 @@
 #include "../../../Renderer/Renderer.h"
 #include "../../Aim.h"     // Necessário para pegar a posição da Mira
 #include "../../Player.h"  // Necessário para pegar o Ator do Player e a Mira
+#include "../../Enemy.h"
 
 AuraActor::AuraActor(Game* game, Player* owner)
     : Actor(game)  // O Actor base se registra no Game
@@ -18,15 +19,15 @@ AuraActor::AuraActor(Game* game, Player* owner)
       // Cor Padrão: Azul claro, 20% Opaco (Alpha = 0.2f)
       ,
       mAuraColor(1.0f, 0.4f, 0.0f, 0.2f),
-      mHitTimer(0.0f) {
-  // 1. Cria o Colisor (mas NÃO um componente de desenho)
+      mHitTimer(0.0f),
+      mIsDamageTick(false) {
+
   mCollider = new AABBColliderComponent(
       this, 0, 0, Game::TILE_SIZE * 2, Game::TILE_SIZE * 2,  // Tamanho base
       ColliderLayer::PlayerProjectile,  // Age como um projétil
       false);                           // Não é estático
 
-  // 2. Define o Nível 1
-
+  mCollider->SetEnabled(true);
   mDrawComponent = new RectComponent(this,
                                      Game::TILE_SIZE * 1.5,  // largura
                                      Game::TILE_SIZE * 1.5,  // altura
@@ -67,13 +68,10 @@ void AuraActor::LevelUp() {
 
   float baseSize = Game::TILE_SIZE;
 
-  // 2. Calcula o novo tamanho baseado na escala do nível
   Vector2 newSize(baseSize * mAreaScale, baseSize * mAreaScale);
 
-  // 3. Aplica a nova escala ao Ator (para o DrawRect)
   SetScale(newSize);
 
-  // 4. Aplica o novo tamanho ao Colisor usando o seu método
   if (mCollider) {
     mCollider->SetSize(newSize);
   }
@@ -84,6 +82,8 @@ void AuraActor::LevelUp() {
 
 void AuraActor::OnUpdate(float deltaTime) {
   Actor::OnUpdate(deltaTime);
+  SDL_Log("HIT %f", mHitTimer);
+  SDL_Log("HIT %f", mHitCooldown);
 
   // Se o Player (dono) for destruído, destrói a aura também
   if (!mOwnerPlayer || mOwnerPlayer->GetState() != ActorState::Active) {
@@ -96,38 +96,62 @@ void AuraActor::OnUpdate(float deltaTime) {
 
   // 2. Lógica do Timer de "Tick" de Dano
   mHitTimer -= deltaTime;
+  mIsDamageTick = false;
   if (mHitTimer <= 0.0f) {
+    mIsDamageTick = true;
     mHitTimer = mHitCooldown;     // Reseta o timer
     mEnemiesHitThisTick.clear();  // Limpa a lista de inimigos já atingidos
   }
+
+  auto& colliders = GetGame()->GetColliders();
+
+    // Percorre a lista para ver quem estamos a tocar
+    for (auto other : colliders)
+    {
+        // Ignora a si mesmo, o Player e objetos desativados
+        if (other == mCollider || !other->IsEnabled()) continue;
+
+        // Otimização: Só nos importamos com Inimigos
+        if (other->GetLayer() != ColliderLayer::Enemy) continue;
+
+        // Usa a função Intersect que já existe no componente
+        if (mCollider->Intersect(*other))
+        {
+            // ENCONTRAMOS UM INIMIGO DENTRO DA AURA!
+            // Não precisamos de "Resolver" (empurrar), apenas aplicar a lógica.
+
+            Actor* enemyActor = other->GetOwner();
+            if (enemyActor)
+            {
+                ApplyHit(enemyActor);
+            }
+        }
+    }
 }
 
 // Função auxiliar para aplicar dano (com timer de tick)
 void AuraActor::ApplyHit(Actor* enemy) {
-  // Verifica se o timer de "tick" já zerou
-  if (mHitTimer > 0.0f) {
+    SDL_Log("AAAAAAAAAAAAAAAAAAA");
+
+  if (!mIsDamageTick)
+  {
     return;
-  }  // Ainda em cooldown
+  }
 
   // Verifica se já atingimos este inimigo neste tick
   if (std::find(mEnemiesHitThisTick.begin(), mEnemiesHitThisTick.end(),
                 enemy) == mEnemiesHitThisTick.end()) {
+
+    Enemy* enemy_cast = dynamic_cast<Enemy*>(enemy);
     // Se não atingimos, aplica o dano e adiciona à lista
-    // enemy->ApplyDamage(mDamage);
+    SDL_Log("BBBBBBBBBBBB %f", mDamage);
+    enemy_cast->TakeDamage(mDamage);
     mEnemiesHitThisTick.push_back(enemy);
   }
 }
 
 void AuraActor::OnHorizontalCollision(const float minOverlap,
-                                      AABBColliderComponent* other) {
-  if (other->GetLayer() == ColliderLayer::Enemy) {
-    ApplyHit(other->GetOwner());
-  }
-}
+                                      AABBColliderComponent* other) {}
 
 void AuraActor::OnVerticalCollision(const float minOverlap,
-                                    AABBColliderComponent* other) {
-  if (other->GetLayer() == ColliderLayer::Enemy) {
-    ApplyHit(other->GetOwner());
-  }
-}
+                                    AABBColliderComponent* other) {}

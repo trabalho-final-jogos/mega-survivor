@@ -3,124 +3,115 @@
 //
 
 #include "LaserGun.h"
-#include "LaserProjectile.h"
+#include "../../../Components/Drawing/AnimatorComponent.h"  // <-- Usa um Sprite, não um Animator
+#include "../../../Components/Physics/AABBColliderComponent.h"
+#include "../../../Components/Physics/RigidBodyComponent.h"
 #include "../../../Components/ProjectilePoolComponent.h"
 #include "../../../Game.h"
-#include "../../../Components/Physics/AABBColliderComponent.h"
-#include "../../../Components/Drawing/AnimatorComponent.h" // <-- Usa um Sprite, não um Animator
-#include "../../../Components/Physics/RigidBodyComponent.h"
-#include "../../Player.h" // Necessário para pegar o Ator do Player e a Mira
-#include "../../Aim.h"  // Necessário para pegar a posição da Mira
-#include "../../../Math.h" // Para ToRadians e Vector2::Perpendicular
-
+#include "../../../Math.h"  // Para ToRadians e Vector2::Perpendicular
+#include "../../Aim.h"      // Necessário para pegar a posição da Mira
+#include "../../Player.h"   // Necessário para pegar o Ator do Player e a Mira
+#include "LaserProjectile.h"
 
 LaserGun::LaserGun(Actor* owner, int updateOrder)
-    : WeaponComponent(owner, WeaponType::LaserGun, updateOrder)
-    , mProjectilePool(nullptr)
-    , mAim(nullptr)
-    , mCooldownTimer(0.0f)
-{
-    // Cria o pool
-    mProjectilePool = new ProjectilePoolComponent();
+    : WeaponComponent(owner, WeaponType::LaserGun, updateOrder),
+      mProjectilePool(nullptr),
+      mAim(nullptr),
+      mCooldownTimer(0.0f) {
+  // Cria o pool
+  mProjectilePool = new ProjectilePoolComponent();
 
-    // Preenche o pool com o PROJÉTIL DE LASER
-    for (int i = 0; i < 20; i++) // Pool de 20 (Lasers duram mais)
-    {
-        auto laser = new LaserProjectile(mOwner->GetGame(), 16, 16); // Tamanho
-        mProjectilePool->AddObjectToPool(laser);
-    }
+  // Preenche o pool com o PROJÉTIL DE LASER
+  for (int i = 0; i < 20; i++)  // Pool de 20 (Lasers duram mais)
+  {
+    auto laser = new LaserProjectile(mOwner->GetGame(), 48, 32);  // Tamanho
+    mProjectilePool->AddObjectToPool(laser);
+  }
 
-    Player* player = static_cast<Player*>(mOwner);
-    mAim = player->GetAim();
+  Player* player = static_cast<Player*>(mOwner);
+  mAim = player->GetAim();
 
-    LevelUp(); // Define Nível 1
+  LevelUp();  // Define Nível 1
 }
 
-LaserGun::~LaserGun()
-{
-    delete mProjectilePool;
+LaserGun::~LaserGun() {
+  delete mProjectilePool;
 }
 
-void LaserGun::LevelUp()
-{
-    mLevel++;
-    SDL_Log("LaserGun subiu para o Nível %d!", mLevel);
+void LaserGun::LevelUp() {
+  mLevel++;
+  SDL_Log("LaserGun subiu para o Nível %d!", mLevel);
 
-    switch(mLevel)
-    {
-        case 1:
-            mCooldownTime = 2.0f;
-            mProjectileSpeed = 350.0f;
-            mProjectileLifetime = 5.0f; // Dura 5 segundos
-            mDamage = 8.0f;
-            mAreaScale = 1.0f;
-            mNumBounces = 2; // 2 ricochetes
-            break;
-        case 2:
-            mCooldownTime = 1.8f;
-            mDamage = 12.0f;
-            mNumBounces = 3; // 3 ricochetes
-            break;
-        case 3:
-            mProjectileLifetime = 7.0f; // Dura mais
-            mDamage = 15.0f;
-            mNumBounces = 4; // 4 ricochetes
-            break;
-        default:
-            mNumBounces++; // Mais um ricochete por nível
-            mDamage += 5.0f;
-            break;
-    }
+  switch (mLevel) {
+    case 1:
+      mCooldownTime = 2.0f;
+      mProjectileSpeed = 350.0f;
+      mProjectileLifetime = 5.0f;  // Dura 5 segundos
+      mDamage = 8.0f;
+      mAreaScale = 1.0f;
+      mNumBounces = 2;  // 2 ricochetes
+      break;
+    case 2:
+      mCooldownTime = 1.8f;
+      mDamage = 12.0f;
+      mNumBounces = 3;  // 3 ricochetes
+      break;
+    case 3:
+      mProjectileLifetime = 7.0f;  // Dura mais
+      mDamage = 15.0f;
+      mNumBounces = 4;  // 4 ricochetes
+      break;
+    default:
+      mNumBounces++;  // Mais um ricochete por nível
+      mDamage += 5.0f;
+      break;
+  }
 }
 
-void LaserGun::OnUpdate(float deltaTime)
-{
-    if (mCooldownTimer > 0.0f) { mCooldownTimer -= deltaTime; }
+void LaserGun::OnUpdate(float deltaTime) {
+  if (mCooldownTimer > 0.0f) {
+    mCooldownTimer -= deltaTime;
+  }
 
-    if (mCooldownTimer <= 0.0f)
-    {
-        FireShot();
-        mCooldownTimer = mCooldownTime;
-    }
+  if (mCooldownTimer <= 0.0f) {
+    FireShot();
+    mCooldownTimer = mCooldownTime;
+  }
 }
 
-void LaserGun::FireShot()
-{
-    if (!mAim) { return; }
+void LaserGun::FireShot() {
+  Player* player = static_cast<Player*>(mOwner);
+  Vector2 playerPos = player->GetPosition();
+  float randomAngle = (static_cast<float>(rand()) / RAND_MAX) * Math::TwoPi;
+  Vector2 direction(std::cos(randomAngle), std::sin(randomAngle));
+  Vector2 finalVelocity = direction * mProjectileSpeed;
 
-    Player* player = static_cast<Player*>(mOwner);
-    Vector2 playerPos = player->GetPosition();
-    Vector2 aimerPos = mAim->GetPosition();
-    Vector2 direction = (aimerPos - playerPos);
-    direction.Normalize();
-    Vector2 playerVelocity = player->GetComponent<RigidBodyComponent>()->GetVelocity();
+  Projectile* p = mProjectilePool->GetDeadObject();
+  if (!p) {
+    return;
+  }  // Pool vazio
 
-    // (O Laser pode ignorar a velocidade do jogador para ser mais previsível)
-    // Vector2 finalVelocity = (direction * mProjectileSpeed) + playerVelocity;
-    Vector2 finalVelocity = (direction * mProjectileSpeed);
+  LaserProjectile* laser = dynamic_cast<LaserProjectile*>(p);
+  if (laser) {
+    // Apply Global Upgrades from Player
+    float finalDamage = mDamage * player->GetDamageMultiplier();
+    float finalArea = mAreaScale * player->GetAreaMultiplier();
 
+    // 1. Define as estatísticas de ricochete
+    laser->SetBounceCount(
+        mNumBounces +
+        player->GetAdditionalProjectiles());  // Using "Projectiles" as extra
+                                              // bounces for Laser? Or just
+                                              // ignore.
+    // Or if Laser was multi-projectile, we would loop here.
+    // LaserGun seems to be single shot. Let's use it for bounces or just
+    // ignore. Logic says "SetBounceCount". Extra projectiles usually means more
+    // lasers. But "LaserGun" logic above handles single shot. Let's stick to
+    // Damage and Area for now to be safe.
 
-    Projectile* p = mProjectilePool->GetDeadObject();
-    if (!p) { return; } // Pool vazio
-
-    // Tenta fazer o cast para o tipo específico
-    LaserProjectile* laser = dynamic_cast<LaserProjectile*>(p);
-    if (laser)
-    {
-        // Apply Global Upgrades from Player
-        float finalDamage = mDamage * player->GetDamageMultiplier();
-        float finalArea = mAreaScale * player->GetAreaMultiplier();
-
-        // 1. Define as estatísticas de ricochete
-        laser->SetBounceCount(mNumBounces + player->GetAdditionalProjectiles()); // Using "Projectiles" as extra bounces for Laser? Or just ignore.
-        // Or if Laser was multi-projectile, we would loop here.
-        // LaserGun seems to be single shot. Let's use it for bounces or just ignore.
-        // Logic says "SetBounceCount". Extra projectiles usually means more lasers.
-        // But "LaserGun" logic above handles single shot.
-        // Let's stick to Damage and Area for now to be safe.
-
-        // 2. "Acorda" o projétil
-        laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
-                     finalVelocity, finalDamage, finalArea);
-    }
+    SDL_Log("danoooo %f", mDamage);
+    // 2. "Acorda" o projétil
+    laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
+                 finalVelocity, finalDamage, finalArea);
+  }
 }
