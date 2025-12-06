@@ -12,11 +12,14 @@ GameOver::GameOver(class Game* game, const std::string& fontName)
   Vector4 textColors =
       ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
 
+  mGame->GetAudioSystem()->PlaySound("explosion.mp3", false);
+  mGame->GetAudioSystem()->PlaySound("game_over.mp3", true);
+
   UIButton* mainMenuButton = AddButton(
       "Main Menu",
       [this]() {
         // Return to main menu
-        GetGame()->SetScene(GameScene::MainMenu);
+        mGame->SetScene(GameScene::MainMenu);
       },
       Vector2(0.0f, 50.0f), 1.0f);
 

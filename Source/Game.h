@@ -82,6 +82,8 @@ class Game {
   class Player* GetPlayer() { return mPlayer; }
   void SetPlayer(Player* player) { mPlayer = player; }
 
+  class AudioSystem* GetAudioSystem() { return mAudio; }
+
   const Vector2& GetMousePos() const { return mMouseWorldPos; }  // Getter
 
   // Level loading
@@ -100,6 +102,7 @@ class Game {
   uint8_t GetRunMinutes() const { return mRunMinutes; }
   void SetPlayerCharInfo(CharInfo pCharInfo) { mCharInfo = pCharInfo; }
   CharInfo GetCharInfo() const { return mCharInfo; }
+
   // Persistent Upgrades
   // Using a raw pointer here, but since Game isn't an Actor, we can't use
   // Component's lifecycle fully. However, we can just use the class as data

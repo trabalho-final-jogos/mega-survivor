@@ -11,6 +11,8 @@ Level1::Level1(Game* game, const std::string& fontName)
 
   SDL_Log("Level data loaded for Level 1-1");
 
+  GetGame()->GetAudioSystem()->PlaySound("level1.mp3", true);
+
   mGame->BuildLevel(level, 60, 60);
 
   SDL_Log("Level 1-1 built successfully");

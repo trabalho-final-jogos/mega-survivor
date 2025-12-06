@@ -20,6 +20,8 @@ LevelUp::LevelUp(Game* game, const std::string& fontName)
   // creates PausedMenu, but here we just want to stop actors.
   mGame->SetPaused(true);
 
+  mGame->GetAudioSystem()->PlaySound("levelUp.wav");
+
   AddText("Level Up!", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   // Select 3 random upgrades

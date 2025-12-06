@@ -268,6 +268,7 @@ void Player::OnVerticalCollision(const float minOverlap,
     if (xpGem) {
       AddXP(xpGem->GetXPValue());
       xpGem->SetState(ActorState::Destroy);
+      mGame->GetAudioSystem()->PlaySound("pickupXP.wav", false);
     }
   }
 }
@@ -381,6 +382,8 @@ void Player::TakeDamage(uint32_t damage) {
   // Check for invulnerability
   if (mIsInvulnerable)
     return;
+
+  mGame->GetAudioSystem()->PlaySound("hitHurt.wav");
 
   mCurrentHP -= damage;
   mIsInvulnerable = true;

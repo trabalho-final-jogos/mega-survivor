@@ -1,8 +1,8 @@
+#include "UpgradeStore.h"
 #include <algorithm>
+#include "../../Components/Upgrades/UpgradeComponent.h"
 #include "../../Game.h"
 #include "../../Managers/ColorPalette.h"
-#include "../../Components/Upgrades/UpgradeComponent.h"
-#include "UpgradeStore.h"
 
 UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
@@ -13,6 +13,8 @@ UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
 
   AddImage("../Assets/Levels/UpgradeStore/background.png", Vector2(0.0f, 0.0f),
            0.35f, 0.0f, 50);
+
+  GetGame()->GetAudioSystem()->PlaySound("upgrade_store.mp3", true);
 
   AddText("Upgrades", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
 
@@ -30,39 +32,38 @@ UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     int level = upgrades->GetBaseLevel(type);
     int cost = upgrades->GetUpgradeCost(type);
 
-    std::string buttonText =
-        statButtons[i].first + " (Lvl " +
-        std::to_string(level) +
-        ") - Cost: " +
-        std::to_string(cost);
+    std::string buttonText = statButtons[i].first + " (Lvl " +
+                             std::to_string(level) +
+                             ") - Cost: " + std::to_string(cost);
 
     but[i] = AddButton(
         buttonText,
         [this, type, upgrades]() {
           int currentCost = upgrades->GetUpgradeCost(type);
           if (mGame->GetCurrency() >= currentCost) {
-             mGame->AddCurrency(-currentCost);
+            mGame->AddCurrency(-currentCost);
 
-             // Determine amount. For now, use 1.0f or constants.
-             // If we want to replicate 0.2f multiplier or +5 amount.
-             float amount = 0.0f;
-             switch(type) {
-                 case Stats::Speed:
-                 case Stats::Damage:
-                 case Stats::Area:
-                     amount = ADDITIONAL_MULTIPLIER_PER_UPGRADE; // 0.2f
-                     break;
-                 case Stats::Projectiles:
-                 case Stats::Regen:
-                 case Stats::Lucky:
-                 case Stats::Health:
-                     amount = static_cast<float>(ADDITIONAL_AMOUNT_PER_UPGRADE); // 5.0f
-                     break;
-                 default:
-                     amount = 1.0f;
-             }
+            // Determine amount. For now, use 1.0f or constants.
+            // If we want to replicate 0.2f multiplier or +5 amount.
+            float amount = 0.0f;
+            switch (type) {
+              case Stats::Speed:
+              case Stats::Damage:
+              case Stats::Area:
+                amount = ADDITIONAL_MULTIPLIER_PER_UPGRADE;  // 0.2f
+                break;
+              case Stats::Projectiles:
+              case Stats::Regen:
+              case Stats::Lucky:
+              case Stats::Health:
+                amount =
+                    static_cast<float>(ADDITIONAL_AMOUNT_PER_UPGRADE);  // 5.0f
+                break;
+              default:
+                amount = 1.0f;
+            }
 
-             upgrades->UpgradeBaseStat(type, amount);
+            upgrades->UpgradeBaseStat(type, amount);
           }
         },
         pos, 0.4f, 0.0f, 32, 256, 102);
@@ -108,11 +109,9 @@ void UpgradeStore::Update(float deltaTime) {
     int level = upgrades->GetBaseLevel(type);
     int cost = upgrades->GetUpgradeCost(type);
 
-    std::string newText =
-        statButtons[i].first + " (Lvl " +
-        std::to_string(level) +
-        ") - Cost: " +
-        std::to_string(cost);
+    std::string newText = statButtons[i].first + " (Lvl " +
+                          std::to_string(level) +
+                          ") - Cost: " + std::to_string(cost);
     mUpgradeButtons[i]->SetText(newText);
 
     if (mGame->GetCurrency() < cost) {

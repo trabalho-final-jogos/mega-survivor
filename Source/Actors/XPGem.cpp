@@ -9,7 +9,7 @@ XPGem::XPGem(Game* game, const Vector2& position, int xpValue)
     : Actor(game),
       mXPValue(xpValue),
       mMagnetRadius(100.0f),
-      mMoveSpeed(200.0f)  // Speed when attracted
+      mMoveSpeed(400.0f)  // Speed when attracted
 {
   SetPosition(position);
   SetScale(Vector2(40.0f, 30.0f));  // Small size
