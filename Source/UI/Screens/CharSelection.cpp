@@ -20,6 +20,8 @@ CharSelection::CharSelection(class Game* game, const std::string& fontName)
   float charButOffset = -75.0f;
   UIButton* but[kCharCount + 1]{nullptr};
 
+  GetGame()->GetAudioSystem()->PlaySound("char_select.mp3", true);
+
   for (uint i = 0; i < kCharCount; i++) {
     CharInfo _char = CharacterDB::Get(static_cast<PlayerChar>(i));
 

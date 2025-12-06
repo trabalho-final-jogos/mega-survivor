@@ -505,11 +505,6 @@ void Game::PerformSceneChange() {
 
     case GameScene::Level1: {
       new Level1(this, std::string(GAME_FONT));
-
-      if (mAudio) {
-        mAudio->PlaySound("Music.ogg", true);
-      }
-
       break;
     }
 

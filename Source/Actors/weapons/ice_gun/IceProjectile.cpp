@@ -6,8 +6,8 @@
 #include "../../../Game.h"
 #include "../../../Math.h"  // Para ToRadians e Vector2::Perpendicular
 #include "../../Aim.h"      // Necessário para pegar a posição da Mira
-#include "../../Player.h"   // Necessário para pegar o Ator do Player e a Mira
 #include "../../Enemy.h"
+#include "../../Player.h"  // Necessário para pegar o Ator do Player e a Mira
 
 IceProjectile::IceProjectile(Game* game, int width, int height)
     : Projectile(
@@ -32,6 +32,8 @@ void IceProjectile::Awake(Actor* owner,
   Projectile::Awake(owner, position, rotation, lifetime, velocity, damage,
                     areaScale);
 
+  GetGame()->GetAudioSystem()->PlaySound("shot2.wav");
+
   if (mDrawComponent) {
     mDrawComponent->SetAnimation("fly_ice");
   }
@@ -43,13 +45,11 @@ void IceProjectile::OnHorizontalCollision(const float minOverlap,
 
   if (otherLayer == ColliderLayer::Blocks) {
     Kill();  // Desativa (retorna ao pool)
-  }
-  else if (otherLayer == ColliderLayer::Enemy) {
+  } else if (otherLayer == ColliderLayer::Enemy) {
     Actor* enemyActor = other->GetOwner();
     Enemy* enemy = dynamic_cast<Enemy*>(enemyActor);
 
-    if (enemy)
-    {
+    if (enemy) {
       enemy->TakeDamage(this->GetDamage());
     }
     Kill();
