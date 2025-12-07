@@ -30,7 +30,7 @@ class UIScreen {
   // UIScreen subclasses can override these
   virtual void Update(float deltaTime);
   virtual void HandleKeyPress(int key);
-
+  void SetVisible(bool visible);
   // Set state to closing
   void Close();
 

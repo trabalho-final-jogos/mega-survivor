@@ -4,6 +4,7 @@
 #include "../../Managers/ColorPalette.h"
 #include "../UIButton.h"
 #include "../UIRect.h"
+#include "ControlsMenu.h"
 #include "SDL.h"
 
 PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
@@ -11,13 +12,12 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
   // Fundo semi-transparente
   auto* bg =
       AddRect(Vector2(0.0f, 0.0f), Vector2(1024.0f, 768.0f), 1.0f, 0.0f, 50);
-  bg->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.1f));
+  bg->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.6f));
 
   // Título
-  AddText("PAUSED", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddText("Paused", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
 
-  Vector4 textColors =
-      ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
+  Vector4 textColors = ColorPalette::GetInstance().GetColorAsVec4("UI_Text");
 
   // Botão "Continuar"
   UIButton* continueButton = AddButton(
@@ -27,10 +27,21 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
         mGame->SetPaused(false);
         Close();
       },
-      Vector2(0.0f, 0.0f), 0.3f, 0.0f, 40, 1024, 101);
+      Vector2(0.0f, 50.0f), 0.3f, 0.0f, 40, 1024, 101);
 
   continueButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
   continueButton->SetTextColor(textColors);
+
+  UIButton* controlsMenuButton = AddButton(
+      "Controls",
+      [this]() {
+        // só fecha o menu de pausa
+        new ControlsMenu(GetGame(), GAME_FONT.data(), this);
+      },
+      Vector2(0.0f, 0.0f), 0.3f, 0.0f, 40, 1024, 101);
+
+  controlsMenuButton->SetBackgroundColor(Vector4(0.01f, 0.01f, 1.0f, 1.0f));
+  controlsMenuButton->SetTextColor(textColors);
 
   // Botão "Voltar ao menu"
   UIButton* exitButton = AddButton(
