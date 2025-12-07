@@ -4,16 +4,21 @@
 #include "../../Managers/ColorPalette.h"
 #include "SDL.h"
 
-ControlsMenu::ControlsMenu(class Game* game, const std::string& fontName)
-    : UIScreen(game, fontName) {
+ControlsMenu::ControlsMenu(class Game* game,
+                           const std::string& fontName,
+                           UIScreen* parent = nullptr)
+    : UIScreen(game, fontName), mParent(parent) {
+  if (mParent) {
+    mParent->SetVisible(false);
+  }
   auto* bg =
       AddRect(Vector2(0.0f, 0.0f), Vector2(1024.0f, 768.0f), 1.0f, 0.0f, 50);
   bg->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.1f));
 
-  AddText("Game controls", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddText("Game controls", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   UIText* but[ControlsDB::GetMappingCount() - 1]{nullptr};
-  Vector2 basePos{100.0f, 0.0f};
+  Vector2 basePos{0.0f, 100.0f};
   Vector2 offset{0.0f, -50.0f};
   int i{0};
 
@@ -23,7 +28,13 @@ ControlsMenu::ControlsMenu(class Game* game, const std::string& fontName)
     std::string fullText = std::string(map.name) + ": " + keyName;
 
     but[i] =
-        AddText(fullText, basePos + (offset * i), 0.5f, 0.0f, 64, 1024, 100);
+        AddText(fullText, basePos + (offset * i), 0.25f, 0.0f, 64, 1024, 100);
     i++;
+  }
+}
+
+void ControlsMenu::HandleKeyPress(int key) {
+  if (key == SDLK_ESCAPE) {
+    Close();
   }
 }
