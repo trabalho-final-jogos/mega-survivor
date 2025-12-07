@@ -95,6 +95,8 @@ Player::Player(Game* game,
   mMaxHP +=
       static_cast<uint32_t>(mUpgradeComponent->GetFinalStat(Stats::Health));
 
+  mCurrentHP = mMaxHP;
+
   EquipWeapon(pcharInfo.charWeapon);
 }
 

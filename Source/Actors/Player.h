@@ -104,7 +104,7 @@ class Player : public Actor {
 
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
-  uint32_t mMaxHP{20};
+  uint32_t mMaxHP;
   uint32_t mCurrentHP{mMaxHP};
   float mHealthRegenTimer{0.0f};
 
