@@ -11,7 +11,9 @@
 #include "../Components/ParticleSystemComponent.h"
 #include "../Components/Physics/AABBColliderComponent.h"
 #include "../Components/Physics/RigidBodyComponent.h"
+#include "../Components/Upgrades/UpgradeComponent.h"
 #include "../Game.h"
+#include "../UI/Screens/LevelUp.h"
 #include "Block.h"
 #include "Enemy.h"
 #include "XPGem.h"
@@ -22,6 +24,8 @@
 #include "weapons/laser_beam/LaserGun.h"
 #include "weapons/main_gun/MainGun.h"
 #include "weapons/saw_blade/SawGun.h"
+
+constexpr uint32_t PLAYER_BASE_HP = 10;
 
 std::string getPlayerTexturePath(PlayerChar character) {
   switch (character) {
@@ -50,7 +54,7 @@ std::string getPlayerDataPath(PlayerChar character) {
 }
 
 Player::Player(Game* game,
-               PlayerChar pchar,
+               CharInfo pcharInfo,
                const float forwardSpeed,
                const float jumpSpeed)
     : Actor(game),
@@ -61,11 +65,13 @@ Player::Player(Game* game,
       mIsBig(false),
       mIsInvulnerable(false),
       mInvulnerabilityTimer(0.0f),
-      mAimer(nullptr) {
+      mAimer(nullptr),
+      mMaxHP(PLAYER_BASE_HP) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
-  mDrawComponent = new AnimatorComponent(this, getPlayerTexturePath(pchar),
-                                         getPlayerDataPath(pchar),
-                                         Game::TILE_SIZE, Game::TILE_SIZE);
+  mDrawComponent =
+      new AnimatorComponent(this, getPlayerTexturePath(pcharInfo.playerChar),
+                            getPlayerDataPath(pcharInfo.playerChar),
+                            Game::TILE_SIZE, Game::TILE_SIZE);
   mDrawComponent->SetFlipHorizontal(true);
 
   mDrawComponent->AddAnimation("idle", std::vector<int>{0});
@@ -82,20 +88,19 @@ Player::Player(Game* game,
 
   mAimer = new Aim(this->GetGame(), this);
 
-  switch (game->mChar) {
-    case PlayerChar::MEGAMAN:
-      new MainGun(this);
-      break;
-    case PlayerChar::PROTOMAN:
-      new IceGun(this);
-      break;
-    case PlayerChar::BASS:
-      new LaserGun(this);
-      break;
-    default:
-      new MainGun(this);
-      break;
+  // Initialize Upgrades
+  mUpgradeComponent = new UpgradeComponent(this);
+  if (GetGame()->GetPersistentUpgrades()) {
+    mUpgradeComponent->CopyBaseStatsFrom(*GetGame()->GetPersistentUpgrades());
   }
+
+  // Adjust Health based on upgrades
+  mMaxHP +=
+      static_cast<uint32_t>(mUpgradeComponent->GetFinalStat(Stats::Health));
+
+  mCurrentHP = mMaxHP;
+
+  EquipWeapon(pcharInfo.charWeapon);
 }
 
 void Player::OnProcessInput(const uint8_t* state) {
@@ -103,134 +108,60 @@ void Player::OnProcessInput(const uint8_t* state) {
     return;
   }
 
+  // Apply speed upgrade
+  // Default forwardSpeed is passed in Ctor, but we can modulate it.
+  float speedMultiplier = 1.0f + mUpgradeComponent->GetFinalStat(Stats::Speed);
+  float currentSpeed = mForwardSpeed * speedMultiplier;
+
   mIsRunning = false;
   Vector2 velocity = Vector2::Zero;  // Começa com velocidade zero
 
   // Eixo Y (Norte/Sul)
   if (state[SDL_SCANCODE_W]) {
-    velocity.y = -mForwardSpeed;  // Y negativo é para CIMA
+    velocity.y = -currentSpeed;  // Y negativo é para CIMA
     mIsRunning = true;
   }
   if (state[SDL_SCANCODE_S]) {
-    velocity.y = mForwardSpeed;  // Y positivo é para BAIXO
+    velocity.y = currentSpeed;  // Y positivo é para BAIXO
     mIsRunning = true;
   }
 
   // Eixo X (Leste/Oeste)
   if (state[SDL_SCANCODE_D]) {
-    velocity.x = mForwardSpeed;
+    velocity.x = currentSpeed;
     mIsRunning = true;
   }
   if (state[SDL_SCANCODE_A]) {
-    velocity.x = -mForwardSpeed;
+    velocity.x = -currentSpeed;
     mIsRunning = true;
   }
 
-  if (velocity.LengthSq() > mForwardSpeed * mForwardSpeed) {
+  if (velocity.LengthSq() > currentSpeed * currentSpeed) {
     velocity.Normalize();
-    velocity *= mForwardSpeed;
+    velocity *= currentSpeed;
   }
 
   mRigidBodyComponent->SetVelocity(velocity);
+}
 
-  // Input de teste para habilitar e desabilitar as armas
-  //  ---- Detecção de um toque por tecla (flags estáticas) ----
-  static bool keyDown[7] = {false};
-  // Usaremos índices 1–6, ignorando o 0.
-
-  // ---- Tecla 1: Alterna MainGun ----
-  if (state[SDL_SCANCODE_1]) {
-    if (!keyDown[1]) {
-      keyDown[1] = true;
-
-      MainGun* gun = GetComponent<MainGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::MainGun);
-      } else {
-        EquipWeapon(WeaponType::MainGun);
-      }
-    }
-  } else
-    keyDown[1] = false;
-
-  // ---- Tecla 2: Alterna IceGun ----
-  if (state[SDL_SCANCODE_2]) {
-    if (!keyDown[2]) {
-      keyDown[2] = true;
-
-      IceGun* gun = GetComponent<IceGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::IceGun);
-      } else {
-        EquipWeapon(WeaponType::IceGun);
-      }
-    }
-  } else
-    keyDown[2] = false;
-
-  // ---- Tecla 3: Alterna BoomerangGun ----
-  if (state[SDL_SCANCODE_3]) {
-    if (!keyDown[3]) {
-      keyDown[3] = true;
-
-      BoomerangGun* gun = GetComponent<BoomerangGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::BoomerangGun);
-      } else {
-        EquipWeapon(WeaponType::BoomerangGun);
-      }
-    }
-  } else
-    keyDown[3] = false;
-
-  // ---- Tecla 4: Alterna SawGun ----
-  if (state[SDL_SCANCODE_4]) {
-    if (!keyDown[4]) {
-      keyDown[4] = true;
-
-      SawGun* gun = GetComponent<SawGun>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::SawGun);
-      } else {
-        EquipWeapon(WeaponType::SawGun);
-      }
-    }
-  } else
-    keyDown[4] = false;
-
-  // ---- Tecla 5: Alterna Aura ----
-  if (state[SDL_SCANCODE_5]) {
-    if (!keyDown[5]) {
-      keyDown[5] = true;
-
-      AuraWeapon* gun = GetComponent<AuraWeapon>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::Aura);
-      } else {
-        EquipWeapon(WeaponType::Aura);
-      }
-    }
-  } else
-    keyDown[5] = false;
-
-  // ---- Tecla 6: Alterna LaserGun ----
-  if (state[SDL_SCANCODE_6]) {
-    if (!keyDown[6]) {
-      keyDown[6] = true;
-
-      AuraWeapon* gun = GetComponent<AuraWeapon>();
-      if (gun && gun->IsEnabled()) {
-        UnequipWeapon(WeaponType::LaserGun);
-      } else {
-        EquipWeapon(WeaponType::LaserGun);
-      }
-    }
-  } else {
-    keyDown[6] = false;
-  }
+void Player::SetCharInfo(CharInfo* charInfo) {
+  mCharInfo = charInfo;
 }
 
 void Player::OnUpdate(float deltaTime) {
+  // Health Regen Logic
+  float regenRate = mUpgradeComponent->GetFinalStat(Stats::Regen);
+  if (mCurrentHP < mMaxHP) {
+    if (regenRate > 0.0f) {
+      mHealthRegenTimer += regenRate * deltaTime;
+      if (mHealthRegenTimer >= 40.0f) {
+        int healAmount = static_cast<int>(mHealthRegenTimer);
+        HealDamage(healAmount);
+        mHealthRegenTimer -= healAmount;
+      }
+    }
+  }
+
   if (mIsInvulnerable) {
     mInvulnerabilityTimer -= deltaTime;
 
@@ -340,6 +271,7 @@ void Player::OnVerticalCollision(const float minOverlap,
     if (xpGem) {
       AddXP(xpGem->GetXPValue());
       xpGem->SetState(ActorState::Destroy);
+      mGame->GetAudioSystem()->PlaySound("pickupXP.wav", false);
     }
   }
 }
@@ -441,6 +373,7 @@ void Player::AddXP(uint32_t amount) {
     mCurrentXp -= GetMaxXP();
     mCurrentLvl++;
     SDL_Log("Level Up! New Level: %d", mCurrentLvl);
+    new LevelUp(GetGame(), GAME_FONT.data());
   }
 }
 
@@ -449,9 +382,49 @@ uint32_t Player::GetMaxXP() const {
 }
 
 void Player::TakeDamage(uint32_t damage) {
+  // Check for invulnerability
+  if (mIsInvulnerable)
+    return;
+
+  mGame->GetAudioSystem()->PlaySound("hitHurt.wav");
+
   mCurrentHP -= damage;
+  mIsInvulnerable = true;
+  mInvulnerabilityTimer = INVULNERABILITY_DURATION;
 }
 
 void Player::HealDamage(uint32_t heal) {
-  mCurrentHP += heal;
+  mCurrentHP = std::min(mMaxHP, mCurrentHP + heal);
+}
+
+void Player::ApplyRunUpgrade(Stats type, float amount) {
+  mUpgradeComponent->UpgradeRunStat(type, amount);
+}
+
+float Player::GetDamageMultiplier() const {
+  // Base 1.0 + upgrades
+  return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Damage);
+}
+
+float Player::GetAreaMultiplier() const {
+  return 1.0f + mUpgradeComponent->GetFinalStat(Stats::Area);
+}
+
+float Player::GetProjectileSpeedMultiplier() const {
+  return 1.0f;
+}
+
+int Player::GetAdditionalProjectiles() const {
+  return static_cast<int>(mUpgradeComponent->GetFinalStat(Stats::Projectiles));
+}
+
+float Player::GetCooldownReduction() const {
+  // Maybe map "Speed" to cooldown? Or "Regen"?
+  // Usually "Cooldown" is a separate stat.
+  // Let's return 0.0f for now.
+  return 0.0f;
+}
+
+float Player::GetLuck() const {
+  return mUpgradeComponent->GetFinalStat(Stats::Lucky);
 }

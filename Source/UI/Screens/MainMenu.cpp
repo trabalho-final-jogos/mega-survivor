@@ -16,12 +16,14 @@ MainMenu::MainMenu(class Game* game, const std::string& fontName)
   Vector4 textColors =
       ColorPalette::GetInstance().GetColorAsVec4("Yellow_bright");
 
+  GetGame()->GetAudioSystem()->PlaySound("main.mp3", true);
+
   // Seleção de personagem
 
   UIButton* startButton = AddButton(
       "New game",
       [this]() {
-        Close();                             // Fecha a tela de menu
+        Close();                                 // Fecha a tela de menu
         mGame->SetScene(GameScene::CharSelect);  // Inicia o jogo
       },
       Vector2(0.0f, -50.0f),  // Posição centralizada

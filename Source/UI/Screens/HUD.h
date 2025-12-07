@@ -6,6 +6,7 @@
 
 #include <string>
 
+#include "../../Actors/Player.h"
 #include "../../Color.h"
 #include "../../Managers/ColorPalette.h"
 #include "UIScreen.h"
@@ -21,6 +22,7 @@ class HUD : public UIScreen {
   Vector2 GetXPBarSize(float bar_progress);
   Vector2 GetXPBarOffset(float bar_progress);
   void ShowFlash();
+  void UpdateHealthBar(const Player* player);
 
  private:
   // HUD elements
@@ -33,5 +35,8 @@ class HUD : public UIScreen {
   UIText* mRunTime;
   UIRect* mXpBar;
   UIRect* mOverlay;
-  uint32_t mLastPlayerHP{100};
+  uint32_t mLastPlayerHP{20};
+
+  UIRect* mHealthBar;
+  UIRect* mHealthBarBg;
 };

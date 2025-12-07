@@ -22,6 +22,8 @@ class UIImage : public UIElement {
           float angle = 0.0f,
           int drawOrder = 100);
 
+  void SetImage(const std::string& imagePath);
+
   ~UIImage();
 
   void Draw(class Shader* shader) override;

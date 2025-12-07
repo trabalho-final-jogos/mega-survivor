@@ -31,7 +31,7 @@ class UIButton : public UIText {
   void SetTextColor(const Vector4& color);
   void SetText(const std::string& text);
   void SetScale(float scale) { mScale = scale; }
-  void SetSelected(bool sel) { mSelected = sel; }
+  void SetSelected(bool sel);
   void SetOpacity(float opacity);
   float GetOpacity() const { return mBackgroundColor.w; }
   bool GetHighlighted() const { return mHighlighted; }

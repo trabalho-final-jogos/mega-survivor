@@ -3,6 +3,7 @@
 //
 
 #include "UIButton.h"
+#include "../Game.h"
 #include "../Renderer/Texture.h"
 
 UIButton::UIButton(class Game* game,
@@ -34,6 +35,11 @@ void UIButton::OnClick() {
   if (mOnClick) {
     mOnClick();
   }
+}
+
+void UIButton::SetSelected(bool sel) {
+  mSelected = sel;
+  GetGame()->GetAudioSystem()->PlaySound("select.wav");
 }
 
 void UIButton::SetBackgroundColor(const Vector4& color) {

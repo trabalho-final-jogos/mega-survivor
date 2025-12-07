@@ -3,19 +3,38 @@
 //
 
 #pragma once
+#include "../Components/Upgrades/UpgradeComponent.h"
 #include "Actor.h"
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
+enum PlayerChar { MEGAMAN, PROTOMAN, BASS, LAST_CHAR };
+
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
+constexpr uint kCharCount = static_cast<uint>(PlayerChar::LAST_CHAR);
 
-enum PlayerChar { MEGAMAN, PROTOMAN, BASS };
+struct CharInfo {
+  PlayerChar playerChar;
+  std::string_view charName;
+  WeaponType charWeapon;
+};
+
+namespace CharacterDB {
+inline constexpr CharInfo INFOS[] = {
+    {PlayerChar::MEGAMAN, "Megaman", WeaponType::MainGun},
+    {PlayerChar::PROTOMAN, "Protoman", WeaponType::IceGun},
+    {PlayerChar::BASS, "Bass", WeaponType::LaserGun}};
+
+inline const CharInfo& Get(PlayerChar character) {
+  return INFOS[static_cast<int>(character)];
+}
+}  // namespace CharacterDB
 
 class Player : public Actor {
  public:
   explicit Player(Game* game,
-                  PlayerChar pchar = MEGAMAN,
+                  CharInfo pcharInfo,
                   float forwardSpeed = PLAYER_BASE_SPEED,
                   float jumpSpeed = -750.0f);
 
@@ -31,6 +50,8 @@ class Player : public Actor {
 
   void UnequipWeapon(WeaponType type);
 
+  void SetCharInfo(CharInfo* charInfo);
+
   void Kill() override;
   bool isBig() { return mIsBig; };
   bool isInvulnerable() { return mIsInvulnerable; };
@@ -41,8 +62,26 @@ class Player : public Actor {
   uint32_t GetCurrentHP() const { return mCurrentHP; }
   void AddXP(uint32_t amount);
   uint32_t GetMaxXP() const;
+  uint32_t GetMaxHP() const { return mMaxHP; }
   void TakeDamage(uint32_t damage);
   void HealDamage(uint32_t heal);
+
+  // In-game upgrades support
+  void ApplyRunUpgrade(
+      Stats type,
+      float amount = 1.0f);  // Amount is generic, logic can be inside or passed
+
+  class UpgradeComponent* GetUpgradeComponent() const {
+    return mUpgradeComponent;
+  }
+
+  // Stat Getters for Weapons/Gameplay
+  float GetDamageMultiplier() const;
+  float GetAreaMultiplier() const;
+  float GetProjectileSpeedMultiplier() const;  // Example mapping
+  int GetAdditionalProjectiles() const;
+  float GetCooldownReduction() const;  // Could map to Speed or separate stat
+  float GetLuck() const;
 
  private:
   void ManageAnimations();
@@ -65,7 +104,12 @@ class Player : public Actor {
 
   uint8_t mCurrentLvl{0};
   uint32_t mCurrentXp{0};
-  uint32_t mCurrentHP{9999};
+  uint32_t mMaxHP;
+  uint32_t mCurrentHP{mMaxHP};
+  float mHealthRegenTimer{0.0f};
+
+  CharInfo* mCharInfo;
 
   class Aim* mAimer;
+  class UpgradeComponent* mUpgradeComponent;
 };
