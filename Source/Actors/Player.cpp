@@ -25,6 +25,8 @@
 #include "weapons/main_gun/MainGun.h"
 #include "weapons/saw_blade/SawGun.h"
 
+constexpr uint32_t PLAYER_BASE_HP = 10;
+
 std::string getPlayerTexturePath(PlayerChar character) {
   switch (character) {
     case PlayerChar::MEGAMAN:
@@ -63,7 +65,8 @@ Player::Player(Game* game,
       mIsBig(false),
       mIsInvulnerable(false),
       mInvulnerabilityTimer(0.0f),
-      mAimer(nullptr) {
+      mAimer(nullptr),
+      mMaxHP(PLAYER_BASE_HP) {
   SetScale(Vector2(Game::TILE_SIZE, Game::TILE_SIZE));
   mDrawComponent =
       new AnimatorComponent(this, getPlayerTexturePath(pcharInfo.playerChar),
