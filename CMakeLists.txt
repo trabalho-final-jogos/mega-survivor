@@ -128,6 +128,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Enemy.h
         Source/Actors/XPGem.cpp
         Source/Actors/XPGem.h
+        Source/Actors/enemies/EnemyGround.cpp
+        Source/Actors/enemies/EnemyGround.h
+        Source/Actors/enemies/EnemyFly.cpp
+        Source/Actors/enemies/EnemyFly.h
         Source/UI/Screens/LevelUp.cpp
         Source/UI/Screens/LevelUp.h
         Source/Components/Upgrades/UpgradeComponent.cpp

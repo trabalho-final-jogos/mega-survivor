@@ -183,8 +183,6 @@ void Player::OnUpdate(float deltaTime) {
 
   Vector2 pos = GetPosition();
 
-  // Pega as "meias-dimensões" do Mario
-  // (Assumindo que a escala do Ator é o tamanho em pixels)
   float halfWidth = GetScale().x / 2.0f;
   float halfHeight =
       GetScale().y / 2.0f;  // Use GetScale().y se Mario Grande/Pequeno
@@ -193,7 +191,7 @@ void Player::OnUpdate(float deltaTime) {
   float levelWidth = Game::LEVEL_WIDTH * Game::TILE_SIZE;
   float levelHeight = Game::LEVEL_HEIGHT * Game::TILE_SIZE;
 
-  // Trava a posição X do Mario
+  // Trava a posição X
   pos.x =
       std::max(halfWidth, pos.x);  // Trava na borda Esquerda (0.0 + halfWidth)
   pos.x = std::min(levelWidth - halfWidth, pos.x);  // Trava na borda Direita

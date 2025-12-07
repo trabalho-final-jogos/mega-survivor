@@ -109,9 +109,8 @@ void LaserGun::FireShot() {
     // lasers. But "LaserGun" logic above handles single shot. Let's stick to
     // Damage and Area for now to be safe.
 
-    SDL_Log("danoooo %f", mDamage);
-    // 2. "Acorda" o projétil
-    laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
-                 finalVelocity, finalDamage, finalArea);
-  }
+        // 2. "Acorda" o projétil
+        laser->Awake(mOwner, playerPos, mOwner->GetRotation(), mProjectileLifetime,
+                     finalVelocity, mDamage, mAreaScale);
+    }
 }

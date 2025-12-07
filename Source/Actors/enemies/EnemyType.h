@@ -4,8 +4,9 @@
 #pragma once
 
 enum class EnemyType {
-  Metall,  // Inimigo básico
-  Fly,     // (Exemplo futuro) Inimigo rápido
+  Metall,
+  Fly,
   Bat,
-  Ground  // (Exemplo futuro) Inimigo voador
+  Ground,
+  Random
 };

@@ -1,7 +1,3 @@
-//
-// Created by Lucas N. Ferreira on 30/09/23.
-//
-
 #include "Enemy1.h"
 
 #include "../../Components/Drawing/AnimatorComponent.h"
