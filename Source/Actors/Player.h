@@ -62,6 +62,7 @@ class Player : public Actor {
   uint32_t GetCurrentHP() const { return mCurrentHP; }
   void AddXP(uint32_t amount);
   uint32_t GetMaxXP() const;
+  uint32_t GetMaxHP() const { return mMaxHP; }
   void TakeDamage(uint32_t damage);
   void HealDamage(uint32_t heal);
 

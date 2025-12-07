@@ -38,6 +38,7 @@ void ColorPalette::InitializeBasePalette() {
   AddColor("Red_bright", 0xc8002aff);
   AddColor("Blue_dark", 0x030060ff);
   AddColor("Lime_green", 0x32cd32ff);
+  AddColor("Smoke", 0x232423ff);
   AddColor("Orange", 0xffa500ff);
   AddColor("Red_light", 0xff7f7fff);
   AddColor("Purple_light", 0xa8a8ffff);
