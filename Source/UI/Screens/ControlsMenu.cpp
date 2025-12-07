@@ -6,16 +6,16 @@
 
 ControlsMenu::ControlsMenu(class Game* game,
                            const std::string& fontName,
-                           UIScreen* parent = nullptr)
+                           UIScreen* parent)
     : UIScreen(game, fontName), mParent(parent) {
   if (mParent) {
     mParent->SetVisible(false);
   }
   auto* bg =
       AddRect(Vector2(0.0f, 0.0f), Vector2(1024.0f, 768.0f), 1.0f, 0.0f, 50);
-  bg->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.1f));
+  bg->SetColor(Vector4(0.0f, 0.0f, 0.0f, 0.6f));
 
-  AddText("Game controls", Vector2(0.0f, 200.0f), 0.5f, 0.0f, 64, 1024, 100);
+  AddText("Game controls", Vector2(0.0f, 180.0f), 0.5f, 0.0f, 64, 1024, 100);
 
   UIText* but[ControlsDB::GetMappingCount() - 1]{nullptr};
   Vector2 basePos{0.0f, 100.0f};
@@ -33,8 +33,14 @@ ControlsMenu::ControlsMenu(class Game* game,
   }
 }
 
+ControlsMenu::~ControlsMenu() {
+  if (mParent) {
+    mParent->SetVisible(true);
+  }
+}
+
 void ControlsMenu::HandleKeyPress(int key) {
-  if (key == SDLK_ESCAPE) {
+  if (key == SDLK_ESCAPE || key == SDLK_RETURN) {
     Close();
   }
 }

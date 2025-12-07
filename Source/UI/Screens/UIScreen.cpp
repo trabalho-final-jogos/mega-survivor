@@ -117,15 +117,15 @@ UIRect* UIScreen::AddRect(const Vector2& offset,
 
 void UIScreen::SetVisible(bool visible) {
   for (auto b : mButtons) {
-    b->SetVisible(visible);
+    b->SetIsVisible(visible);
   }
   for (auto t : mTexts) {
-    t->SetVisible(visible);
+    t->SetIsVisible(visible);
   }
   for (auto i : mImages) {
-    i->SetVisible(visible);
+    i->SetIsVisible(visible);
   }
   for (auto r : mRects) {
-    r->SetVisible(visible);
+    r->SetIsVisible(visible);
   }
 }

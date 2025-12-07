@@ -36,7 +36,7 @@ PausedMenu::PausedMenu(class Game* game, const std::string& fontName)
       "Controls",
       [this]() {
         // só fecha o menu de pausa
-        new ControlsMenu(GetGame(), GAME_FONT.data());
+        new ControlsMenu(GetGame(), GAME_FONT.data(), this);
       },
       Vector2(0.0f, 0.0f), 0.3f, 0.0f, 40, 1024, 101);
 

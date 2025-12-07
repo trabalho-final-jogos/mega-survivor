@@ -6,6 +6,7 @@ class ControlsMenu : public UIScreen {
   ControlsMenu(class Game* game,
                const std::string& fontName,
                UIScreen* parent = nullptr);
+  ~ControlsMenu();
   void HandleKeyPress(int key);
 
  private:
