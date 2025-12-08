@@ -3,10 +3,19 @@
 #include <vector>
 #include "../../Components/Upgrades/UpgradeComponent.h"
 #include "UIScreen.h"
+#include "../../Actors/weapons/WeaponType.h"
 
+enum class UpgradeType {
+	Stat,
+	Weapon
+};
+
+// Estrutura que define um item de upgrade
 struct RunUpgrade {
-    Stats type;
-    std::string description;
+	UpgradeType type;
+	Stats statType;         // Usado se for Stat
+	WeaponType weaponId; // Usado se for Weapon (Ex: "IceGun")
+	std::string description;// O texto que aparece no botão
 };
 
 class LevelUp : public UIScreen {
@@ -18,5 +27,6 @@ class LevelUp : public UIScreen {
 
  private:
   std::vector<RunUpgrade> mOptions;
-  void SelectUpgrade(Stats type);
+  void SelectUpgrade(RunUpgrade upgrade);
+	int mSelectedButtonIndex;
 };

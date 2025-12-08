@@ -8,6 +8,8 @@
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
+class WeaponComponent;
+
 enum PlayerChar { MEGAMAN, PROTOMAN, BASS, LAST_CHAR };
 
 constexpr float PLAYER_BASE_SPEED{200.0f};
@@ -47,6 +49,9 @@ class Player : public Actor {
                            AABBColliderComponent* other) override;
 
   void EquipWeapon(WeaponType type);
+
+  void LevelUpWeapon(WeaponType type);
+  WeaponComponent* GetWeaponByType(WeaponType type);
 
   void UnequipWeapon(WeaponType type);
 

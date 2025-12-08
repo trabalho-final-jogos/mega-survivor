@@ -3,136 +3,230 @@
 #include <random>
 #include "../../Actors/Player.h"
 #include "../../Game.h"
+#include "../../Components/WeaponComponent.h"
 
+
+static bool IsWeaponAvailable(Player* player, WeaponType weaponId) {
+    WeaponComponent* weapon = player->GetWeaponByType(weaponId);
+
+    // Não tem → pode aparecer (unlock)
+    if (!weapon)
+        return true;
+
+    // Tem mas ainda não maxou → pode aparecer (level up)
+    return weapon->GetLevel() < weapon->GetMaxLevel();
+}
 // Define available run upgrades locally since RunUpgrade.h is missing
 // and we are replacing the system anyway.
 const std::vector<RunUpgrade> AVAILABLE_RUN_UPGRADES = {
-    {Stats::Speed, "Increase Speed"},  {Stats::Damage, "Increase Damage"},
-    {Stats::Area, "Increase Area"},    {Stats::Projectiles, "Extra Projectile"},
-    {Stats::Regen, "Health Regen"},    {Stats::Lucky, "Increase Luck"},
-    {Stats::Health, "Increase Max HP"}};
+
+    // -------- STATS --------
+    { UpgradeType::Stat, Stats::Speed,       WeaponType::None, "Increase Speed" },
+    { UpgradeType::Stat, Stats::Damage,      WeaponType::None, "Increase Damage" },
+    { UpgradeType::Stat, Stats::Area,        WeaponType::None, "Increase Area" },
+    { UpgradeType::Stat, Stats::Projectiles, WeaponType::None, "Extra Projectile" },
+    { UpgradeType::Stat, Stats::Regen,       WeaponType::None, "Health Regen" },
+    { UpgradeType::Stat, Stats::Lucky,       WeaponType::None, "Increase Luck" },
+    { UpgradeType::Stat, Stats::Health,      WeaponType::None, "Increase Max HP" },
+
+    // -------- WEAPONS --------
+    { UpgradeType::Weapon, Stats::None, WeaponType::IceGun,       "Ice Gun" },
+    { UpgradeType::Weapon, Stats::None, WeaponType::LaserGun,     "Laser Gun" },
+    { UpgradeType::Weapon, Stats::None, WeaponType::BoomerangGun, "Boomerang" },
+    { UpgradeType::Weapon, Stats::None, WeaponType::SawGun,       "Saw Blade" },
+    { UpgradeType::Weapon, Stats::None, WeaponType::MainGun,      "Main Gun" },
+    { UpgradeType::Weapon, Stats::None, WeaponType::Aura,         "Aura" }
+};
+
+// ======================================================
+// CONSTRUCTOR / DESTRUCTOR
+// ======================================================
 
 LevelUp::LevelUp(Game* game, const std::string& fontName)
-    : UIScreen(game, fontName) {
-  // Pause the game when this screen is created
-  // mGame->SetPaused(true); // Assuming Player or Game handles pausing before
-  // creating this screen, or we do it here. Game::SetPaused logic usually
-  // creates PausedMenu, but here we just want to stop actors.
-  mGame->SetPaused(true);
+    : UIScreen(game, fontName)
+{
+    mGame->SetPaused(true);
+    mGame->GetAudioSystem()->PlaySound("levelUp.wav");
 
-  mGame->GetAudioSystem()->PlaySound("levelUp.wav");
+    AddText("LEVEL UP!",
+            Vector2(0.0f, 200.0f),
+            0.6f, 0.0f, 64, 1024, 150);
 
-  AddText("Level Up!", Vector2(0.0f, 100.0f), 0.5f, 0.0f, 64, 1024, 100);
+    // ---- Randomiza upgrades ----
+    Player* player = mGame->GetPlayer();
 
-  // Select 3 random upgrades
-  std::vector<RunUpgrade> allUpgrades = AVAILABLE_RUN_UPGRADES;
+    std::vector<RunUpgrade> weaponUpgrades;
+    std::vector<RunUpgrade> statUpgrades;
 
-  // Simple random shuffle
-  std::random_device rd;
-  std::mt19937 g(rd());
-  std::shuffle(allUpgrades.begin(), allUpgrades.end(), g);
+    // Separa upgrades válidos
+    for (const RunUpgrade& def : AVAILABLE_RUN_UPGRADES) {
+        if (def.type == UpgradeType::Weapon) {
+            if (player && IsWeaponAvailable(player, def.weaponId)) {
+                weaponUpgrades.push_back(def);
+            }
+        }
+        else {
+            statUpgrades.push_back(def);
+        }
+    }
 
-  // Take top 3 or less if not enough
-  int count = std::min((int)allUpgrades.size(), 3);
-  for (int i = 0; i < count; ++i) {
-    mOptions.push_back(allUpgrades[i]);
-  }
+    std::random_device rd;
+    std::mt19937 rng(rd());
 
-  // Create UI Buttons
-  Vector2 pos(0.0f, 0.0f);
-  for (const auto& upgrade : mOptions) {
-    UIButton* btn = AddButton(
-        upgrade.description,
-        [this, upgrade]() { this->SelectUpgrade(upgrade.type); }, pos, 0.5f,
-        0.0f, 32, 1024, 102);
-    btn->SetBackgroundColor(
-        ColorPalette::GetInstance().GetColorAsVec4("FX_Glow"));
-    pos.y -= 75.0f;  // Spacing
-  }
+    std::shuffle(weaponUpgrades.begin(), weaponUpgrades.end(), rng);
+    std::shuffle(statUpgrades.begin(), statUpgrades.end(), rng);
 
-  mSelectedButtonIndex = 0;
-  if (!mButtons.empty()) {
-    mButtons[0]->SetHighlighted(true);
-    mButtons[0]->SetSelected(true);
-  }
+    std::vector<RunUpgrade> finalOptions;
+
+    // Sempre tenta pegar 3 weapons
+    for (int i = 0; i < 3 && i < static_cast<int>(weaponUpgrades.size()); ++i) {
+        finalOptions.push_back(weaponUpgrades[i]);
+    }
+
+    // Completa com stats se necessário
+    int missing = 3 - static_cast<int>(finalOptions.size());
+
+    for (int i = 0; i < missing && i < static_cast<int>(statUpgrades.size()); ++i) {
+        finalOptions.push_back(statUpgrades[i]);
+    }
+
+    // Cria botões
+    Vector2 pos(0.0f, 80.0f);
+
+    for (const RunUpgrade& upgrade : finalOptions) {
+
+        std::string label = upgrade.description;
+
+        if (upgrade.type == UpgradeType::Weapon && player) {
+            WeaponComponent* weapon =
+                player->GetWeaponByType(upgrade.weaponId);
+
+            if (weapon) {
+                label = "Level Up " + WeaponTypeToString(upgrade.weaponId) +
+                        " (Lvl " + std::to_string(weapon->GetLevel() + 1) + ")";
+            }
+            else {
+                label = "Unlock " + WeaponTypeToString(upgrade.weaponId);
+            }
+        }
+
+        UIButton* btn = AddButton(
+            label,
+            [this, upgrade]() { SelectUpgrade(upgrade); },
+            pos,
+            0.5f, 0.0f, 32, 1024, 102
+        );
+
+        btn->SetBackgroundColor(
+            ColorPalette::GetInstance().GetColorAsVec4("FX_Glow")
+        );
+
+        //mButtons.push_back(btn);
+        pos.y -= 80.0f;
+    }
+
+    mSelectedButtonIndex = 0;
+    if (!mButtons.empty()) {
+        mButtons[0]->SetHighlighted(true);
+        mButtons[0]->SetSelected(true);
+    }
 }
+
 
 LevelUp::~LevelUp() {
-  // Unpause when screen is destroyed
-  mGame->SetPaused(false);
+    SDL_Log("UIScreen::~UIScreen() this=%p", this);
+    mGame->SetPaused(false);
 }
+// ======================================================
+// INPUT
+// ======================================================
 
 void LevelUp::HandleKeyPress(int key) {
-  if (mButtons.empty())
-    return;
+    if (mButtons.empty())
+        return;
 
-  int oldIndex = mSelectedButtonIndex;
+    int oldIndex = mSelectedButtonIndex;
 
-  switch (key) {
-    case SDLK_UP:
-    case SDLK_w:
-      if (mSelectedButtonIndex > 0)
-        mSelectedButtonIndex--;
-      else
-        mSelectedButtonIndex = static_cast<int>(mButtons.size()) - 1;
-      break;
+    switch (key) {
+        case SDLK_w:
+        case SDLK_UP:
+            mSelectedButtonIndex =
+                (mSelectedButtonIndex - 1 + mButtons.size()) % mButtons.size();
+            break;
 
-    case SDLK_DOWN:
-    case SDLK_s:
-      if (mSelectedButtonIndex < static_cast<int>(mButtons.size()) - 1)
-        mSelectedButtonIndex++;
-      else
-        mSelectedButtonIndex = 0;
-      break;
+        case SDLK_s:
+        case SDLK_DOWN:
+            mSelectedButtonIndex =
+                (mSelectedButtonIndex + 1) % mButtons.size();
+            break;
 
-    case SDLK_RETURN:
-    case SDLK_KP_ENTER:
-      if (mSelectedButtonIndex >= 0 &&
-          mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
-        mButtons[mSelectedButtonIndex]->OnClick();
-      }
-      break;
-
-    default:
-      break;
-  }
-
-  if (oldIndex != mSelectedButtonIndex) {
-    if (oldIndex >= 0 && oldIndex < static_cast<int>(mButtons.size())) {
-      mButtons[oldIndex]->SetHighlighted(false);
-      mButtons[oldIndex]->SetSelected(false);
+        case SDLK_RETURN:
+        case SDLK_KP_ENTER:
+            mButtons[mSelectedButtonIndex]->OnClick();
+            return;
     }
 
-    if (mSelectedButtonIndex >= 0 &&
-        mSelectedButtonIndex < static_cast<int>(mButtons.size())) {
-      mButtons[mSelectedButtonIndex]->SetHighlighted(true);
-      mButtons[mSelectedButtonIndex]->SetSelected(true);
+    if (oldIndex != mSelectedButtonIndex) {
+        mButtons[oldIndex]->SetHighlighted(false);
+        mButtons[oldIndex]->SetSelected(false);
+
+        mButtons[mSelectedButtonIndex]->SetHighlighted(true);
+        mButtons[mSelectedButtonIndex]->SetSelected(true);
     }
-  }
 }
 
-void LevelUp::SelectUpgrade(Stats type) {
-  Player* player = mGame->GetPlayer();
-  if (player) {
-    // Determine amount
-    float amount = 1.0f;
-    switch (type) {
-      case Stats::Speed:
-      case Stats::Damage:
-      case Stats::Area:
-        amount = ADDITIONAL_MULTIPLIER_PER_UPGRADE;  // 0.2f (defined in
-                                                     // UpgradeComponent.h)
-        break;
-      case Stats::Projectiles:
-      case Stats::Regen:
-      case Stats::Lucky:
-      case Stats::Health:
-        amount = static_cast<float>(ADDITIONAL_AMOUNT_PER_UPGRADE);  // 5.0f
-        break;
-      default:
-        amount = 1.0f;
+// ======================================================
+// APLICA UPGRADE
+// ======================================================
+
+void LevelUp::SelectUpgrade(RunUpgrade upgrade) {
+    Player* player = mGame->GetPlayer();
+    if (!player) {
+        Close();
+        return;
     }
-    player->ApplyRunUpgrade(type, amount);
-  }
-  Close();
+
+    // -------- STAT --------
+    if (upgrade.type == UpgradeType::Stat) {
+        float amount = 1.0f;
+
+        switch (upgrade.statType) {
+            case Stats::Speed:
+            case Stats::Damage:
+            case Stats::Area:
+                amount = ADDITIONAL_MULTIPLIER_PER_UPGRADE;
+                break;
+
+            case Stats::Projectiles:
+            case Stats::Regen:
+            case Stats::Lucky:
+            case Stats::Health:
+                amount = static_cast<float>(ADDITIONAL_AMOUNT_PER_UPGRADE);
+                break;
+
+            default:
+                break;
+        }
+
+        player->ApplyRunUpgrade(upgrade.statType, amount);
+    }
+    // -------- WEAPON --------
+    else if (upgrade.type == UpgradeType::Weapon) {
+
+        WeaponComponent* weapon =
+            player->GetWeaponByType(upgrade.weaponId);
+
+        if (weapon) {
+            SDL_Log("FOi pro upgrade");
+            weapon->LevelUp();
+        }
+        else {
+            SDL_Log("NOVAAA");
+            player->EquipWeapon(upgrade.weaponId);
+        }
+    }
+    SDL_Log("Antes do close");
+    Close();
+    SDL_Log("Depois do close");
+
 }
