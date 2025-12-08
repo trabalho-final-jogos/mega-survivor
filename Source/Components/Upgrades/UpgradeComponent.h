@@ -17,7 +17,8 @@ enum class Stats {
   Regen,
   Lucky,
   Health,
-  Count  // Must be the last one
+  Count,
+  None// Must be the last one
 };
 
 class UpgradeComponent : public Component {

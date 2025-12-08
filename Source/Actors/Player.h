@@ -10,6 +10,10 @@
 #include "Aim.h"
 #include "weapons/WeaponType.h"
 
+class WeaponComponent;
+
+enum PlayerChar { MEGAMAN, PROTOMAN, BASS, LAST_CHAR };
+
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
 constexpr uint kCharCount = static_cast<uint>(PlayerChar::LAST_CHAR);
@@ -30,6 +34,9 @@ class Player : public Actor {
                            AABBColliderComponent* other) override;
 
   void EquipWeapon(WeaponType type);
+
+  void LevelUpWeapon(WeaponType type);
+  WeaponComponent* GetWeaponByType(WeaponType type);
 
   void UnequipWeapon(WeaponType type);
 

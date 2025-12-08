@@ -330,6 +330,59 @@ void Player::EquipWeapon(WeaponType type) {
     }
   }
 }
+void Player::LevelUpWeapon(WeaponType type) {
+  WeaponComponent* weaponToUpgrade = nullptr;
+
+  switch (type) {
+    case WeaponType::MainGun:
+      weaponToUpgrade = GetComponent<MainGun>();
+      break;
+    case WeaponType::IceGun:
+      weaponToUpgrade = GetComponent<IceGun>();
+      break;
+    case WeaponType::BoomerangGun:
+      weaponToUpgrade = GetComponent<BoomerangGun>();
+      break;
+    case WeaponType::SawGun:
+      weaponToUpgrade = GetComponent<SawGun>();
+      break;
+    case WeaponType::Aura:
+      weaponToUpgrade = GetComponent<AuraWeapon>();
+      break;
+    case WeaponType::LaserGun:
+      weaponToUpgrade = GetComponent<LaserGun>();
+      break;
+  }
+
+  // 2. Se encontrou a arma (o Player já a possui)
+  if (weaponToUpgrade != nullptr) {
+    // Chama a função de evoluir
+    weaponToUpgrade->LevelUp();
+
+    SDL_Log("DEBUG: Level Up aplicado na arma tipo: %d. Novo Nível: %d",
+            (int)type, weaponToUpgrade->GetLevel());
+  }
+  else {
+    SDL_Log("DEBUG: Tentou upar arma %d mas o Player não a possui.", (int)type);
+  }
+}
+WeaponComponent* Player::GetWeaponByType(WeaponType type) {
+  // 1. Percorre a lista genérica de componentes do Player
+  // (Substitua 'm_Components' pelo nome da sua lista de componentes)
+  for (auto component : mComponents) {
+
+    // 2. Tenta "converter" o componente genérico para uma Arma.
+    // O dynamic_cast retorna nullptr se o componente NÃO for do tipo Weapon.
+    WeaponComponent* weapon = dynamic_cast<WeaponComponent*>(component);
+
+    // 3. Verifica se a conversão funcionou (é uma arma) E se é do tipo certo
+    if (weapon != nullptr && weapon->GetType() == type) {
+      return weapon; // Achou!
+    }
+  }
+
+  return nullptr;
+}
 
 void Player::UnequipWeapon(WeaponType type) {
   Component* compToUnequip = nullptr;

@@ -17,8 +17,11 @@ class WeaponComponent : public Component {
   // Getter para o tipo de arma
   WeaponType GetType() const { return mType; }
   int GetLevel() const { return mLevel; }
+  int GetMaxLevel() const { return mMaxLevel; }
+
 
  protected:
   WeaponType mType;
   int mLevel;
+  int mMaxLevel = 3;
 };

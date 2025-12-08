@@ -61,7 +61,11 @@ class Game {
   std::vector<class DrawComponent*>& GetDrawables() { return mDrawables; }
 
   // UI functions
-  void PushUI(class UIScreen* screen) { mUIStack.emplace_back(screen); }
+  void PushUI(class UIScreen* screen) {
+		SDL_Log("Game::PushUI this=%p", screen);
+
+  	mUIStack.emplace_back(screen);
+  }
   const std::vector<class UIScreen*>& GetUIStack() { return mUIStack; }
 
   void SetPaused(bool paused) { mIsPaused = paused; }
