@@ -32,6 +32,7 @@
 #include "UI/Screens/UpgradeStore.h"
 
 #define SAVE_FILE "save.json"
+constexpr uint8_t GOLD_PER_SEC = 5;
 
 Game::Game()
     : mWindow(nullptr),
@@ -325,6 +326,7 @@ void Game::UpdateRunTime() {
     static int lastSecond = -1;
 
     if (totalSeconds != lastSecond) {
+      AddCurrency(GOLD_PER_SEC);
       SDL_Log("Tempo: %02d:%02d", mRunMinutes, mRunSeconds);
       lastSecond = totalSeconds;
 

@@ -188,7 +188,7 @@ class Game {
   bool mIsClockRunning;
 
   CharInfo mCharInfo;
-  int mCurrency{100000};  // Start with some money for testing
+  int mCurrency{1000};  // Start with some money for testing
   class UpgradeComponent* mPersistentUpgrades = nullptr;
   class Actor* mPersistentActor = nullptr;  // Dummy actor to hold the component
 };
