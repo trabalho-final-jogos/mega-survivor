@@ -117,21 +117,21 @@ void Player::OnProcessInput(const uint8_t* state) {
   Vector2 velocity = Vector2::Zero;  // Começa com velocidade zero
 
   // Eixo Y (Norte/Sul)
-  if (state[SDL_SCANCODE_W]) {
+  if (state[ControlsDB::GetDefaultKey(GameAction::MoveUp)]) {
     velocity.y = -currentSpeed;  // Y negativo é para CIMA
     mIsRunning = true;
   }
-  if (state[SDL_SCANCODE_S]) {
+  if (state[ControlsDB::GetDefaultKey(GameAction::MoveDown)]) {
     velocity.y = currentSpeed;  // Y positivo é para BAIXO
     mIsRunning = true;
   }
 
   // Eixo X (Leste/Oeste)
-  if (state[SDL_SCANCODE_D]) {
+  if (state[ControlsDB::GetDefaultKey(GameAction::MoveRight)]) {
     velocity.x = currentSpeed;
     mIsRunning = true;
   }
-  if (state[SDL_SCANCODE_A]) {
+  if (state[ControlsDB::GetDefaultKey(GameAction::MoveLeft)]) {
     velocity.x = -currentSpeed;
     mIsRunning = true;
   }

@@ -109,6 +109,8 @@ void HUD::Update(float deltaTime) {
 }
 
 void HUD::UpdateHealthBar(const Player* player) {
+  float alpha = mGame->IsPaused() ? 0.1f : 1.0f;
+
   Vector2 playerPos = player->GetPosition();
   Vector2 cameraPos = GetGame()->GetCameraPos();
   Vector2 relPos = playerPos - cameraPos;
@@ -127,9 +129,7 @@ void HUD::UpdateHealthBar(const Player* player) {
   mHealthBarBg->SetOffset(Vector2(barX, barY));
   mHealthBarBg->SetSize(Vector2(barWidth + 2.0f, barHeight + 2.0f));
 
-  // Foreground (Fill) update
   float currentHP = static_cast<float>(player->GetCurrentHP());
-  // NOTE: This requires GetMaxHP() in Player.h public interface
   float maxHP = static_cast<float>(player->GetMaxHP());
   float hpPercent =
       (maxHP > 0.0f) ? Math::Clamp(currentHP / maxHP, 0.0f, 1.0f) : 0.0f;
@@ -138,6 +138,14 @@ void HUD::UpdateHealthBar(const Player* player) {
 
   // Left-alignment math: CenterX = LeftEdge + (NewWidth / 2)
   float filledCenterX = (barX - barWidth / 2.0f) + (filledWidth / 2.0f);
+
+  Vector4 bgColor = ColorPalette::GetInstance().GetColorAsVec4("Smoke");
+  bgColor.w = alpha;  // Set Alpha
+  mHealthBarBg->SetColor(bgColor);
+
+  Vector4 fgColor = ColorPalette::GetInstance().GetColorAsVec4("Lime_green");
+  fgColor.w = alpha;  // Set Alpha
+  mHealthBar->SetColor(fgColor);
 
   mHealthBar->SetOffset(Vector2(filledCenterX, barY));
   mHealthBar->SetSize(Vector2(filledWidth, barHeight));
