@@ -62,9 +62,9 @@ class Game {
 
   // UI functions
   void PushUI(class UIScreen* screen) {
-		SDL_Log("Game::PushUI this=%p", screen);
+    SDL_Log("Game::PushUI this=%p", screen);
 
-  	mUIStack.emplace_back(screen);
+    mUIStack.emplace_back(screen);
   }
   const std::vector<class UIScreen*>& GetUIStack() { return mUIStack; }
 
@@ -81,6 +81,10 @@ class Game {
   // Camera functions
   Vector2& GetCameraPos() { return mCameraPos; };
   void SetCameraPos(const Vector2& position) { mCameraPos = position; };
+
+  // Handle game saves
+  void SaveGame();
+  void LoadGame();
 
   // Game specific
   class Player* GetPlayer() { return mPlayer; }
