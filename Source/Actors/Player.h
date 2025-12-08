@@ -12,8 +12,6 @@
 
 class WeaponComponent;
 
-enum PlayerChar { MEGAMAN, PROTOMAN, BASS, LAST_CHAR };
-
 constexpr float PLAYER_BASE_SPEED{200.0f};
 const float INVULNERABILITY_DURATION = 1.5f;
 constexpr uint kCharCount = static_cast<uint>(PlayerChar::LAST_CHAR);
