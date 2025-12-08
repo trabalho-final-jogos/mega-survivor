@@ -242,7 +242,7 @@ void Spawner::SpawnEnemy() {
     // Injeta Stats (Vida, Velocidade)
     ground->SetStats(wave->enemyHealth, wave->enemySpeed);
     ground->SetScale(Vector2(32.0f*wave->enemySize, 32.0f * wave->enemySize));
-  }if (wave->type == EnemyType::Ground) {
+  }if (wave->type == EnemyType::Fly) {
 
     auto fly = new EnemyFly(GetGame());
     fly->SetPosition(spawnPos);
