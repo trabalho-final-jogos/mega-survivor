@@ -39,4 +39,5 @@ class HUD : public UIScreen {
 
   UIRect* mHealthBar;
   UIRect* mHealthBarBg;
+  uint8_t mLastMinute;
 };

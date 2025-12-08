@@ -9,6 +9,7 @@
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <map>
 #include <sstream>
 #include <vector>
@@ -19,6 +20,7 @@
 #include "CSV.h"
 #include "Components/Drawing/DrawComponent.h"
 #include "Components/Physics/RigidBodyComponent.h"
+#include "Json.h"
 #include "Managers/ColorPalette.h"
 #include "Random.h"
 #include "UI/Screens/CharSelection.h"
@@ -28,6 +30,9 @@
 #include "UI/Screens/MainMenu.h"
 #include "UI/Screens/PausedMenu.h"
 #include "UI/Screens/UpgradeStore.h"
+
+#define SAVE_FILE "save.json"
+constexpr uint8_t GOLD_PER_SEC = 5;
 
 Game::Game()
     : mWindow(nullptr),
@@ -82,16 +87,15 @@ bool Game::Initialize() {
   InitializeActors();
 
   mTicksCount = SDL_GetTicks();
-  mIsDebugging = true;
+  // mIsDebugging = true;
 
   mAudio = new AudioSystem(16);
 
-  // Initialize Persistent Upgrades
-  // We need a dummy actor to hold the component because Component requires an
-  // Actor. This actor will not be added to mActors to avoid update/draw loops.
   mPersistentActor = new Actor(this);
   RemoveActor(mPersistentActor);  // Prevents UnloadScene from deleting it
   mPersistentUpgrades = new UpgradeComponent(mPersistentActor);
+
+  LoadGame();
 
   SetScene(GameScene::MainMenu);
 
@@ -322,6 +326,7 @@ void Game::UpdateRunTime() {
     static int lastSecond = -1;
 
     if (totalSeconds != lastSecond) {
+      AddCurrency(GOLD_PER_SEC);
       SDL_Log("Tempo: %02d:%02d", mRunMinutes, mRunSeconds);
       lastSecond = totalSeconds;
 
@@ -571,6 +576,8 @@ void Game::Shutdown() {
   delete mRenderer;
   mRenderer = nullptr;
 
+  SaveGame();
+
   // Cleanup Persistent Upgrades
   if (mPersistentActor) {
     delete mPersistentActor;
@@ -607,4 +614,35 @@ float Game::GetClockTime() {
   Uint32 elapsedTimeMS = currentTime - mClockStartTime;
 
   return static_cast<float>(elapsedTimeMS) / 1000.0f;
+}
+
+void Game::SaveGame() {
+  if (!mPersistentUpgrades)
+    return;
+
+  nlohmann::json j;
+  j["upgrades"] = mPersistentUpgrades->Save();
+  j["currency"] = mCurrency;
+
+  std::ofstream o(SAVE_FILE);
+  o << std::setw(4) << j << std::endl;
+}
+
+void Game::LoadGame() {
+  std::ifstream i(SAVE_FILE);
+  if (!i.is_open())
+    return;
+
+  SDL_Log("Loading game file");
+
+  nlohmann::json j;
+  i >> j;
+
+  if (mPersistentUpgrades && j.contains("upgrades")) {
+    mPersistentUpgrades->Load(j["upgrades"]);
+  }
+
+  if (j.contains("currency")) {
+    mCurrency = j["currency"];
+  }
 }

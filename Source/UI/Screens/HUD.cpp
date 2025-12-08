@@ -26,7 +26,6 @@ HUD::HUD(class Game* game, const std::string& fontName)
       mLastPlayerHP(0) {
   const Vector2 basePos(0.0f, 220.0f);
 
-  // Health Bar setup
   mHealthBarBg = AddRect(Vector2::Zero, Vector2(60.0f, 10.0f), 1.0f, 0.0f, 150);
   mHealthBarBg->SetColor(ColorPalette::GetInstance().GetColorAsVec4("Smoke"));
 
@@ -35,7 +34,6 @@ HUD::HUD(class Game* game, const std::string& fontName)
   mHealthBar->SetColor(
       ColorPalette::GetInstance().GetColorAsVec4("Lime_green"));
 
-  // XP Bar setup (RESTORED ORIGINAL)
   float initialProgress = 0.0f;
   mXpBar = AddRect(GetXPBarOffset(initialProgress),
                    GetXPBarSize(initialProgress), 0.5f, 0.0f, 50);
@@ -104,7 +102,6 @@ void HUD::Update(float deltaTime) {
 
   SetXPBar(mDisplayedProgress);
 
-  // --- HEALTH BAR LOGIC FIXED HERE ---
   UpdateHealthBar(player);
 }
 

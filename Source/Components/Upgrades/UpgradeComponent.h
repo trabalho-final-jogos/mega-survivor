@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include "../../Json.h"
 #include "../Component.h"
 
 constexpr float ADDITIONAL_MULTIPLIER_PER_UPGRADE{0.05f};
@@ -18,7 +19,7 @@ enum class Stats {
   Lucky,
   Health,
   Count,
-  None// Must be the last one
+  None  // Must be the last one
 };
 
 class UpgradeComponent : public Component {
@@ -58,6 +59,9 @@ class UpgradeComponent : public Component {
       RecalculateStat(static_cast<Stats>(i));
     }
   }
+
+  nlohmann::json Save() const;
+  void Load(const nlohmann::json& j);
 
  private:
   void RecalculateStat(Stats stat) {

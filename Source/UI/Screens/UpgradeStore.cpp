@@ -6,10 +6,7 @@
 
 UpgradeStore::UpgradeStore(Game* game, const std::string& fontName)
     : UIScreen(game, fontName) {
-  // Access persistent data from Game
   auto upgrades = mGame->GetPersistentUpgrades();
-  // We can't use CanAfford/Purchase from UpgradeManager anymore.
-  // We implement them here or in Game/UpgradeComponent.
 
   AddImage("../Assets/Levels/UpgradeStore/background.png", Vector2(0.0f, 0.0f),
            0.35f, 0.0f, 50);
