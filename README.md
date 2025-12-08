@@ -71,7 +71,7 @@ cmake --build .
 ## 🕹️ Controles
 
 *   **WASD:** Movimentação do personagem.
-*   **Mouse:** Mira (para armas direcionais) e Seleção nos Menus.
+*   **Mouse:** Mira (para armas direcionais).
 *   **ESC:** Pausa o jogo e abre o menu de pausa.
 
 ## 📄 Licença
