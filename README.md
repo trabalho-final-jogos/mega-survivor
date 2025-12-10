@@ -74,6 +74,11 @@ cmake --build .
 *   **Mouse:** Mira (para armas direcionais).
 *   **ESC:** Pausa o jogo e abre o menu de pausa.
 
+## 📽️ Apresentação
+
+O vídeo de demonstração do jogo apresenta o funcionamento geral, mecânicas de jogo e as principais funcionalidades desenvolvidas ao longo do projeto.
+- Link da demonstração: [https://www.youtube.com/watch?v=VCV-xfScCLw&t=1s]
+
 ## 📄 Licença
 
 Este projeto está licenciado sob a licença MIT.
